@@ -1,0 +1,14 @@
+[user]
+	email = m.glushchenko@office.hoster.kz
+	name = Maxim
+[alias]
+	flush = "!f(){ git stash && git stash drop && git clean -f -d; };f"
+	logp = log  --pretty=format:'%C(auto)%h%d%Creset %C(cyan)(%cr)%Creset %C(green)%cn%Creset %s' --all --decorate --graph --first-parent --
+	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
+	s = status
+	pfwl = push --force-with-lease
+	cm = commit -m
+	ada = add .
+	p = push
+	ca = commit --amend
+	can = commit --amend --no-edit

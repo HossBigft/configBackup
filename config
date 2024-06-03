@@ -1,0 +1,320 @@
+Host gruzo
+	HostName 185.129.51.20
+	User root
+	IdentityFile ~/.ssh/id_rsa
+Host p-cloud-1
+	HostName cloud-1.hoster.kz
+	User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-kturbo-1
+	#Currently doesn't exist
+        HostName kturbo-1.hoster.kz
+        User maximg
+        IdentityFile ~/.ssh/id_rsa
+Host p-aturbo-2
+        HostName aturbo-2.hoster.kz
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-aturbo-3
+        HostName aturbo-3.hoster.kz
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-apkz1
+        HostName apkz1.hoster.kz
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-apkz2
+        HostName apkz2.hoster.kz
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-apkz3
+        HostName apkz3.hoster.kz
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-apkz4
+        HostName apkz4.hoster.kz
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-apkz5
+        HostName apkz5.hoster.kz
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-apkz6
+        HostName apkz6.hoster.kz
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-apkz7
+        HostName apkz7.hoster.kz
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz37
+        HostName pkz37.hoster.kz
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz47
+        HostName pkz47.hoster.kz
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz48
+        HostName pkz48.hoster.kz
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz49
+        HostName pkz49.hoster.kz
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz50
+        HostName pkz50.hoster.kz
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz58
+        HostName pkz58.hoster.kz
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-cloud-2
+        HostName cloud-2.hoster.kz
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-nturbo-2
+        HostName nturbo-2.hoster.kz
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-nturbo-1
+        HostName nturbo-1.hoster.kz
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz4 
+	#No access 
+        HostName pkz4.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz5
+        #No access
+        HostName pkz5.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz6
+        #No access
+        HostName pkz6.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz7
+        #No access
+        HostName pkz7.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz8
+        #No access
+        HostName pkz8.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz9
+        #No access
+        HostName pkz9.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz10
+        HostName pkz10.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz11
+        HostName pkz11.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz12
+        HostName pkz12.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz13
+        HostName pkz13.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz14
+        HostName pkz14.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz15
+        HostName pkz15.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz17
+        HostName pkz17.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz18
+        HostName pkz18.hoster.kz.
+        User maximg
+        IdentityFile ~/.ssh/id_rsa
+Host p-pkz20
+        HostName pkz20.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz21
+        HostName pkz21.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz22
+        HostName pkz22.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz23
+        HostName pkz23.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz24
+        HostName pkz24.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz25
+        HostName pkz25.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz27
+        HostName pkz27.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz31
+        HostName pkz31.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz32
+        HostName pkz32.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz33
+        HostName pkz33.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz34
+        HostName pkz34.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz35
+        HostName pkz35.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz36
+        HostName pkz36.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz37
+        HostName pkz37.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz38
+        HostName pkz38.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz39
+        HostName pkz39.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz40
+        HostName pkz40.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz41
+        HostName pkz41.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz42
+        HostName pkz42.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz43
+        HostName pkz43.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz44
+        HostName pkz44.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz45
+        Hostname pkz45.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz46
+        HostName pkz46.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz51
+        HostName pkz51.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz52
+        HostName pkz52.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz53
+        HostName pkz53.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz54
+        HostName pkz54.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz55
+        HostName pkz55.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz56
+        HostName pkz56.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz57
+        HostName pkz57.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz58
+        HostName pkz58.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz59
+        HostName pkz59.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz60
+        HostName pkz60.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz61
+        HostName pkz61.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz62
+        HostName pkz62.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz63
+        HostName pkz63.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz64
+        HostName pkz64.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz65
+        HostName pkz65.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz66
+        HostName pkz66.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz67
+        HostName pkz67.hoster.kz.
+        User maximg
+	IdentityFile ~/.ssh/id_rsa
+Host p-pkz68
+        HostName pkz68.hoster.kz.
+        User maximg
+        IdentityFile ~/.ssh/id_rsa
+Host p-cloud-3
+		Hostname cloud-3.hoster.kz
+		User maximg
+    IdentityFile ~/.ssh/id_rsa
+Host vgruzo
+		Hostname 185.111.106.116
+		User root
+    IdentityFile ~/.ssh/id_rsa
+
