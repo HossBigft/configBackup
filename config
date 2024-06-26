@@ -1,3 +1,5 @@
+Include conf.d/*
+
 Host gruzo
 	HostName 185.129.51.20
 	User root
@@ -316,5 +318,9 @@ Host p-cloud-3
 Host vgruzo
 		Hostname 185.111.106.116
 		User root
+    IdentityFile ~/.ssh/id_rsa
+Host p-cloud-4
+		Hostname cloud-4.hoster.kz
+		User maximg
     IdentityFile ~/.ssh/id_rsa
 
