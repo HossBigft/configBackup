@@ -34,3 +34,4 @@ SETUVAR fish_user_paths:/home/gmv/\x2elocal/bin
 SETUVAR ns1:\x40ns1\x2ehoster\x2ekz
 SETUVAR ns2:\x40ns2\x2ehoster\x2ekz
 SETUVAR ns3:\x40ns3\x2ehoster\x2ekz
+SETUVAR sm34IP:185\x2e121\x2e82\x2e217
