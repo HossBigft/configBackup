@@ -323,4 +323,15 @@ Host p-cloud-4
 		Hostname cloud-4.hoster.kz
 		User maximg
     IdentityFile ~/.ssh/id_rsa
-
+Host ns1
+		Hostname ns1.hoster.kz
+		User root
+    IdentityFile ~/.ssh/id_rsa
+Host ns2
+		Hostname ns2.hoster.kz
+		User root
+    IdentityFile ~/.ssh/id_rsa
+Host ns3
+		Hostname ns3.hoster.kz
+		User root
+    IdentityFile ~/.ssh/id_rsa
