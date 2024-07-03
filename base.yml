@@ -1,0 +1,179 @@
+# espanso match file
+
+# For a complete introduction, visit the official docs at: https://espanso.org/docs/
+
+# You can use this file to define the base matches (aka snippets)
+# that will be available in every application when using espanso.
+
+# Matches are substitution rules: when you type the "trigger" string
+# it gets replaced by the "replace" string.
+matches:
+  # Simple text replacement
+  - trigger: ":espanso"
+    replace: "Hi there!"
+  # NOTE: espanso uses YAML to define matches, so pay attention to the indentation!
+
+  # But matches can also be dynamic:
+
+  # Print the current date
+  - trigger: ":date"
+    replace: "{{mydate}}"
+    vars:
+      - name: mydate
+        type: date
+        params:
+          format: "%m/%d/%Y"
+
+  # Print the output of a shell command
+  - trigger: ":shell"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: "echo 'Hello from your shell'"
+
+  # And much more! For more information, visit the docs: https://espanso.org/docs/
+
+
+  - trigger: "\\здр"
+    replace: "Здравствуйте!"
+  - trigger: "\\пр"
+    replace: "Привет!"
+  - trigger: "\\дд"
+    replace: "Добрый день!"
+  - trigger: "\\дос"
+    replace: | 
+               В таком случае я закрою чат. Спасибо за обращение.
+
+               До свидания!
+  - trigger: "\\ебв"
+    replace: | 
+               Если больше вопросов нет, то я закрою чат. Спасибо за обращение.
+
+               До свидания!
+  - trigger: "\\Спс"
+    replace: "Спасибо!"
+  - trigger: "\\спс"
+    replace: "спасибо"
+  - trigger: "\\пж"
+    replace: "пожалуйста"
+  - trigger: "\\Пж"
+    replace: "Пожалуйста!"
+  - trigger: "\\впр"
+    replace: "Уточните, пожалуйста, у вас остались вопросы?"
+  - trigger: "\\ямв"
+    replace: "Я могу вам еще чем-то помочь?"
+  - trigger: "\\вмо"
+    replace: "вы можете"
+  - trigger: "\\Вмо"
+    replace: "Вы можете"
+  - trigger: "\\пб"
+    replace: "Админ панель сервера Plesk>Инструменты и настройки>Настройки почтового сервера>Черный список>"
+  - trigger: "\\др"
+    replace: "Доброе утро!"
+  - trigger: "\\пп"
+    replace: "Проверьте, пожалуйста, "
+  - trigger: "\\поп"
+    replace: "Попробуйте, пожалуйста, "
+  - trigger: "\\чмп"
+    replace: "Чем могу вам помочь?"
+  - trigger: "\\уп"
+    replace: "Уточните, пожалуйста, "
+  - trigger: "\\опп"
+    replace: "Опишите, пожалуйста, подробнее"
+  - trigger: "\\спи"
+    replace: "с помощью инструкции "
+  - trigger: "\\вмс"
+    replace: "вы можете это сделать "
+  - trigger: "\\Вмс"
+    replace: "Вы можете это сделать "
+  - trigger: "\\вмв"
+    replace: "вы можете воспользоваться "
+  - trigger: "\\Вмв"
+    replace: "Вы можете воспользоваться "
+  - trigger: "\\дпж"
+    replace: "Добавь, пожалуйста, в ."
+  - trigger: "\\ут"
+    replace: "Уточните, пожалуйста, "
+  - trigger: "\\Квпс"
+    replace: "Как выражается проблема с "
+  - trigger: "\\втс"
+    replace: "в таком случае "
+  - trigger: "\\Втс"
+    replace: "В таком случае "
+  - trigger: "\\ва"
+    replace: "[wa]"
+  - trigger: "\\пхп"
+    replace: "Выставил Админ панель сервера Plesk>Подписка>Домен>PHP>Версия PHP "
+  - trigger: "\\подп"
+    replace: "Подскажи, пожалуйста, "
+  - trigger: "\\хнс"
+    replace: |
+               ns1.hoster.kz   185.116.195.38
+               ------------------------------
+               ns2.hoster.kz   185.121.81.104
+               ------------------------------
+               ns3.hoster.kz     89.35.125.31
+  - trigger: "\\ipdns"
+    replace: "https://hoster.kz/support/prochie-voprosy-po-rabote-v-paneli-plesk/5544/"
+  - trigger: "\\ipcreatemail"
+    replace: "https://hoster.kz/support/mail-hosted-by-plesk/5535/"
+  - trigger: "\\ipred"
+    replace: "https://hoster.kz/support/prochie-voprosy-po-rabote-v-paneli-plesk/5540/?sphrase_id=3437"
+  - trigger: "\\ipcleanm"
+    replace: "https://hoster.kz/support/mail-hosted-by-plesk/5564/"
+  - trigger: "\\ipchpass"
+    replace: "https://hoster.kz/support/mail-hosted-by-plesk/5560/"
+  - trigger: "\\iplogin"
+    replace: "https://hoster.kz/support/general-issues/5538/"
+  - trigger: "\\ipmlogin"
+    replace: "https://hoster.kz/support/mail-hosted-by-plesk/5504/"
+  - trigger: "\\ipimp"
+    replace: "https://hoster.kz/support/rabota-s-saytom-v-paneli-plesk/5545/"
+  - trigger: "\\ipwpdup"
+    replace: "https://hoster.kz/support/rabota-s-saytom-v-plesk/5603/?sphrase_id=1717"
+  - trigger: "\\ipfile"
+    replace: "https://hoster.kz/support/rabota-s-saytom-v-paneli-plesk/6827/"
+  - trigger: "\\iprest"
+    replace: "https://hoster.kz/support/rabota-s-saytom-v-paneli-plesk/5563/"
+  - trigger: "\\ipscan"
+    replace: "https://hoster.kz/support/orabota-s-saytom-v-paneli-plesk/5572/"
+  - trigger: "\\ipback"
+    replace: "https://hoster.kz/support/prochie-voprosy-po-rabote-v-paneli-plesk/5565/"
+  - trigger: "\\ipftp"
+    replace: "https://hoster.kz/support/prochie-voprosy-po-rabote-v-paneli-plesk/5526/?sphrase_id=2799"
+  - trigger: "\\ivreinstall"
+    replace: "https://hoster.kz/support/rabota-s-vds-khostingom/6482/?sphrase_id=1768"
+  - trigger: "\\ivcos"
+    replace: "https://hoster.kz/support/rabota-s-vds-khostingom/5593/"
+  - trigger: "\\ivpassres"
+    replace: "https://hoster.kz/support/rabota-s-vds-khostingom/5595/"
+  - trigger: "\\ivnc"
+    replace: "https://hoster.kz/support/rabota-s-vds-khostingom/5998/"
+  - trigger: "\\ioreins"
+    replace: "https://hoster.kz/support/oblachnyy-server/6789/"
+  - trigger: "\\imout"
+    replace: "https://hoster.kz/support/nastroyka-pochtovykh-programm/5531/"
+  - trigger: "\\iip"
+    replace: "https://hoster.kz/support/obshchie-voprosy/6924/"
+  - trigger: "\\idns"
+    replace: "https://hoster.kz/support/upravlenie-dns-zapisyami-domenov/5537/"
+  - trigger: "\\imyan"
+    replace: "https://hoster.kz/support/nastroyka-pochty-na-storonnie-servisy-yandeks-mail-ru-vk-workmail-google/5571/"
+  - trigger: "\\isif"
+    replace: "https://hoster.kz/support/upravlenie-dns-zapisyami-domenov/5568/"
+  - trigger: "\\idnsred"
+    replace: "https://hoster.kz/support/upravlenie-dns-zapisyami-domenov/5514/?sphrase_id=3052"
+  - trigger: "\\imacos"
+    replace: "https://hoster.kz/support/nastroyka-pochtovykh-programm/5532/"
+
+
+
+
+
+
+
+
+
+
