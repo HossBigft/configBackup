@@ -1,9 +1,9 @@
 Include conf.d/*
 
-Host gruzo
+Host ogruzo
 	HostName 185.129.51.20
 	User root
-	IdentityFile ~/.ssh/id_rsa
+  IdentityFile ~/.ssh/id_rsa
 Host p-cloud-1
 	HostName cloud-1.hoster.kz
 	User maximg

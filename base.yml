@@ -163,10 +163,12 @@ matches:
     replace: "https://hoster.kz/support/nastroyka-pochty-na-storonnie-servisy-yandeks-mail-ru-vk-workmail-google/5571/"
   - trigger: "\\isif"
     replace: "https://hoster.kz/support/upravlenie-dns-zapisyami-domenov/5568/"
-  - trigger: "\\idnsred"
+  - trigger: "\\ired"
     replace: "https://hoster.kz/support/upravlenie-dns-zapisyami-domenov/5514/?sphrase_id=3052"
   - trigger: "\\imacos"
     replace: "https://hoster.kz/support/nastroyka-pochtovykh-programm/5532/"
+  - trigger: "\\ipdom"
+    replace: "https://hoster.kz/support/prochie-voprosy-po-rabote-v-paneli-plesk/5550/"
 
 
 
