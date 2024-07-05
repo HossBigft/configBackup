@@ -117,7 +117,7 @@ matches:
                ns3.hoster.kz     89.35.125.31
   - trigger: "\\ipdns"
     replace: "https://hoster.kz/support/prochie-voprosy-po-rabote-v-paneli-plesk/5544/"
-  - trigger: "\\ipcreatemail"
+  - trigger: "\\ipmcr"
     replace: "https://hoster.kz/support/mail-hosted-by-plesk/5535/"
   - trigger: "\\ipred"
     replace: "https://hoster.kz/support/prochie-voprosy-po-rabote-v-paneli-plesk/5540/?sphrase_id=3437"
@@ -169,6 +169,14 @@ matches:
     replace: "https://hoster.kz/support/nastroyka-pochtovykh-programm/5532/"
   - trigger: "\\ipdom"
     replace: "https://hoster.kz/support/prochie-voprosy-po-rabote-v-paneli-plesk/5550/"
+  - trigger: "\\ipfm"
+    replace: "https://hoster.kz/support/rabota-s-saytom-v-paneli-plesk/6827/"
+  - trigger: "\\ipres"
+    replace: "https://hoster.kz/support/prochie-voprosy-po-rabote-v-paneli-plesk/5583/"
+  - trigger: "\\спз"
+    replace: "создайте, пожалуйста, заявку в поддержку через личный кабинет"
+  - trigger: "\\ipcsr"
+    replace: "https://hoster.kz/support/ssl-certificates/5588/"
 
 
 
