@@ -8,19 +8,12 @@ Host p-cloud-1
 	HostName cloud-1.hoster.kz
 	User maximg
 	IdentityFile ~/.ssh/id_rsa
-Host p-kturbo-1
-	#Currently doesn't exist
-        HostName kturbo-1.hoster.kz
-        User maximg
-        IdentityFile ~/.ssh/id_rsa
+#Host p-kturbo-1	Currently doesn't exist
 Host p-aturbo-2
         HostName aturbo-2.hoster.kz
         User maximg
 	IdentityFile ~/.ssh/id_rsa
-Host p-aturbo-3
-        HostName aturbo-3.hoster.kz
-        User maximg
-	IdentityFile ~/.ssh/id_rsa
+# Host p-aturbo-3 currently doesn't exist
 Host p-apkz1
         HostName apkz1.hoster.kz
         User maximg
@@ -37,10 +30,7 @@ Host p-apkz4
         HostName apkz4.hoster.kz
         User maximg
 	IdentityFile ~/.ssh/id_rsa
-Host p-apkz5
-        HostName apkz5.hoster.kz
-        User maximg
-	IdentityFile ~/.ssh/id_rsa
+  # for some reason apkz5.hoster.kz resolves to ip of apkz6, while actual ip of apkz5 have ip.dns.kz PTR
 Host p-apkz6
         HostName apkz6.hoster.kz
         User maximg
