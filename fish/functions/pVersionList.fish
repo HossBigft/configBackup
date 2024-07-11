@@ -7,5 +7,7 @@ function pVersionList
         echo $i $pleskVersion
         echo $i $pleskVersion >> ~/pkzStats/pleskVersions$currDate.txt
     end
+    echo "Sorting by version"
+    sort -k4 -o ~/pkzStats/pleskVersions$currDate.txt{,}
     echo "Saved in ~/pkzStats/pleskVersions$currDate.txt"
 end
