@@ -324,3 +324,7 @@ Host ns3
 		Hostname ns3.hoster.kz
 		User root
     IdentityFile ~/.ssh/id_rsa
+Host p-cloud-5
+		Hostname cloud-5.hoster.kz
+		User maximg
+    IdentityFile ~/.ssh/id_rsa
