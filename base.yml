@@ -108,7 +108,7 @@ matches:
     replace: "Выставил Админ панель сервера Plesk>Подписка>Домен>PHP>Версия PHP "
   - trigger: "\\подп"
     replace: "Подскажи, пожалуйста, "
-  - trigger: "\\хнс"
+  - trigger: "\\днс"
     replace: |
                ns1.hoster.kz   185.116.195.38
                ------------------------------
@@ -177,6 +177,33 @@ matches:
     replace: "создайте, пожалуйста, заявку в поддержку через личный кабинет"
   - trigger: "\\ipcsr"
     replace: "https://hoster.kz/support/ssl-certificates/5588/"
+  - trigger: "\\imail"
+    replace: "https://hoster.kz/support/nastroyka-pochty-na-storonnie-servisy-yandeks-mail-ru-vk-workmail-google/5534/"
+  - trigger: "\\igoogle"
+    replace: "https://hoster.kz/support/upravlenie-dns-zapisyami-domenov/6475/?sphrase_id=3005"
+  - trigger: "\\iphp"
+    replace: "https://hoster.kz/support/rabota-s-saytom-v-paneli-plesk/5542/"
+  - trigger: ":vgr"
+    replace: "185.111.106.116"
+  - trigger: ":ogr"
+    replace: "185.129.51.20"
+  - trigger: "\\mm"
+    replace: "20mingot@gmail.com"
+  - trigger: "\\ts"
+    replace: "test {{mydate}},{{mytime}}"
+    vars:
+      - name: mytime
+        type: date
+        params:
+          format: "%_H:%M:%S"
+      - name: mydate
+        type: date
+        params:
+          format: "%m/%d/%Y"
+
+
+
+
 
 
 

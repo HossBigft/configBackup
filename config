@@ -1,5 +1,4 @@
 Include conf.d/*
-
 Host ogruzo
 	HostName 185.129.51.20
 	User root
