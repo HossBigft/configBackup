@@ -200,8 +200,10 @@ matches:
         type: date
         params:
           format: "%m/%d/%Y"
-
-
+  - trigger: "\\Вмжу"
+    replace: "Вы можете в этом убедиться "
+  - trigger: "\\вмжу"
+    replace: "вы можете в этом убедиться "
 
 
 
