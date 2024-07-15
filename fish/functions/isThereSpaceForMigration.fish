@@ -4,5 +4,10 @@ function isThereSpaceForMigration
     set used (echo $cleanString|string split -f 3 ' '|string sub -e -1)
     set added $argv[2]
     set usedPercentAfter (math ceil (math \(\($used+$added\)/$total\)\*100))
-    echo $usedPercentAfter%
+    if test $usedPercentAfter -ge 87
+        echo "Not enough space --- used space will be $usedPercentAfter%"
+    else
+        echo $usedPercentAfter
+    end
+    
 end
