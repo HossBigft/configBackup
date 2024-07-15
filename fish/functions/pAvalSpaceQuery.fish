@@ -7,10 +7,11 @@ function pAvalSpaceQuery
     echo "Starting queries"
     mkdir -p ~/pkzStats && touch ~/pkzStats/$filename$currDate.txt
     
-    for server in servers
-        set response (ssh maximg@$server 'df -h')
-        set extractedValue (echo $response | tr -s ' ' | string join "; " | grep -Po "(?:\S+\s+){5}\/var;|(?:\S+\s+){5}\/(?!.*\/var);")
-        echo $extractedValue && echo $extractedValue >>~/pkzStats/$filename$currDate.txt
+    for server in $servers
+        echo "Querying $server"
+        set response (ssh maximg@$server 'df -h' | tr -s ' ' | string join "; " | grep -Po "(?:\S+\s+){5}\/var;|((?:\S+\s+){5}\/;)(?!.*\/var;)")
+        echo "$server  answered $response"
+        echo $server $response >>~/pkzStats/$filename$currDate.txt
     end
     
     echo Sorting
