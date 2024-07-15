@@ -204,6 +204,11 @@ matches:
     replace: "Вы можете в этом убедиться "
   - trigger: "\\вмжу"
     replace: "вы можете в этом убедиться "
+  - trigger: "\\ins"
+    replace: "https://hoster.kz/support/upravlenie-dns-zapisyami-domenov/5513/"
+  - trigger: "\\it"
+    replace: "https://hoster.kz/support/personal-area/5605/"
+
 
 
 
