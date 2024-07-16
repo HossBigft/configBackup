@@ -141,7 +141,7 @@ matches:
     replace: "https://hoster.kz/support/orabota-s-saytom-v-paneli-plesk/5572/"
   - trigger: "\\ipback"
     replace: "https://hoster.kz/support/prochie-voprosy-po-rabote-v-paneli-plesk/5565/"
-  - trigger: "\\ipftp"
+  - trigger: "\\ipftpc"
     replace: "https://hoster.kz/support/prochie-voprosy-po-rabote-v-paneli-plesk/5526/?sphrase_id=2799"
   - trigger: "\\ivreinstall"
     replace: "https://hoster.kz/support/rabota-s-vds-khostingom/6482/?sphrase_id=1768"
@@ -208,6 +208,9 @@ matches:
     replace: "https://hoster.kz/support/upravlenie-dns-zapisyami-domenov/5513/"
   - trigger: "\\it"
     replace: "https://hoster.kz/support/personal-area/5605/"
+  - trigger: "\\ipftp"
+    replace: "https://hoster.kz/support/prochie-voprosy-po-rabote-v-paneli-plesk/5551/"
+
 
 
 
