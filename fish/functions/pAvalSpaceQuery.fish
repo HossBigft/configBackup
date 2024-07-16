@@ -9,7 +9,7 @@ function pAvalSpaceQuery
     
     for server in $servers
         echo "Querying $server"
-        set response (ssh maximg@$server 'df -h' | tr -s ' ' | string join "; " | grep -Po "(?:\S+\s+){5}\/var;|((?:\S+\s+){5}\/;)(?!.*\/var;)")
+        set response (ssh maximg@$server 'df -BG' | tr -s ' ' | string join "; " | grep -Po "(?:\S+\s+){5}\/var;|((?:\S+\s+){5}\/;)(?!.*\/var;)")
         echo "$server  answered $response"
         echo $server $response >>~/pkzStats/$filename$currDate.txt
     end
