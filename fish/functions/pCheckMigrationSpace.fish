@@ -11,7 +11,9 @@ function pCheckMigrationSpace
         
         set usedPercentAfter (math ceil (math \($newUsed/$total\)\*100))
         if test $usedPercentAfter -le 87
-            echo $host New used space will be "$newUsed"G, new used percentage will be $usedPercentAfter%
+            echo $host
+            echo "  New used space will be "$newUsed"G, new used percentage will be $usedPercentAfter%"
+            
         end
     end
 end
