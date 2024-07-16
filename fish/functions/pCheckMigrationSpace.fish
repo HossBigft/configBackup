@@ -1,4 +1,4 @@
-function checkMigrationSpace
+function pCheckMigrationSpace
     set data (ls ~/pkzStats/pleskAvailableSpace*|tail -n 1|xargs cat)
     echo Suitable hosts
     for line in $data
