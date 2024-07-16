@@ -1,13 +1,18 @@
 function isThereSpaceForMigration
-    set cleanString (echo $argv[1]| tr -s ' ')
-    set total (echo $cleanString|string split -f 2 ' '|string sub -e -1)
-    set used (echo $cleanString|string split -f 3 ' '|string sub -e -1)
-    set added $argv[2]
-    set usedPercentAfter (math ceil (math \(\($used+$added\)/$total\)\*100))
-    if test $usedPercentAfter -ge 87
-        echo "Not enough space --- used space will be $usedPercentAfter%"
-    else
-        echo $usedPercentAfter
+    set data (ls ~/pkzStats/pleskAvailableSpace*|tail -n 1|xargs cat)
+    echo Suitable hosts
+    for line in $data
+        set cleanString (echo $line| tr -s ' ')
+        set host (echo $cleanString|string split -f 1 ' ')
+        set total (echo $cleanString|string split -f 3 ' '|string sub -e -1)
+        set used (echo $cleanString|string split -f 4 ' '|string sub -e -1)
+        set added $argv
+        set newUsed (math $used+$added)
+        
+        set usedPercentAfter (math ceil (math \($newUsed/$total\)\*100))
+        if test $usedPercentAfter -le 87
+            echo $host New used space "$newUsed"G, new used percentage will be $usedPercentAfter%
+        end
     end
-    
+  
 end
