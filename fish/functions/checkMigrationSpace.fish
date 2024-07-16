@@ -1,4 +1,4 @@
-function isThereSpaceForMigration
+function checkMigrationSpace
     set data (ls ~/pkzStats/pleskAvailableSpace*|tail -n 1|xargs cat)
     echo Suitable hosts
     for line in $data
@@ -14,5 +14,4 @@ function isThereSpaceForMigration
             echo $host New used space "$newUsed"G, new used percentage will be $usedPercentAfter%
         end
     end
-  
 end
