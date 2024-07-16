@@ -1,5 +1,5 @@
 function pCheckMigrationSpace
-    set data (ls ~/pkzStats/pleskAvailableSpace*|tail -n 1|xargs cat)
+    set data (fish -c pGetAvalSpaceList)
     echo Suitable hosts
     for line in $data
         set cleanString (echo $line| tr -s ' ')
