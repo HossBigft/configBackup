@@ -1,6 +1,5 @@
 function pCheckMigrationSpace
     set data (fish -c pGetAvalSpaceList)
-    echo Suitable hosts
     for line in $data
         set cleanString (echo $line| tr -s ' ')
         set host (echo $cleanString|string split -f 1 ' '|grep -Po "^([^.])+")
