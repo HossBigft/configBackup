@@ -1,4 +1,4 @@
-function pCheckMigrationVersion
+function pFindSuitableServer
     set targetVersion (echo $argv[1])
     set subscriptionSize (echo $argv[2])
     set listOfVersionCompatibleServers (fish -c "pFindSameVersionOrGreater $targetVersion")
