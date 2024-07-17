@@ -1,7 +1,6 @@
 function pFindSameVersionOrGreater
     set targetVersion (echo $argv)
     set targetVersionNumber (echo $targetVersion | string split '.' | string join '')
-    echo $targetVersionNumber
     set serverData (fish -c pGetVersionsList)
 
     for server in $serverData
