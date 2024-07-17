@@ -8,7 +8,7 @@ function pCheckMigrationVersion
         set -a listOfSpaceFittingServernames  (echo $line | grep -Po "^([^|])+")
     end
     set listOfVersionSpaceCompatibleServers  (echo $listOfSpaceFittingServers | grep -P (string join '|' $listOfVersionCompatibleServernames))
-    echo (fish -c "pCheckMigrationSpace $subscriptionSize"|string split '\n')
-    for server in $listOfVersionSpaceCompatibleServers
+    for server in (string split ';' (string replace -a '; ' ';' $listOfVersionSpaceCompatibleServers))
+        echo $server
     end
 end

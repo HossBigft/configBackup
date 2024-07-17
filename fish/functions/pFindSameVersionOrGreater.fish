@@ -8,7 +8,7 @@ function pFindSameVersionOrGreater
         set serverVersionNumber (echo $serverVersion | string split '.' | string join '')
         if test $serverVersionNumber -ge $targetVersionNumber
             set serverName (echo $server | grep -Po "^([^.])+")
-            echo $serverName\| $serverVersion \>\= $targetVersion
+            echo $serverName\| $serverVersion \>\= $targetVersion\;
         end
     end
 end
