@@ -11,9 +11,15 @@ function pCheckMigrationVersion
     end
     
     set regexPatternForVersionCompatibleServerNames (string join '|' $listOfVersionCompatibleServernames)
-    set listOfVersionSpaceCompatibleServers  (string split -n ';' $listOfSpaceFittingServers | grep -P $regexPatternForVersionCompatibleServerNames )
+    set listOfCompatibleServers (string split -n ';' $listOfSpaceFittingServers | grep -Pw $regexPatternForVersionCompatibleServerNames )
     
-    for server in (string split -n ';' (string replace -a '; ' ';' $listOfVersionSpaceCompatibleServers))
-        echo $server\;
+    set listOfCompatibleServerNames ( string collect $listOfCompatibleServers | grep -Po "^([^|])+" )
+    set listOfCompatibleVersions (string collect $listOfVersionCompatibleServers | grep -Pw (string join '|' $listOfCompatibleServerNames) | grep -Po "\d+(\.\d+)+ >= \d+(\.\d+)+;")
+
+
+    set counter 1
+    for server in (string split -n ';' (string replace -a '; ' ';' $listOfCompatibleServers))
+        echo $server S\>\=T $listOfCompatibleVersions[$counter]
+        set counter (math $counter+1)
     end
 end
