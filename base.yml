@@ -210,7 +210,12 @@ matches:
     replace: "https://hoster.kz/support/personal-area/5605/"
   - trigger: "\\ipftp"
     replace: "https://hoster.kz/support/prochie-voprosy-po-rabote-v-paneli-plesk/5551/"
-
+  - trigger: "\\Спи"
+    replace: "С помощью инструкции "
+  - trigger: "\\ioaccess"
+    replace: "https://hoster.kz/support/oblachnyy-server/6786/"
+  - trigger: "\\ivptr"
+    replace: "https://hoster.kz/support/rabota-s-vds-khostingom/5591/"
 
 
 
