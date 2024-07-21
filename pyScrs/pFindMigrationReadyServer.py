@@ -18,9 +18,10 @@ result = result.stdout.splitlines()
 result = [" ".join(line.split()) for line in result]
 result = "".join(filter(lambda s: re.fullmatch("(?:\S+\s+){5}/var;|((?:\S+\s+){5}/)(?!.*/var)",s),result))
 
-serverSpaceDataPath=list(pathlib.Path(f"{userHomeDir}/pkzStats").glob("pleskAvailableSpace*"))[-1]
+spaceDataPath=list(pathlib.Path(f"{userHomeDir}/pkzStats").glob("pleskAvailableSpace*"))[-1]
+versionDataPath=list(pathlib.Path(f"{userHomeDir}/pkzStats").glob("pleskVersion*"))[-1]
 servers = {}
-with open(serverSpaceDataPath) as f:
+with open(spaceDataPath) as f:
     for line in f:
         line = line.replace("\n", "").replace('G','').split(' ',1)
         print(line)
