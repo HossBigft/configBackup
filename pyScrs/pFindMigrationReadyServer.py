@@ -8,15 +8,15 @@ class pkzServer:
     usedSpace: int
     freeSpace: int
     pleskVersion: str
-    
-    
+hosts=("185.111.106.116","185.129.51.20")
 
 userHomeDir=pathlib.Path.home()
 pathlib.Path(f"{userHomeDir}/pkzStats").mkdir(parents=True, exist_ok=True)
-cmd = shlex.split("ssh root@185.111.106.116 df -BG")
-print(cmd)
-sshOutput = subprocess.run(cmd,capture_output=True, text=True)
-print(sshOutput.stdout)
+for host in hosts:
+    cmd = shlex.split(f"ssh root@{host} df -BG")
+    print(cmd)
+    sshOutput = subprocess.run(cmd,capture_output=True, text=True)
+    print(sshOutput.stdout)
 # result = subprocess.run(["df", "-BG"],capture_output=True, text=True)
 # result = result.stdout.splitlines()
 # result = [" ".join(line.split()) for line in result]
