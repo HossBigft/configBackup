@@ -216,7 +216,9 @@ matches:
     replace: "https://hoster.kz/support/oblachnyy-server/6786/"
   - trigger: "\\ivptr"
     replace: "https://hoster.kz/support/rabota-s-vds-khostingom/5591/"
-
+  
+  - trigger: "\\wm"
+    replace: "m.glushchenko@office.hoster.kz"
 
 
 
