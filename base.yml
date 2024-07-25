@@ -137,7 +137,7 @@ matches:
     replace: "https://hoster.kz/support/rabota-s-saytom-v-paneli-plesk/6827/"
   - trigger: "\\iprest"
     replace: "https://hoster.kz/support/rabota-s-saytom-v-paneli-plesk/5563/"
-  - trigger: "\\ipscan"
+  - trigger: "\\ipav"
     replace: "https://hoster.kz/support/orabota-s-saytom-v-paneli-plesk/5572/"
   - trigger: "\\ipback"
     replace: "https://hoster.kz/support/prochie-voprosy-po-rabote-v-paneli-plesk/5565/"
@@ -219,6 +219,8 @@ matches:
   
   - trigger: "\\wm"
     replace: "m.glushchenko@office.hoster.kz"
+  - trigger: "\\дв"
+    replace: "Добрый вечер!"
 
 
 
