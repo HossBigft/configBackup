@@ -1,4 +1,4 @@
-function pCheckMigrationSpace
+function pFindServerWithFreeSpace
     set data (fish -c pGetAvalSpaceList)
     for line in $data
         set cleanString (echo $line| tr -s ' ')
