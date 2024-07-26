@@ -10,7 +10,59 @@ class pkzServer:
     usedSpace: int
     freeSpace: int
     pleskVersion: str
+    
+def __createFreeSpaceServerList(user:str, userHomeDirectory:str, fileName:str):
+    statsFileName=f"{fileName}{datetime.datetime.now().strftime('%Y%m%d_%H%M')}"
+    fileDirName="pkzStats"
+    statsDirPath=f"{userHomeDir}/{fileDirName}"
+    statsFilePath=f"{statsDirPath}/{statsFileName}"
+    pathlib.Path(statsDirPath).mkdir(parents=True, exist_ok=True)
+    serverSpaceData=[]
+    serverSpaceRecord = namedtuple('serverSpaceRecord', ['host', 'data'])
+    for host in hosts[:5]:
+        cmd = f"ssh {sshUser}@{host} df -BG"
+        print(f"Querying {host}")
+        sshOutput = subprocess.run(shlex.split(cmd),capture_output=True, text=True)
+        result=sshOutput.stdout.splitlines()
+        result = [" ".join(line.split()) for line in result]
+        result = "".join(filter(lambda s: re.fullmatch(r"(?:\S+\s+){5}/var;|((?:\S+\s+){5}/)(?!.*/var)",s),result))
+        print(f"{host} answered {result}")
+        serverSpaceData.append(serverSpaceRecord(host,result))
+        
+    print("Sorting by used space %") 
+    serverSpaceData=sorted(serverSpaceData, key=lambda record: int(record.data.split()[4][:-1]))
+    
+    with open(statsFilePath, 'w') as statsFile:  
+        for line in serverSpaceData:    
+            statsFile.write(f"{line.host}; {line.data};\n")
+    print(f"Saved in {statsFilePath}")
+    
+def __createServerVersionList(user:str, userHomeDirectory:str, fileName:str):
+    statsFileName=f"{fileName}{datetime.datetime.now().strftime('%Y%m%d_%H%M')}"
+    fileDirName="pkzStats"
+    statsDirPath=f"{userHomeDir}/{fileDirName}"
+    statsFilePath=f"{statsDirPath}/{statsFileName}"
+    pathlib.Path(statsDirPath).mkdir(parents=True, exist_ok=True)
+    serverSpaceData=[]
+    serverVersionRecord = namedtuple('serverVersionRecord', ['host', 'pleskVersion'])
+    for host in hosts[:5]:
+        cmd = f"ssh {sshUser}@{host} plesk -v"
+        print(f"Querying {host}")
+        sshOutput = subprocess.run(shlex.split(cmd),capture_output=True, text=True)
+        result=sshOutput.stdout.splitlines()
+        result = [" ".join(line.split()) for line in result]
+        result = "".join(filter(lambda s: re.fullmatch(r"Plesk.*",s),result))
+        print(f"{host} answered {result}")
+        serverSpaceData.append(serverVersionRecord(host,result))
+        
+    print("Sorting by Plesk Version") 
+    serverSpaceData=sorted(serverSpaceData, key=lambda record: int(record.data.split()[4][:-1]))
 
+    with open(statsFilePath, 'w') as statsFile:  
+        for line in serverSpaceData:    
+            statsFile.write(f"{line.host}; {line.data};\n")
+    print(f"Saved in {statsFilePath}")
+      
 hosts=(
     "cloud-1.hoster.kz.",
     "aturbo-2.hoster.kz.",
@@ -90,37 +142,12 @@ hosts=(
 )
 
 sshUser="maximg"
-
-
 userHomeDir=pathlib.Path.home()
-
 avalSpaceFileName="pleskAvalSpaceList"
-def __createFreeSpaceServerList(user:str, userHomeDirectory:str, availableSpaceFileName:str):
-    statsFileName=f"{availableSpaceFileName}{datetime.datetime.now().strftime('%Y%m%d_%H%M')}"
-    fileDirName="pkzStats"
-    statsDirPath=f"{userHomeDir}/{fileDirName}"
-    statsFilePath=f"{statsDirPath}/{statsFileName}"
-    pathlib.Path(statsDirPath).mkdir(parents=True, exist_ok=True)
-    serverSpaceData=[]
-    serverSpaceRecord = namedtuple('serverSpaceRecord', ['host', 'data'])
-    for host in hosts[:5]:
-        cmd = f"ssh {sshUser}@{host} df -BG"
-        print(f"Querying {host}")
-        sshOutput = subprocess.run(shlex.split(cmd),capture_output=True, text=True)
-        result=sshOutput.stdout.splitlines()
-        result = [" ".join(line.split()) for line in result]
-        result = "".join(filter(lambda s: re.fullmatch(r"(?:\S+\s+){5}/var;|((?:\S+\s+){5}/)(?!.*/var)",s),result))
-        print(f"{host} answered {result}")
-        serverSpaceData.append(serverSpaceRecord(host,result))
-        
-    print("Sorting by used space %") 
-    serverSpaceData=sorted(serverSpaceData, key=lambda record: int(record.data.split()[4][:-1]))
+serverVersionFileName='pleskServerVersionList'
 
-    with open(statsFilePath, 'w') as statsFile:  
-        for line in serverSpaceData:    
-            statsFile.write(f"{line.host}; {line.data};\n")
-    print(f"Saved in {statsFilePath}")
-    
+
+  
 if  not any(pathlib.Path(f"{userHomeDir}/pkzStats").glob(f"{avalSpaceFileName}{datetime.datetime.now().strftime('%Y%m%d')}*")):
     __createFreeSpaceServerList(sshUser,userHomeDir,avalSpaceFileName)
     
@@ -137,6 +164,8 @@ if  not any(pathlib.Path(f"{userHomeDir}/pkzStats").glob(f"{avalSpaceFileName}{d
 #         curServer= pkzServer(curServerName,curFilesystem,curTotalSpace,curUsedSpace,curFreeSpace,'')
 #         servers[curServerName]=curServer
 # print(servers["pkz44"])
+
+
 
 
 
