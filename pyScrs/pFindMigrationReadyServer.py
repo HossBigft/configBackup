@@ -106,10 +106,13 @@ for host in hosts:
     sshOutput = subprocess.run(shlex.split(cmd),capture_output=True, text=True)
     result=sshOutput.stdout.splitlines()
     result = [" ".join(line.split()) for line in result]
-    result = "".join(filter(lambda s: re.fullmatch("(?:\S+\s+){5}/var;|((?:\S+\s+){5}/)(?!.*/var)",s),result))
+    result = "".join(filter(lambda s: re.fullmatch(r"(?:\S+\s+){5}/var;|((?:\S+\s+){5}/)(?!.*/var)",s),result))
     print(f"{host} answered {result}")
     serverSpaceData.append(dataRecord(host,result))
-print(serverSpaceData)
+    
+serverSpaceData=sorted(serverSpaceData, key=lambda record: int(record.data.split()[4][:-1]))
+
+
 with open(statsFilePath, 'w') as statsFile:  
     for line in serverSpaceData:    
          statsFile.write(f"{line.host}; {line.data};\n")
