@@ -170,7 +170,16 @@ if not any(
         f"{avalSpaceFileName}{datetime.datetime.now().strftime('%Y%m%d')}*"
     )
 ):
+    print("No relevant file with server space was found")
     __createFreeSpaceServerList(sshUser, userHomeDir, avalSpaceFileName)
+elif any(
+    pathlib.Path(f"{userHomeDir}/pkzStats").glob(
+        f"{serverVersionFileName
+        }{datetime.datetime.now().strftime('%Y%m%d')}*"
+    )
+):
+    print("No relevant file with server versions was found")
+    __createServerVersionList()(sshUser, userHomeDir, avalSpaceFileName)
 
 # spaceDataPath=list(pathlib.Path(f"{userHomeDir}/pkzStats").glob("pleskAvailableSpace*"))[-1]
 # versionDataPath=list(pathlib.Path(f"{userHomeDir}/pkzStats").glob("pleskVersion*"))[-1]
