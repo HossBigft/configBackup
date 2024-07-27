@@ -1,63 +1,66 @@
-import subprocess, re, pathlib, shlex, datetime
+import subprocess, re, pathlib, shlex, datetime, argparse
 from dataclasses import dataclass
 from collections import namedtuple
 
-sshUser = "maximg"
-userHomeDir = pathlib.Path.home()
-avalSpaceFileName = "pleskAvalSpaceList"
-serverVersionFileName = "pleskServerVersionList"
-
+SSH_USER = "maximg"
+USER_HOME_DIR = pathlib.Path.home()
+SERVER_FREE_SPACE_FILENAME = "pleskAvalSpaceList"
+SERVER_VERSION_FILENAME = "pleskServerVersionList"
 
 
 class pkzServer:
 
-    def __init__(self,name:str,totalSpace:int,usedSpace:int,pleskVersion:str) -> None:
-        self.name=name
-        self.totalSpace=totalSpace
-        self.usedSpace=usedSpace
-        self.pleskVersion=pleskVersion
-        
-    def getUsedSpacePercent(self)->int:
-        return int(((self.usedSpace/self.totalSpace)*10000+100-1)//100)
-    
-    def getUsedSpacePercent(self, spaceToAdd:float)->int:
-        return int((((self.usedSpace+spaceToAdd)/self.totalSpace)*10000+100-1)//100)
-    
-    def hasEnoughSpace(self, size:float)->bool:
-        return self.getUsedSpacePercent(size)<=87
-    
-    def __versionCompare(v1, v2)->int:
+    def __init__(
+        self, name: str, totalSpace: int, usedSpace: int, pleskVersion=""
+    ) -> None:
+        self.name = name
+        self.totalSpace = totalSpace
+        self.usedSpace = usedSpace
+        self.pleskVersion = pleskVersion
+
+    def getUsedSpacePercent(self) -> int:
+        return int(((self.usedSpace / self.totalSpace) * 10000 + 100 - 1) // 100)
+
+    def getUsedSpacePercent(self, spaceToAdd: float) -> int:
+        return int(
+            (((self.usedSpace + spaceToAdd) / self.totalSpace) * 10000 + 100 - 1) // 100
+        )
+
+    def hasEnoughSpace(self, size: float) -> bool:
+        return self.getUsedSpacePercent(size) <= 87
+
+    def __versionCompare(v1, v2) -> int:
         # This will split both the versions by '.'
-        arr1 = v1.split(".") 
-        arr2 = v2.split(".") 
+        arr1 = v1.split(".")
+        arr2 = v2.split(".")
         n = len(arr1)
         m = len(arr2)
-        
+
         # converts to integer from string
         arr1 = [int(i) for i in arr1]
         arr2 = [int(i) for i in arr2]
-    
-        # compares which list is bigger and fills 
+
+        # compares which list is bigger and fills
         # smaller list with zero (for unequal delimiters)
-        if n>m:
+        if n > m:
             for i in range(m, n):
                 arr2.append(0)
-        elif m>n:
+        elif m > n:
             for i in range(n, m):
                 arr1.append(0)
-        
+
         # returns 1 if version 1 is bigger and -1 if
         # version 2 is bigger and 0 if equal
         for i in range(len(arr1)):
-            if arr1[i]>arr2[i]:
+            if arr1[i] > arr2[i]:
                 return 1
-            elif arr2[i]>arr1[i]:
+            elif arr2[i] > arr1[i]:
                 return -1
         return 0
-    
-    def isVersionsCompatible(self,versionToCompare:str)->bool:
-       return self.__versionCompare(self.pleskVersion,versionToCompare) in (-1,0)
-        
+
+    def isVersionsCompatible(self, versionToCompare: str) -> bool:
+        return self.__versionCompare(self.pleskVersion, versionToCompare) in (-1, 0)
+
 
 def __send_command_to_pkz_servers(cmd: str, sshUser: str) -> dict:
     hosts = (
@@ -164,7 +167,7 @@ def __filter_server_answer_by_regex(serverAnswers: dict, pattern: str) -> dict:
 def __createFreeSpaceServerList(sshUser: str, userHomeDirectory: str, fileName: str):
     statsFileName = f"{fileName}{datetime.datetime.now().strftime('%Y%m%d_%H%M')}"
     statsDirName = "pkzStats"
-    statsDirPath = f"{userHomeDir}/{statsDirName}"
+    statsDirPath = f"{USER_HOME_DIR}/{statsDirName}"
     statsFilePath = f"{statsDirPath}/{statsFileName}"
     pathlib.Path(statsDirPath).mkdir(parents=True, exist_ok=True)
 
@@ -179,7 +182,7 @@ def __createFreeSpaceServerList(sshUser: str, userHomeDirectory: str, fileName: 
     )
 
     with open(statsFilePath, "w") as statsFile:
-        for host,line in serverSpaceData.items():
+        for host, line in serverSpaceData.items():
             statsFile.write(f"{host}; {line};\n")
     print(f"Saved in {statsFilePath}")
 
@@ -188,50 +191,70 @@ def __createServerVersionList(user: str, userHomeDirectory: str, fileName: str):
     statsFileName = f"{fileName}{datetime.datetime.now().strftime('%Y%m%d_%H%M')}"
 
     statsDirName = "pkzStats"
-    statsDirPath = f"{userHomeDir}/{statsDirName}"
+    statsDirPath = f"{USER_HOME_DIR}/{statsDirName}"
     statsFilePath = f"{statsDirPath}/{statsFileName}"
     pathlib.Path(statsDirPath).mkdir(parents=True, exist_ok=True)
 
-    serverVersionData = __send_command_to_pkz_servers("plesk -v", sshUser)
+    serverVersionData = __send_command_to_pkz_servers("plesk -v", SSH_USER)
     serverSpaceData = __filter_server_answer_by_regex(serverSpaceData, "Plesk.*")
 
     print("Sorting by Plesk Version")
-    serverVersionData = sorted(
-        serverVersionData.items(), key=lambda item: int(item[1])
-    )
+    serverVersionData = sorted(serverVersionData.items(), key=lambda item: int(item[1]))
 
     with open(statsFilePath, "w") as statsFile:
-        for host,line in serverVersionData.items():
+        for host, line in serverVersionData.items():
             statsFile.write(f"{host}; {line};\n")
     print(f"Saved in {statsFilePath}")
 
 
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "Plesk version",
+    dest="version",
+    required=True,
+    type=str,
+    help="site's host Plesk version",
+    metavar="v",
+)
+parser.add_argument(
+    "size", dest="siteSize", type=int, help="size of site to migrate", metavar="s"
+)
+args = parser.parse_args()
+
+serverData = {}
+versionDataPath: str
+spaceDataPath: str
+
 if not any(
-    pathlib.Path(f"{userHomeDir}/pkzStats").glob(
-        f"{avalSpaceFileName}{datetime.datetime.now().strftime('%Y%m%d')}*"
+    pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob(
+        f"{SERVER_FREE_SPACE_FILENAME}{datetime.datetime.now().strftime('%Y%m%d')}*"
     )
 ):
     print("No relevant file with server space was found")
-    __createFreeSpaceServerList(sshUser, userHomeDir, avalSpaceFileName)
+    __createFreeSpaceServerList(SSH_USER, USER_HOME_DIR, SERVER_FREE_SPACE_FILENAME)
+    spaceDataPath = list(
+        pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob("pleskAvailableSpace*")
+    )[-1]
 elif any(
-    pathlib.Path(f"{userHomeDir}/pkzStats").glob(
-        f"{serverVersionFileName
-        }{datetime.datetime.now().strftime('%Y%m%d')}*"
+    pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob(
+        f"{SERVER_VERSION_FILENAME}{datetime.datetime.now().strftime('%Y%m%d')}*"
     )
 ):
     print("No relevant file with server versions was found")
-    __createServerVersionList()(sshUser, userHomeDir, avalSpaceFileName)
+    __createServerVersionList()(SSH_USER, USER_HOME_DIR, SERVER_FREE_SPACE_FILENAME)
+    versionDataPath = list(
+        pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob("pleskVersion*")
+    )[-1]
 
-# spaceDataPath=list(pathlib.Path(f"{userHomeDir}/pkzStats").glob("pleskAvailableSpace*"))[-1]
-# versionDataPath=list(pathlib.Path(f"{userHomeDir}/pkzStats").glob("pleskVersion*"))[-1]
-# servers = {}
-# with open(spaceDataPath) as f:
-#     for line in f:
-#         line = line.replace("\n", "").replace('G','').split(' ',1)
-#         print(line)
-#         curServerName=re.search(r"^([^.])+",line[0]).group(0)
-#         curServerData=line[1].split(' ')
-#         curFilesystem, curTotalSpace, curUsedSpace, curFreeSpace= curServerData[0],int(curServerData[1]),int(curServerData[2]),int(curServerData[3])
-#         curServer= pkzServer(curServerName,curFilesystem,curTotalSpace,curUsedSpace,curFreeSpace,'')
-#         servers[curServerName]=curServer
-# print(servers["pkz44"])
+
+with open(spaceDataPath) as f:
+    for line in f:
+        line = line.replace("\n", "").replace("G", "").split(" ", 1)
+        print(line)
+        curServerName = re.search(r"^([^.])+", line[0]).group(0)
+        curServerData = line[1].split(" ")
+        curTotalSpace, curUsedSpace = int(curServerData[1]), int(curServerData[2])
+        curServer = pkzServer(curServerName, curTotalSpace, curUsedSpace)
+        if curServer.hasEnoughSpace(args.siteSize):
+            serverData[curServer.name] = curServer
+print(serverData["pkz44"])
