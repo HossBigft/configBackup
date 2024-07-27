@@ -135,7 +135,7 @@ class pkzServer:
                 return -1
         return 0
 
-    def isVersionsCompatible(self, versionToCompare: str) -> bool:
+    def isCompatible(self, versionToCompare: str) -> bool:
         return self.__versionCompare(self.pleskVersion, versionToCompare) in (-1, 0)
 
 
@@ -221,7 +221,7 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
-serverData = {}
+serverData: dict[str, pkzServer]
 versionDataPath: str
 spaceDataPath: str
 
@@ -250,11 +250,17 @@ elif any(
 with open(spaceDataPath) as f:
     for line in f:
         line = line.replace("\n", "").replace("G", "").split(" ", 1)
-        print(line)
-        curServerName = re.search(r"^([^.])+", line[0]).group(0)
-        curServerData = line[1].split(" ")
-        curTotalSpace, curUsedSpace = int(curServerData[1]), int(curServerData[2])
-        curServer = pkzServer(curServerName, curTotalSpace, curUsedSpace)
-        if curServer.hasEnoughSpace(args.siteSize):
-            serverData[curServer.name] = curServer
-print(serverData["pkz44"])
+        currServerName = re.search(r"^([^.])+", line[0]).group(0)
+        currServerData = line[1].split(" ")
+        currTotalSpace, currUsedSpace = int(currServerData[1]), int(currServerData[2])
+        currServer = pkzServer(currServerName, currTotalSpace, currUsedSpace)
+        if currServer.hasEnoughSpace(args.siteSize):
+            serverData[currServer.name] = currServer
+
+with open(versionDataPath) as v:
+    for line in v:
+        currVersion = line.replace("\n", "")
+        currServerName = re.search(r"^([^.])+", line[0]).group(0)
+        serverData[currServerName].pleskVersion = currVersion
+        if not serverData[currServerName].isCompatible(args.version):
+            del serverData[currServerName]
