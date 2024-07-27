@@ -43,7 +43,7 @@ def __createServerVersionList(user:str, userHomeDirectory:str, fileName:str):
     statsDirPath=f"{userHomeDir}/{fileDirName}"
     statsFilePath=f"{statsDirPath}/{statsFileName}"
     pathlib.Path(statsDirPath).mkdir(parents=True, exist_ok=True)
-    serverSpaceData=[]
+    serverVersionData=[]
     serverVersionRecord = namedtuple('serverVersionRecord', ['host', 'pleskVersion'])
     for host in hosts[:5]:
         cmd = f"ssh {sshUser}@{host} plesk -v"
@@ -53,13 +53,13 @@ def __createServerVersionList(user:str, userHomeDirectory:str, fileName:str):
         result = [" ".join(line.split()) for line in result]
         result = "".join(filter(lambda s: re.fullmatch(r"Plesk.*",s),result))
         print(f"{host} answered {result}")
-        serverSpaceData.append(serverVersionRecord(host,result))
+        serverVersionData.append(serverVersionRecord(host,result))
         
     print("Sorting by Plesk Version") 
-    serverSpaceData=sorted(serverSpaceData, key=lambda record: int(record.data.split()[4][:-1]))
+    serverVersionData=sorted(serverVersionData, key=lambda record: int(record.pleskVersion))
 
     with open(statsFilePath, 'w') as statsFile:  
-        for line in serverSpaceData:    
+        for line in serverVersionData:    
             statsFile.write(f"{line.host}; {line.data};\n")
     print(f"Saved in {statsFilePath}")
       
