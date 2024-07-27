@@ -8,15 +8,56 @@ avalSpaceFileName = "pleskAvalSpaceList"
 serverVersionFileName = "pleskServerVersionList"
 
 
-@dataclass
-class pkzServer:
-    name: str
-    mainFileSystem: str
-    totalSpace: int
-    usedSpace: int
-    freeSpace: int
-    pleskVersion: str
 
+class pkzServer:
+
+    def __init__(self,name:str,totalSpace:int,usedSpace:int,pleskVersion:str) -> None:
+        self.name=name
+        self.totalSpace=totalSpace
+        self.usedSpace=usedSpace
+        self.pleskVersion=pleskVersion
+        
+    def getUsedSpacePercent(self)->int:
+        return int(((self.usedSpace/self.totalSpace)*10000+100-1)//100)
+    
+    def getUsedSpacePercent(self, spaceToAdd:float)->int:
+        return int((((self.usedSpace+spaceToAdd)/self.totalSpace)*10000+100-1)//100)
+    
+    def hasEnoughSpace(self, size:float)->bool:
+        return self.getUsedSpacePercent(size)<=87
+    
+    def __versionCompare(v1, v2)->int:
+        # This will split both the versions by '.'
+        arr1 = v1.split(".") 
+        arr2 = v2.split(".") 
+        n = len(arr1)
+        m = len(arr2)
+        
+        # converts to integer from string
+        arr1 = [int(i) for i in arr1]
+        arr2 = [int(i) for i in arr2]
+    
+        # compares which list is bigger and fills 
+        # smaller list with zero (for unequal delimiters)
+        if n>m:
+            for i in range(m, n):
+                arr2.append(0)
+        elif m>n:
+            for i in range(n, m):
+                arr1.append(0)
+        
+        # returns 1 if version 1 is bigger and -1 if
+        # version 2 is bigger and 0 if equal
+        for i in range(len(arr1)):
+            if arr1[i]>arr2[i]:
+                return 1
+            elif arr2[i]>arr1[i]:
+                return -1
+        return 0
+    
+    def isVersionsCompatible(self,versionToCompare:str)->bool:
+       return self.__versionCompare(self.pleskVersion,versionToCompare) in (-1,0)
+        
 
 def __send_command_to_pkz_servers(cmd: str, sshUser: str) -> dict:
     hosts = (
@@ -122,8 +163,8 @@ def __filter_server_answer_by_regex(serverAnswers: dict, pattern: str) -> dict:
 
 def __createFreeSpaceServerList(sshUser: str, userHomeDirectory: str, fileName: str):
     statsFileName = f"{fileName}{datetime.datetime.now().strftime('%Y%m%d_%H%M')}"
-    fileDirName = "pkzStats"
-    statsDirPath = f"{userHomeDir}/{fileDirName}"
+    statsDirName = "pkzStats"
+    statsDirPath = f"{userHomeDir}/{statsDirName}"
     statsFilePath = f"{statsDirPath}/{statsFileName}"
     pathlib.Path(statsDirPath).mkdir(parents=True, exist_ok=True)
 
@@ -146,8 +187,8 @@ def __createFreeSpaceServerList(sshUser: str, userHomeDirectory: str, fileName: 
 def __createServerVersionList(user: str, userHomeDirectory: str, fileName: str):
     statsFileName = f"{fileName}{datetime.datetime.now().strftime('%Y%m%d_%H%M')}"
 
-    fileDirName = "pkzStats"
-    statsDirPath = f"{userHomeDir}/{fileDirName}"
+    statsDirName = "pkzStats"
+    statsDirPath = f"{userHomeDir}/{statsDirName}"
     statsFilePath = f"{statsDirPath}/{statsFileName}"
     pathlib.Path(statsDirPath).mkdir(parents=True, exist_ok=True)
 
