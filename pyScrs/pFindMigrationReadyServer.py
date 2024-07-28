@@ -124,14 +124,31 @@ def __createServerVersionList(user: str, userHomeDirectory: str, fileName: str):
             statsFile.write(f"{host}; {line};\n")
     print(f"Saved in {statsFilePath}")
 
-class InsufficientSpaceError(Exception):
-    def __init__(self, siteSize:float) -> None:
-        super().__init__(f"No servers have enough free space to fit the size:{siteSize}gb")
-        
-class NoCompatiblePleskVersionError(Exception):
-    def __init__(self, targetVersion:float) -> None:
-        super().__init__(f"No servers are compatible with target version:{targetVersion}")
 
+class InsufficientSpaceError(Exception):
+    def __init__(self, siteSize: float) -> None:
+        super().__init__(
+            f"No servers have enough free space to fit the size:{siteSize}gb"
+        )
+
+
+class NoCompatiblePleskVersionError(Exception):
+    def __init__(self, targetVersion: float) -> None:
+        super().__init__(
+            f"No servers are compatible with target version:{targetVersion}"
+        )
+
+
+def regex_type(pattern: str | re.Pattern):
+
+    def closure_check_regex(arg_value):
+        if not re.match(pattern, arg_value):
+            raise argparse.ArgumentTypeError(
+                f"Provided value doesn't match pattern {pattern}"
+            )
+        return arg_value
+
+    return closure_check_regex
 
 
 SSH_USER = "maximg"
@@ -218,17 +235,24 @@ SERVER_LIST = (
 
 
 parser = argparse.ArgumentParser()
+
 parser.add_argument(
     " target Plesk version",
     dest="targetVersion",
     required=True,
-    type=str,
+    type=regex_type(r"\d+(\.\d+)+"),
     help="site's host Plesk version",
     metavar="v",
 )
+
 parser.add_argument(
-    "size", dest="siteSize", type=int, help="size of site to migrate", metavar="s"
+    "size",
+    dest="siteSize",
+    type=regex_type(r"^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$"),
+    help="size of site to migrate",
+    metavar="s",
 )
+
 args = parser.parse_args()
 
 serverData: dict[str, pkzServer]
@@ -266,7 +290,7 @@ with open(spaceDataPath) as f:
         currServer = pkzServer(currServerName, currTotalSpace, currUsedSpace)
         if currServer.hasEnoughSpace(args.siteSize):
             serverData[currServer.name] = currServer
-if len(serverData)==0:
+if len(serverData) == 0:
     raise InsufficientSpaceError(args.siteSize)
 
 
@@ -277,7 +301,7 @@ with open(versionDataPath) as v:
         serverData[currServerName].pleskVersion = currVersion
         if not serverData[currServerName].isCompatible(args.targetVersion):
             del serverData[currServerName]
-if len(serverData)==0:
+if len(serverData) == 0:
     raise NoCompatiblePleskVersionError(args.targetVersion)
 
 
