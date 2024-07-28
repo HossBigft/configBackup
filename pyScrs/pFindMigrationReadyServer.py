@@ -209,8 +209,8 @@ def __createServerVersionList(user: str, userHomeDirectory: str, fileName: str):
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    "Plesk version",
-    dest="version",
+    " target Plesk version",
+    dest="targetVersion",
     required=True,
     type=str,
     help="site's host Plesk version",
@@ -262,5 +262,11 @@ with open(versionDataPath) as v:
         currVersion = line.replace("\n", "")
         currServerName = re.search(r"^([^.])+", line[0]).group(0)
         serverData[currServerName].pleskVersion = currVersion
-        if not serverData[currServerName].isCompatible(args.version):
+        if not serverData[currServerName].isCompatible(args.targetVersion):
             del serverData[currServerName]
+            
+print("server|Total|Free|Used%|Host version >= Target version")
+for server, data in serverData.items():
+    print(
+        f"{server}|{data.totalSpace}=>{data.totalSpace+args.siteSize}|{data.free}=>{data.free-args.siteSize}|{data.getUsedPercent()}%=>{data.getUsedPercent(args.siteSize)}|{data.pleskVersion}>={args.targetVersion}"
+    )
