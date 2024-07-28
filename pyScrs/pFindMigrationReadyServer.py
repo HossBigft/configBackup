@@ -235,20 +235,17 @@ SERVER_LIST = (
 parser = argparse.ArgumentParser()
 
 parser.add_argument(
-    " target Plesk version",
-    dest="targetVersion",
-    required=True,
+    "targetVersion",
     type=regex_type(r"\d+(\.\d+)+"),
     help="site's host Plesk version",
-    metavar="v",
+    metavar="target Plesk version",
 )
 
 parser.add_argument(
-    "size",
-    dest="siteSize",
+    "siteSize",
     type=regex_type(r"^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$"),
     help="size of site to migrate",
-    metavar="s",
+    metavar="size",
 )
 
 args = parser.parse_args()
