@@ -124,6 +124,15 @@ def __createServerVersionList(user: str, userHomeDirectory: str, fileName: str):
             statsFile.write(f"{host}; {line};\n")
     print(f"Saved in {statsFilePath}")
 
+class InsufficientSpaceError(Exception):
+    def __init__(self, siteSize:float) -> None:
+        super().__init__(f"No servers have enough free space to fit the size:{siteSize}gb")
+        
+class NoCompatiblePleskVersionError(Exception):
+    def __init__(self, targetVersion:float) -> None:
+        super().__init__(f"No servers are compatible with target version:{targetVersion}")
+
+
 
 SSH_USER = "maximg"
 USER_HOME_DIR = pathlib.Path.home()
@@ -257,6 +266,9 @@ with open(spaceDataPath) as f:
         currServer = pkzServer(currServerName, currTotalSpace, currUsedSpace)
         if currServer.hasEnoughSpace(args.siteSize):
             serverData[currServer.name] = currServer
+if len(serverData)==0:
+    raise InsufficientSpaceError(args.siteSize)
+
 
 with open(versionDataPath) as v:
     for line in v:
@@ -265,6 +277,9 @@ with open(versionDataPath) as v:
         serverData[currServerName].pleskVersion = currVersion
         if not serverData[currServerName].isCompatible(args.targetVersion):
             del serverData[currServerName]
+if len(serverData)==0:
+    raise NoCompatiblePleskVersionError(args.targetVersion)
+
 
 print("server|Total|Free|Used%|Host version >= Target version")
 for server, data in serverData.items():
