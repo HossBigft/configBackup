@@ -254,17 +254,8 @@ serverData: dict[str, pkzServer]
 versionDataPath: str
 spaceDataPath: str
 
-if not any(
-    pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob(
-        f"{SERVER_FREE_SPACE_FILENAME}{datetime.datetime.now().strftime('%Y%m%d')}*"
-    )
-):
-    print("No relevant file with server space was found")
-    __createFreeSpaceServerList(SSH_USER, USER_HOME_DIR, SERVER_FREE_SPACE_FILENAME)
-    spaceDataPath = list(
-        pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob("pleskAvailableSpace*")
-    )[-1]
-elif any(
+
+if any(
     pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob(
         f"{SERVER_VERSION_FILENAME}{datetime.datetime.now().strftime('%Y%m%d')}*"
     )
@@ -285,6 +276,17 @@ with open(versionDataPath) as v:
             serverData[currServerName] = currServer
 if len(serverData) == 0:
     raise NoCompatiblePleskVersionError(args.targetVersion)
+
+if not any(
+    pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob(
+        f"{SERVER_FREE_SPACE_FILENAME}{datetime.datetime.now().strftime('%Y%m%d')}*"
+    )
+):
+    print("No relevant file with server space was found")
+    __createFreeSpaceServerList(SSH_USER, USER_HOME_DIR, SERVER_FREE_SPACE_FILENAME)
+    spaceDataPath = list(
+        pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob("pleskAvailableSpace*")
+    )[-1]
 
 with open(spaceDataPath) as f:
     for line in f:
