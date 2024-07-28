@@ -5,9 +5,7 @@ from collections import namedtuple
 
 class pkzServer:
 
-    def __init__(
-        self, name: str, totalSpace: int, usedSpace: int, pleskVersion=""
-    ) -> None:
+    def __init__(self, name: str, totalSpace=0, usedSpace=0, pleskVersion="") -> None:
         self.name = name
         self.totalSpace = totalSpace
         self.usedSpace = usedSpace
@@ -280,6 +278,16 @@ elif any(
         pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob("pleskVersion*")
     )[-1]
 
+with open(versionDataPath) as v:
+    for line in v:
+        currVersion = line.replace("\n", "")
+        currServerName = re.search(r"^([^.])+", line[0]).group(0)
+        serverData[currServerName].pleskVersion = currVersion
+        currServer = pkzServer(currServerName, currVersion)
+        if serverData[currServerName].isCompatible(args.targetVersion):
+            serverData[currServerName] = currServer
+if len(serverData) == 0:
+    raise NoCompatiblePleskVersionError(args.targetVersion)
 
 with open(spaceDataPath) as f:
     for line in f:
@@ -289,20 +297,12 @@ with open(spaceDataPath) as f:
         currTotalSpace, currUsedSpace = int(currServerData[1]), int(currServerData[2])
         currServer = pkzServer(currServerName, currTotalSpace, currUsedSpace)
         if currServer.hasEnoughSpace(args.siteSize):
+            currServer.pleskVersion = serverData[currServer.name].pleskVersion
             serverData[currServer.name] = currServer
+        else:
+            del serverData[currServer.name]
 if len(serverData) == 0:
     raise InsufficientSpaceError(args.siteSize)
-
-
-with open(versionDataPath) as v:
-    for line in v:
-        currVersion = line.replace("\n", "")
-        currServerName = re.search(r"^([^.])+", line[0]).group(0)
-        serverData[currServerName].pleskVersion = currVersion
-        if not serverData[currServerName].isCompatible(args.targetVersion):
-            del serverData[currServerName]
-if len(serverData) == 0:
-    raise NoCompatiblePleskVersionError(args.targetVersion)
 
 
 print("server|Total|Free|Used%|Host version >= Target version")
