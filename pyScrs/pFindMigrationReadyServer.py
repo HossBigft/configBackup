@@ -147,7 +147,6 @@ def __send_command_to_servers(cmd: str, sshUser: str, serverList: list) -> dict:
         sshOutput = subprocess.run(
             shlex.split(sshCommand), capture_output=True, text=True
         )
-        print(f"{host} answered {sshOutput.stdout}")
         serverAnswers[host] = sshOutput.stdout
     return serverAnswers
 
@@ -160,6 +159,7 @@ def __filter_server_answer_by_regex(serverAnswers: dict, pattern: str) -> dict:
         currAnswer = "".join(
             filter(lambda s: re.fullmatch(rf"{pattern}", s), currAnswer)
         )
+        print(f"{server} answered {currAnswer}")
         filteredAnswers[server] = currAnswer
     return filteredAnswers
 
