@@ -88,14 +88,10 @@ def __createFreeSpaceServerList(sshUser: str, userHomeDirectory: str, fileName: 
     for server, answer in serverSpaceData.items():
         currAnswer = answer.splitlines()
         currAnswer = [" ".join(line.split()) for line in currAnswer]
-        currAnswer = "".join(
-            filter(
-                lambda s: re.fullmatch(
-                    r"(?:\S+\s+){5}/var;|((?:\S+\s+){5}/)(?!.*/var)", s
-                ),
-                currAnswer,
-            )
-        )
+
+        currAnswer = re.search(
+            r"(?:\S+\s+){5}\/var;|((?:\S+\s+){5}\/;)(?!.*\/var;)", ";".join(currAnswer)
+        ).group(0)
         print(f"{server} answered {currAnswer}")
         serverSpaceData[server] = currAnswer
 
