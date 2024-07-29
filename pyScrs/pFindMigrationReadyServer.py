@@ -338,7 +338,9 @@ with open(spaceDataPath) as f:
 if len(serverData) == 0:
     raise InsufficientSpaceError(siteSize)
 
-
+serverData = dict(
+        sorted(serverData.items(), key=lambda item: item[1].getUsedSpacePercent(), reverse=True)
+    )
 print("server | Total | Free | Used%| Host version >= Target version")
 for server, data in serverData.items():
     print(
