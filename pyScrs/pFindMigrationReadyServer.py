@@ -280,10 +280,10 @@ if not any(
     print("No relevant file with server versions was found")
     __createServerVersionList(SSH_USER, USER_HOME_DIR, SERVER_VERSION_FILENAME)
     versionDataPath = list(
-    pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob(
-        f"{SERVER_VERSION_FILENAME}{datetime.datetime.now().strftime('%Y%m%d')}*.txt"
-    )
-)[-1]
+        pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob(
+            f"{SERVER_VERSION_FILENAME}{datetime.datetime.now().strftime('%Y%m%d')}*.txt"
+        )
+    )[-1]
 else:
     versionDataPath = list(
         pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob(
@@ -339,10 +339,12 @@ if len(serverData) == 0:
     raise InsufficientSpaceError(siteSize)
 
 serverData = dict(
-        sorted(serverData.items(), key=lambda item: item[1].getUsedSpacePercent(), reverse=True)
+    sorted(
+        serverData.items(), key=lambda item: item[1].getUsedSpacePercent(), reverse=True
     )
-print("server | Total | Free | Used%| Host version >= Target version")
+)
+print("server | Total | Used | Free | Used% | Host version >= Target version")
 for server, data in serverData.items():
     print(
-        f"{server} | {data.totalSpace}=>{round(data.totalSpace+siteSize)} Gb | {data.getFreeSpace()}=>{round(data.getFreeSpace()-siteSize)} Gb | {data.getUsedSpacePercent()}=>{data.getUsedSpacePercent(siteSize)}% | {data.pleskVersion}>={args.targetVersion}"
+        f"{server} | {data.totalSpace} GB | {data.usedSpace}=>{round(data.usedSpace+siteSize)} Gb | {data.getFreeSpace()}=>{round(data.getFreeSpace()-siteSize)} Gb | {data.getUsedSpacePercent()}=>{data.getUsedSpacePercent(siteSize)}% | {data.pleskVersion}>={args.targetVersion}"
     )
