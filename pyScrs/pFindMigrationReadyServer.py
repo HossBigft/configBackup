@@ -1,19 +1,23 @@
-import subprocess, re, pathlib, shlex, datetime, argparse
-from dataclasses import dataclass
-from collections import namedtuple
+import subprocess
+import re
+import pathlib
+import shlex
+import datetime
+import argparse
 
 
 class pkzServer:
-    def __init__(self, name: str, totalSpace=0, usedSpace=0, pleskVersion="") -> None:
+    def __init__(
+        self, name: str, totalSpace=0.0, usedSpace=0.0, pleskVersion=""
+    ) -> None:
         self.name = name
         self.totalSpace = totalSpace
         self.usedSpace = usedSpace
         self.pleskVersion = pleskVersion
 
-    def getUsedSpacePercent(self) -> int:
-        return int(((self.usedSpace / self.totalSpace) * 10000 + 100 - 1) // 100)
-
-    def getUsedSpacePercent(self, spaceToAdd: float) -> int:
+    def getUsedSpacePercent(self, spaceToAdd=0.0) -> float:
+        if spaceToAdd == 0.0:
+            return int(((self.usedSpace / self.totalSpace) * 10000 + 100 - 1) // 100)
         return int(
             (((self.usedSpace + spaceToAdd) / self.totalSpace) * 10000 + 100 - 1) // 100
         )
@@ -51,14 +55,20 @@ class pkzServer:
         return 0
 
     def isCompatible(self, versionToCompare: str) -> bool:
-        return self.__versionCompare(versionToCompare) in (-1, 0)
+        return self.__versionCompare(versionToCompare) in (1, 0)
+
+    def getFreeSpace(self) -> int:
+        return self.totalSpace - self.usedSpace
+
+    def __str__(self) -> str:
+        return f"Name: {self.name}\nTotal space: {self.totalSpace}\nUsed space:{self.usedSpace}\nPlesk Version:{self.pleskVersion}"
 
 
 def __send_command_to_servers(cmd: str, sshUser: str, serverList: list) -> dict:
     serverAnswers = {}
-    for host in serverList[:2]:
+    for host in serverList:
         sshCommand = f"ssh {sshUser}@{host} {cmd}"
-        print(f"Querying {host} with {cmd}")
+        print(f"Querying {host} with: {cmd}")
         sshOutput = subprocess.run(
             shlex.split(sshCommand), capture_output=True, text=True
         )
@@ -66,73 +76,82 @@ def __send_command_to_servers(cmd: str, sshUser: str, serverList: list) -> dict:
     return serverAnswers
 
 
-def __filter_server_answer_by_regex(serverAnswers: dict, pattern: str) -> dict:
-    filteredAnswers = {}
-    for server, answer in serverAnswers.items():
-        currAnswer = answer.splitlines()
-        currAnswer = [" ".join(line.split()) for line in currAnswer]
-        currAnswer = "".join(
-            filter(lambda s: re.search(rf"{pattern}", s), currAnswer)
-        )
-        print(f"{server} answered {currAnswer}")
-        filteredAnswers[server] = currAnswer
-    return filteredAnswers
-
-
 def __createFreeSpaceServerList(sshUser: str, userHomeDirectory: str, fileName: str):
-    statsFileName = f"{fileName}{datetime.datetime.now().strftime('%Y%m%d_%H%M')}"
+    statsFileName = f"{fileName}{datetime.datetime.now().strftime('%Y%m%d_%H%M')}.txt"
     statsDirName = "pkzStats"
     statsDirPath = f"{USER_HOME_DIR}/{statsDirName}"
     statsFilePath = f"{statsDirPath}/{statsFileName}"
     pathlib.Path(statsDirPath).mkdir(parents=True, exist_ok=True)
-
+    print("Starting query...")
     serverSpaceData = __send_command_to_servers("df -BG", sshUser, SERVER_LIST)
-    serverSpaceData = __filter_server_answer_by_regex(
-        serverSpaceData, "(?:\S+\s+){5}/var;|((?:\S+\s+){5}/)(?!.*/var)"
-    )
+
+    for server, answer in serverSpaceData.items():
+        currAnswer = answer.splitlines()
+        currAnswer = [" ".join(line.split()) for line in currAnswer]
+        currAnswer = "".join(
+            filter(
+                lambda s: re.fullmatch(
+                    r"(?:\S+\s+){5}/var;|((?:\S+\s+){5}/)(?!.*/var)", s
+                ),
+                currAnswer,
+            )
+        )
+        print(f"{server} answered {currAnswer}")
+        serverSpaceData[server] = currAnswer
 
     print("Sorting by used space %")
-    serverSpaceData = sorted(
-        serverSpaceData.items(), key=lambda item: int(item[1].split()[4][:-1])
+    serverSpaceData = dict(
+        sorted(serverSpaceData.items(), key=lambda item: int(item[1].split()[4][:-1]))
     )
 
     with open(statsFilePath, "w") as statsFile:
         for host, line in serverSpaceData.items():
-            statsFile.write(f"{host}; {line};\n")
+            statsFile.write(f"{host} {line}\n")
     print(f"Saved in {statsFilePath}")
 
 
 def __createServerVersionList(user: str, userHomeDirectory: str, fileName: str):
-    statsFileName = f"{fileName}{datetime.datetime.now().strftime('%Y%m%d_%H%M')}"
-
+    statsFileName = f"{fileName}{datetime.datetime.now().strftime('%Y%m%d_%H%M')}.txt"
     statsDirName = "pkzStats"
     statsDirPath = f"{USER_HOME_DIR}/{statsDirName}"
     statsFilePath = f"{statsDirPath}/{statsFileName}"
     pathlib.Path(statsDirPath).mkdir(parents=True, exist_ok=True)
-
+    print("Starting query...")
     serverVersionData = __send_command_to_servers("plesk -v", SSH_USER, SERVER_LIST)
-    serverVersionData = __filter_server_answer_by_regex(serverVersionData, "Plesk.*")
-    serverVersionData = {key:re.search(r"\d+(\.\d+)+",value).group(0) for key,value in serverVersionData.items()}
 
-    print("Sorting by Plesk Version")
-    serverVersionData = dict(sorted(serverVersionData.items(), key=lambda item: item[1]))
+    for server, answer in serverVersionData.items():
+        currAnswer = answer.splitlines()
+        currAnswer = [" ".join(line.split()) for line in currAnswer]
+        currAnswer = "".join(filter(lambda s: re.search(r"Plesk.*", s), currAnswer))
+        print(f"{server} answered {currAnswer}")
+        serverVersionData[server] = currAnswer
+
+    serverVersionData = {
+        key: re.search(r"\d+(\.\d+)+", value).group(0)
+        for key, value in serverVersionData.items()
+    }
+
+    print("Sorting by Plesk version")
+    serverVersionData = dict(
+        sorted(serverVersionData.items(), key=lambda item: item[1])
+    )
     with open(statsFilePath, "w") as statsFile:
         for host, line in serverVersionData.items():
-            statsFile.write(f"{host}; {line};\n")
+            statsFile.write(f"{host} {line}\n")
     print(f"Saved in {statsFilePath}")
 
 
 class InsufficientSpaceError(Exception):
     def __init__(self, siteSize: float) -> None:
         super().__init__(
-            f"No servers have enough free space to fit the size:{siteSize}gb"
+            f"No servers have enough free space to fit the size: {round(siteSize)} Gb"
         )
 
 
 class NoCompatiblePleskVersionError(Exception):
     def __init__(self, targetVersion: float) -> None:
         super().__init__(
-            f"No servers are compatible with target version:{targetVersion}"
+            f"No servers are compatible with target version: {targetVersion}"
         )
 
 
@@ -149,8 +168,8 @@ def regex_type(pattern: str | re.Pattern):
 
 SSH_USER = "maximg"
 USER_HOME_DIR = pathlib.Path.home()
-SERVER_FREE_SPACE_FILENAME = "TESTpleskAvalSpaceList"
-SERVER_VERSION_FILENAME = "TESTpleskServerVersionList"
+SERVER_FREE_SPACE_FILENAME = "pleskAvalSpaceList"
+SERVER_VERSION_FILENAME = "pleskServerVersionList"
 SERVER_LIST = (
     "cloud-1.hoster.kz.",
     "aturbo-2.hoster.kz.",
@@ -247,7 +266,7 @@ parser.add_argument(
 )
 
 args = parser.parse_args()
-
+siteSize = float(args.siteSize)
 serverData = {}
 versionDataPath: str
 spaceDataPath: str
@@ -255,22 +274,29 @@ spaceDataPath: str
 
 if not any(
     pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob(
-        f"{SERVER_VERSION_FILENAME}{datetime.datetime.now().strftime('%Y%m%d')}*"
+        f"{SERVER_VERSION_FILENAME}{datetime.datetime.now().strftime('%Y%m%d')}*.txt"
     )
 ):
     print("No relevant file with server versions was found")
     __createServerVersionList(SSH_USER, USER_HOME_DIR, SERVER_VERSION_FILENAME)
-versionDataPath = list(
+    versionDataPath = list(
     pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob(
-        f"{SERVER_VERSION_FILENAME}{datetime.datetime.now().strftime('%Y%m%d')}*"
+        f"{SERVER_VERSION_FILENAME}{datetime.datetime.now().strftime('%Y%m%d')}*.txt"
     )
 )[-1]
-print(versionDataPath)
+else:
+    versionDataPath = list(
+        pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob(
+            f"{SERVER_VERSION_FILENAME}{datetime.datetime.now().strftime('%Y%m%d')}*.txt"
+        )
+    )[-1]
+#    print(f"Found version datafile: {versionDataPath}")
+
 with open(versionDataPath) as v:
-    for line in v:
-        splitLines = line.replace(";","").split(" ")
+    for splitLines in v:
+        splitLines = splitLines.split(" ")
         currServerName = re.search(r"^([^.])+", splitLines[0]).group(0)
-        currVersion = splitLines[1]
+        currVersion = splitLines[1].strip("\n")
         currServer = pkzServer(currServerName, pleskVersion=currVersion)
         if currServer.isCompatible(args.targetVersion):
             serverData[currServerName] = currServer
@@ -279,33 +305,42 @@ if len(serverData) == 0:
 
 if not any(
     pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob(
-        f"{SERVER_FREE_SPACE_FILENAME}{datetime.datetime.now().strftime('%Y%m%d')}*"
+        f"{SERVER_FREE_SPACE_FILENAME}{datetime.datetime.now().strftime('%Y%m%d')}*.txt"
     )
 ):
     print("No relevant file with server space was found")
     __createFreeSpaceServerList(SSH_USER, USER_HOME_DIR, SERVER_FREE_SPACE_FILENAME)
-spaceDataPath = list(
-    pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob("pleskAvailableSpace*")
-)[-1]
+    spaceDataPath = list(
+        pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob(
+            f"{SERVER_FREE_SPACE_FILENAME}{datetime.datetime.now().strftime('%Y%m%d')}*.txt"
+        )
+    )[-1]
+else:
+    spaceDataPath = list(
+        pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob(
+            f"{SERVER_FREE_SPACE_FILENAME}{datetime.datetime.now().strftime('%Y%m%d')}*.txt"
+        )
+    )[-1]
+#    print(f"Found space datafile: {spaceDataPath}")
 
 with open(spaceDataPath) as f:
     for line in f:
-        line = line.replace("\n", "").replace("G", "").split(" ", 1)
-        currServerName = re.search(r"^([^.])+", line[0]).group(0)
-        currServerData = line[1].split(" ")
+        splitLines = line.replace("\n", "").split(" ", 1)
+        currServerName = re.search(r"^([^.])+", splitLines[0]).group(0)
+        currServerData = " ".join(splitLines[1].split()).replace("G", "").split(" ")
         currTotalSpace, currUsedSpace = int(currServerData[1]), int(currServerData[2])
         currServer = pkzServer(currServerName, currTotalSpace, currUsedSpace)
-        if currServer.hasEnoughSpace(args.siteSize):
+        if currServer.hasEnoughSpace(siteSize) and currServer.name in serverData.keys():
             currServer.pleskVersion = serverData[currServer.name].pleskVersion
             serverData[currServer.name] = currServer
-        else:
+        elif currServer.name in serverData.keys():
             del serverData[currServer.name]
 if len(serverData) == 0:
-    raise InsufficientSpaceError(args.siteSize)
+    raise InsufficientSpaceError(siteSize)
 
 
-print("server|Total|Free|Used%|Host version >= Target version")
+print("server | Total | Free | Used%| Host version >= Target version")
 for server, data in serverData.items():
     print(
-        f"{server}|{data.totalSpace}=>{data.totalSpace+args.siteSize}|{data.free}=>{data.free-args.siteSize}|{data.getUsedPercent()}%=>{data.getUsedPercent(args.siteSize)}|{data.pleskVersion}>={args.targetVersion}"
+        f"{server} | {data.totalSpace}=>{round(data.totalSpace+siteSize)} Gb | {data.getFreeSpace()}=>{round(data.getFreeSpace()-siteSize)} Gb | {data.getUsedSpacePercent()}=>{data.getUsedSpacePercent(siteSize)}% | {data.pleskVersion}>={args.targetVersion}"
     )
