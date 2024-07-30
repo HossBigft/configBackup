@@ -1,4 +1,4 @@
-function pVersionQuery
+function pQueryPleskVersion
     set currDate (date +%Y%m%d_%H%M)
     set filename pleskServerVersionList
     echo "Starting queries"
