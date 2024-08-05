@@ -3,9 +3,8 @@ function pGetSubscriptionIDByDomain --wraps=ssh
     
     if test $argNum -eq 1
         set domain (echo $argv)
-        set host (digs $domain|string sub -e-1)
-
-        ssh $host "plesk db -Ne \"SELECT webspace_id FROM domains WHERE name LIKE '%$domain%'\""|grep -Pv "^0\$"| sort -u
+        set host (digsx $domain|string sub -e-1)
+        ssh maximg@$host "plesk db -Ne \"SELECT webspace_id FROM domains WHERE name LIKE '%$domain%'\""|grep -Pv "^0\$"| sort -u
         
     else if test $argNum -eq 2
         set host (echo $argv[1])
