@@ -1,18 +1,17 @@
 import asyncio
-import shlex
 
 
 async def _run_command_over_ssh(host, username, command, verbose: bool):
-    ssh_command = shlex.split(f"ssh {username}@{host} {command}")
-
-    process = await asyncio.create_subprocess_exec(
-        *ssh_command, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+    ssh_command = f'ssh {username}@{host} "{command}"'
+    process = await asyncio.create_subprocess_shell(
+        ssh_command, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
     )
+
     if verbose:
-        print(f"Sent {command} to {host}. Awaiting result...")
+        print(f"{host} {ssh_command}| Awaiting result...")
     stdout, stderr = await process.communicate()
     if verbose:
-        print(f"{host} answered {stdout.decode()}")
+        print(f"{host} answered: {stdout.decode()}")
 
     return (host, stdout.decode(), stderr.decode(), process.returncode)
 
