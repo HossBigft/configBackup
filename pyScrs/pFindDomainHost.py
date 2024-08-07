@@ -1,5 +1,5 @@
 import async_ssh_executor as ase
-import pprint
+import argparse
 
 SSH_USER = "maximg"
 SERVER_LIST = (
@@ -84,12 +84,13 @@ SERVER_LIST = (
 results=ase.batch_ssh_command_result(
         SERVER_LIST,
         SSH_USER,
-        "plesk db -Ne \\\"SELECT webspace_id FROM domains WHERE name LIKE \'%snrg.kz%\'\\\" | tail -n 1",
+        "plesk db -Ne \\\"SELECT webspace_id FROM domains WHERE name LIKE \'kanzveka21.kz\'\\\" | tail -n 1",
         verbose=True
     )
 results=[x for x in results if x["stdout"]]
 if results:
-    print("Subscription with domain was found on following servers:")
+    print("Subscription with {domainToFind} was found on following servers:")
     for record in results:
         print(f"Host {record["host"]}. Subscription ID:{record["stdout"].strip()} ")
-
+else:
+    print("No servers was found with {domainToFind}")
