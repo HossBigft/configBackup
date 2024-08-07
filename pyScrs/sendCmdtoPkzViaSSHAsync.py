@@ -95,13 +95,14 @@ async def run_command_over_ssh(host, username, command):
 async def run_on_multiple_servers(servers, command, username):
     tasks = [run_command_over_ssh(host, username, command) for host in servers]
     results = await asyncio.gather(*tasks)
-    return {(host, stdout, stderr) for host, stdout, stderr, *_ in results}
+    return [{"host":host, "stdout":stdout,"stderr":stderr} for host, stdout, stderr, *_ in results]
  
 async def main():
     command = 'uptime'
     username = 'maximg'  # Replace with your SSH username
 
     results=await run_on_multiple_servers(SERVER_LIST, command, username)
+    print(results)
 
 # Run the main function
 if __name__ == '__main__':
