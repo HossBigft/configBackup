@@ -1,22 +1,32 @@
 import asyncio
 import shlex
-   
-async def run_command_over_ssh(host, username, command):
+
+
+async def _run_command_over_ssh(host, username, command, verbose: bool):
     ssh_command = shlex.split(f"ssh {username}@{host} {command}")
-    
+
     process = await asyncio.create_subprocess_exec(
-        *ssh_command,
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE
+        *ssh_command, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
     )
-    
+    if verbose:
+        print(f"Sent {command} to {host}. Awaiting result...")
     stdout, stderr = await process.communicate()
-    print(host, stdout.decode())
+    if verbose:
+        print(f"{host} answered {stdout.decode()}")
+
     return (host, stdout.decode(), stderr.decode(), process.returncode)
 
-async def batch_ssh_command(servers, command, username):
-    tasks = [run_command_over_ssh(host, username, command) for host in servers]
+
+async def _batch_ssh_command_prepare(servers, username, command, verbose: bool):
+    tasks = [
+        _run_command_over_ssh(host, username, command, verbose) for host in servers
+    ]
     results = await asyncio.gather(*tasks)
-    return [{"host":host, "stdout":stdout,"stderr":stderr} for host, stdout, stderr, *_ in results]
+    return [
+        {"host": host, "stdout": stdout, "stderr": stderr}
+        for host, stdout, stderr, *_ in results
+    ]
 
 
+def batch_ssh_command_result(servers, username, command, verbose=False):
+    return asyncio.run(_batch_ssh_command_prepare(servers, username, command, verbose))
