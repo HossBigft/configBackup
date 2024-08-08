@@ -1,4 +1,7 @@
 function digs
+    if test (count $argv) -eq 0
+        return 1
+    end
     set argsLen (count $argv)
     set ipRegexPattern "((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}"
     
