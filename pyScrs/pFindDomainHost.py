@@ -81,16 +81,34 @@ SERVER_LIST = (
 )
 
 
-results=ase.batch_ssh_command_result(
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        "domainToFind",
+        type=str,
+        help="domain that will be searched on Plesk servers",
+    )
+
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="print actions of program",
+    )
+    
+    args = parser.parse_args()
+    
+    results = ase.batch_ssh_command_result(
         SERVER_LIST,
         SSH_USER,
-        "plesk db -Ne \\\"SELECT webspace_id FROM domains WHERE name LIKE \'kanzveka21.kz\'\\\" | tail -n 1",
-        verbose=True
+        f"plesk db -Ne \\\"SELECT webspace_id FROM domains WHERE name LIKE '{args.domainToFind}%'\\\" | tail -n 1",
+        verbose=args.verbose,
     )
-results=[x for x in results if x["stdout"]]
-if results:
-    print("Subscription with {domainToFind} was found on following servers:")
-    for record in results:
-        print(f"Host {record["host"]}. Subscription ID:{record["stdout"].strip()} ")
-else:
-    print("No servers was found with {domainToFind}")
+    results = [x for x in results if x["stdout"]]
+    if results:
+        print(f"Subscription with {args.domainToFind} was found on following servers:")
+        for record in results:
+            print(f"Host {record["host"]}. Subscription ID:{record["stdout"].strip()} ")
+    else:
+        print("No servers was found with {args.domainToFind}")
