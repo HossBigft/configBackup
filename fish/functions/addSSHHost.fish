@@ -17,17 +17,17 @@ function addSSHHost
     # Extract username and host from the user_host argument
     set username (string split '@' $user_host)[1]
     set host (string split '@' $user_host)[2]
-    
+    set timeStamp (date +%Y%m%d_%H%M)
     if set -q _flag_private
-        printf "Host %s\n\tHostName %s\n\tUser %s\n\tIdentityFile ~/.ssh/id_rsa\n" $host $hostName  $username >> ~/.ssh/conf.d/private
+        printf "#Added %s\nHost %s\n\tHostName %s\n\tUser %s\n\tIdentityFile ~/.ssh/id_rsa\n" $timeStamp  $hostName $host $username >> ~/.ssh/conf.d/private
         echo "Added host $hostName to private config"
         
     else if set -q _flag_client
-        printf "Host %s\n\tHostName %s\n\tUser %s\n\tIdentityFile ~/.ssh/id_rsa\n" $host $hostName  $username >> ~/.ssh/clients
+        printf "#Added %s\nHost %s\n\tHostName %s\n\tUser %s\n\tIdentityFile ~/.ssh/id_rsa\n" $timeStamp  $hostName $host $username >> ~/.ssh/conf.d/clients
         echo "Added host $hostName to client config"
         
     else
-        printf "Host %s\n\tHostName %s\n\tUser %s\n\tIdentityFile ~/.ssh/id_rsa\n" $host $hostName  $username >> ~/.ssh/config
+        printf "#Added %s\nHost %s\n\tHostName %s\n\tUser %s\n\tIdentityFile ~/.ssh/id_rsa\n" $timeStamp  $hostName $host  $username >> ~/.ssh/config
         echo "Added host $hostName"
     end
 
