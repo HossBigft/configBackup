@@ -22,8 +22,8 @@ Host p-apkz2
         User maximg
 	IdentityFile ~/.ssh/id_rsa
 Host p-apkz3
-        HostName apkz3.hoster.kz.
-        User maximg
+  HostName apkz3.hoster.kz.
+  User maximg
 	IdentityFile ~/.ssh/id_rsa
 Host p-apkz4
         HostName apkz4.hoster.kz.
@@ -328,3 +328,4 @@ Host p-cloud-5
 		Hostname cloud-5.hoster.kz.
 		User maximg
     IdentityFile ~/.ssh/id_rsa
+
