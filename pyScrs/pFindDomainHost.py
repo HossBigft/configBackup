@@ -1,5 +1,6 @@
 import async_ssh_executor as ase
 import argparse
+from collections import defaultdict
 
 SSH_USER = "maximg"
 SERVER_LIST = (
@@ -96,19 +97,49 @@ if __name__ == "__main__":
         action="store_true",
         help="print actions of program",
     )
-    
+    parser.add_argument(
+        "-n",
+        "--name",
+        action="store_true",
+        help="print subscription name",
+    )
+    parser.add_argument(
+        "-i",
+        "--id",
+        action="store_true",
+        help="print subscription name",
+    )
+
     args = parser.parse_args()
-    
+
     results = ase.batch_ssh_command_result(
         SERVER_LIST,
         SSH_USER,
         f"plesk db -Ne \\\"SELECT webspace_id FROM domains WHERE name LIKE '{args.domainToFind}%'\\\" | tail -n 1",
         verbose=args.verbose,
     )
+
+    output_template = "Host {hostname}"
+    if args.verbose:
+        output_template.prepend(
+            "Subscription with {domaintoFind} was found on following servers:\n"
+        )
+
+    if args.id:
+        output_template.append("|Subscription ID:{subscription_id}")
+
     results = [x for x in results if x["stdout"]]
     if results:
-        print(f"Subscription with {args.domainToFind} was found on following servers:")
         for record in results:
-            print(f"Host {record["host"]}. Subscription ID:{record["stdout"].strip()} ")
+            print(
+                output_template.format(
+                    d=defaultdict(
+                        str,
+                        domaintoFind=args.domainToFind,
+                        hostname=record["host"],
+                        subscription_id=record["stdout"].strip(),
+                    )
+                )
+            )
     else:
-        print("No servers was found with {args.domainToFind}")
+        print("No servers was found with {args.domainToFind} domain")
