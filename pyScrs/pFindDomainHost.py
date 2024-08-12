@@ -1,6 +1,5 @@
 import async_ssh_executor as ase
 import argparse
-from collections import defaultdict
 
 SSH_USER = "maximg"
 SERVER_LIST = (
@@ -115,25 +114,37 @@ if __name__ == "__main__":
     results = ase.batch_ssh_command_result(
         SERVER_LIST,
         SSH_USER,
-        f"plesk db -Ne \\\"SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '{args.domainToFind}%';\\\"",
+        f"plesk db -Ne \\\"SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '{args.domainToFind}%';SELECT name FROM domains WHERE id=(SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '{args.domainToFind}%')\\\"",
         verbose=args.verbose,
     )
 
-    output_template = "Host {hostname}"
+    output_template = "Host:{hostname}"
     if args.verbose:
-            print(f"Subscription with {args.domainToFind} was found on following servers:")
+        print(f"Subscription with {args.domainToFind} was found on following servers:")
 
     if args.id:
-        output_template=output_template + "|Subscription ID:{subscription_id}"
+        output_template = output_template + "|Subscription ID:{subscription_id}"
 
-    results = [x for x in results if x["stdout"]]
+    if args.name:
+        output_template = output_template + "|Subscription Name:{subscription_name}"
+
+    results = [
+        {
+            "host": x["host"],
+            "id": x["stdout"].strip().split("\n")[0],
+            "name": x["stdout"].strip().split("\n")[1],
+        }
+        for x in results
+        if x["stdout"]
+    ]
     if results:
         for record in results:
             print(
                 output_template.format(
-                        domaintoFind=args.domainToFind,
-                        hostname=record["host"],
-                        subscription_id=record["stdout"].strip(),
+                    domaintoFind=args.domainToFind,
+                    hostname=record["host"],
+                    subscription_id=record["id"],
+                    subscription_name=record["name"],
                 )
             )
     else:
