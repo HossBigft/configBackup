@@ -115,7 +115,7 @@ if __name__ == "__main__":
     results = ase.batch_ssh_command_result(
         SERVER_LIST,
         SSH_USER,
-        f"plesk db -Ne \\\"SELECT webspace_id FROM domains WHERE name LIKE '{args.domainToFind}%'\\\" | tail -n 1",
+        f"plesk db -Ne \\\"SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '{args.domainToFind}%';\\\"",
         verbose=args.verbose,
     )
 
@@ -124,7 +124,7 @@ if __name__ == "__main__":
             print(f"Subscription with {args.domainToFind} was found on following servers:")
 
     if args.id:
-        output_template.append("|Subscription ID:{subscription_id}")
+        output_template=output_template + "|Subscription ID:{subscription_id}"
 
     results = [x for x in results if x["stdout"]]
     if results:
@@ -137,4 +137,4 @@ if __name__ == "__main__":
                 )
             )
     else:
-        print("No servers was found with {args.domainToFind} domain")
+        print(f"No servers was found with {args.domainToFind} domain")
