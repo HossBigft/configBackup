@@ -121,9 +121,7 @@ if __name__ == "__main__":
 
     output_template = "Host {hostname}"
     if args.verbose:
-        output_template.prepend(
-            "Subscription with {domaintoFind} was found on following servers:\n"
-        )
+            print(f"Subscription with {args.domainToFind} was found on following servers:")
 
     if args.id:
         output_template.append("|Subscription ID:{subscription_id}")
@@ -133,12 +131,9 @@ if __name__ == "__main__":
         for record in results:
             print(
                 output_template.format(
-                    d=defaultdict(
-                        str,
                         domaintoFind=args.domainToFind,
                         hostname=record["host"],
                         subscription_id=record["stdout"].strip(),
-                    )
                 )
             )
     else:
