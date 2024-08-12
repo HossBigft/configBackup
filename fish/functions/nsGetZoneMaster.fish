@@ -4,6 +4,9 @@ function nsGetZoneMaster
     for host in $dnsServers
         set zoneMaster (ssh root@$host "cat /var/opt/isc/scls/isc-bind/zones/_default.nzf"| grep \"$argv\" | grep -Po "((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}")
         echo (echo $host|grep -Po "^([^.])+")\|  $zoneMaster\|
-        echo (fish -c "digsx $zoneMaster")
+
+        if set digAnswer (fish -c "digsx $zoneMaster")
+            echo $digAnswer
+        end
     end
 end
