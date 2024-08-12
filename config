@@ -329,3 +329,8 @@ Host p-cloud-5
 		User maximg
     IdentityFile ~/.ssh/id_rsa
 
+#Added 20240809_1733
+Host dnsHosting
+	HostName 89.35.125.9
+	User root
+	IdentityFile ~/.ssh/id_rsa
