@@ -172,14 +172,15 @@ if __name__ == "__main__":
     ]
     if results:
         for record in results:
-            print(
-                "|".join(output_elements).format(
-                    domaintoFind=args.domainToFind,
-                    hostname=record["host"],
-                    subscription_id=record["id"],
-                    subscription_name=record["name"],
+            if args.name or args.id or args.server:
+                print(
+                    "|".join(output_elements).format(
+                        domaintoFind=args.domainToFind,
+                        hostname=record["host"],
+                        subscription_id=record["id"],
+                        subscription_name=record["name"],
+                    )
                 )
-            )
             if args.domains:
                 if args.verbose:
                     print("Domains:")
