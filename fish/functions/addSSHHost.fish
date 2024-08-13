@@ -1,6 +1,5 @@
 function addSSHHost
-    set -l options p/private
-    set -l options c/client
+    set -l options c/client p/private
     argparse -n addSSHHost $options -- $argv
     or return
     
