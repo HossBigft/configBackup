@@ -114,6 +114,12 @@ if __name__ == "__main__":
         action="store_true",
         help="print subscription domains",
     )
+    parser.add_argument(
+        "-s",
+        "--server",
+        action="store_true",
+        help="print server hostname",
+    )
 
     args = parser.parse_args()
 
@@ -126,25 +132,37 @@ if __name__ == "__main__":
         verbose=args.verbose,
     )
 
-    output_template = "Host:{hostname}"
+    output_elements =[]
+    if args.server:
+        if args.verbose:
+            output_elements.append("Host:{hostname}")
+        else:
+            output_elements.append("{hostname}")
+
     if args.verbose:
-        print(f"Subscription with {args.domainToFind} was found on following servers:")
+        print(
+            f"Subscription with {args.domainToFind} domain was found on following servers:"
+        )
 
     if args.id:
-        output_template = output_template + "|Subscription ID:{subscription_id}"
+        if args.verbose:
+            output_elements.append("Subscription ID:{subscription_id}")
+        elif args.id:
+            output_elements.append("{subscription_id}")
 
     if args.name:
-        output_template = output_template + "|Subscription Name:{subscription_name}"
-        
-    if args.domains:
-        output_template = output_template + "|Domains:"
+        if args.verbose:
+            output_elements.append("Subscription Name:{subscription_name}")
+        elif args.name:
+            output_elements.append("{subscription_name}")
+
 
     results = [
         {
             "host": x["host"],
             "id": x["stdout"].strip().split("\n")[0],
             "name": x["stdout"].strip().split("\n")[1],
-            "domains":x["stdout"].strip().split("\n")[2:]
+            "domains": x["stdout"].strip().split("\n")[2:],
         }
         for x in results
         if x["stdout"]
@@ -152,7 +170,7 @@ if __name__ == "__main__":
     if results:
         for record in results:
             print(
-                output_template.format(
+                "|".join(output_elements).format(
                     domaintoFind=args.domainToFind,
                     hostname=record["host"],
                     subscription_id=record["id"],
@@ -160,6 +178,9 @@ if __name__ == "__main__":
                 )
             )
             if args.domains:
+                if args.verbose:
+                    print("Domains:")
+                print(record["name"])
                 for domain in record["domains"]:
                     print(domain)
     else:
