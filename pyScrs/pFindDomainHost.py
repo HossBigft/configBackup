@@ -106,7 +106,13 @@ if __name__ == "__main__":
         "-i",
         "--id",
         action="store_true",
-        help="print subscription name",
+        help="print subscription id",
+    )
+    parser.add_argument(
+        "-d",
+        "--domains",
+        action="store_true",
+        help="print subscription domains",
     )
 
     args = parser.parse_args()
@@ -114,7 +120,9 @@ if __name__ == "__main__":
     results = ase.batch_ssh_command_result(
         SERVER_LIST,
         SSH_USER,
-        f"plesk db -Ne \\\"SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '{args.domainToFind}%';SELECT name FROM domains WHERE id=(SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '{args.domainToFind}%')\\\"",
+        f"plesk db -Ne \\\"SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '{args.domainToFind}%';"
+        + f"SELECT name FROM domains WHERE id=(SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '{args.domainToFind}%');"
+        + f"SELECT name FROM domains WHERE webspace_id=(SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '{args.domainToFind}%')\\\"",
         verbose=args.verbose,
     )
 
@@ -127,12 +135,16 @@ if __name__ == "__main__":
 
     if args.name:
         output_template = output_template + "|Subscription Name:{subscription_name}"
+        
+    if args.domains:
+        output_template = output_template + "|Domains:"
 
     results = [
         {
             "host": x["host"],
             "id": x["stdout"].strip().split("\n")[0],
             "name": x["stdout"].strip().split("\n")[1],
+            "domains":x["stdout"].strip().split("\n")[2:]
         }
         for x in results
         if x["stdout"]
@@ -147,5 +159,8 @@ if __name__ == "__main__":
                     subscription_name=record["name"],
                 )
             )
+            if args.domains:
+                for domain in record["domains"]:
+                    print(domain)
     else:
         print(f"No servers was found with {args.domainToFind} domain")
