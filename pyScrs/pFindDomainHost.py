@@ -122,6 +122,10 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
+    v = vars(args)
+    argsNumber = sum([1 for a in v.values() if a])
+    if argsNumber == 1:
+        args.verbose=args.name=args.id=args.domains=args.server=True
 
     results = ase.batch_ssh_command_result(
         SERVER_LIST,
@@ -132,14 +136,14 @@ if __name__ == "__main__":
         verbose=args.verbose,
     )
 
-    output_elements =[]
+    output_elements = []
     if args.server:
         if args.verbose:
             output_elements.append("Host:{hostname}")
         else:
             output_elements.append("{hostname}")
 
-    if args.verbose:
+    if args.verbose and args.server:
         print(
             f"Subscription with {args.domainToFind} domain was found on following servers:"
         )
@@ -155,7 +159,6 @@ if __name__ == "__main__":
             output_elements.append("Subscription Name:{subscription_name}")
         elif args.name:
             output_elements.append("{subscription_name}")
-
 
     results = [
         {
