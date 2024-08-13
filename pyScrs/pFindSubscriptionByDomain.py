@@ -145,7 +145,7 @@ if __name__ == "__main__":
 
     if args.verbose and args.server:
         print(
-            f"Subscription with {args.domainToFind} domain was found on following servers:\n"
+            f"\nSubscription with {args.domainToFind} domain was found on following servers:"
         )
 
     if args.id:
