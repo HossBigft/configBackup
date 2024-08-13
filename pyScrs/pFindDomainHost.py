@@ -125,7 +125,7 @@ if __name__ == "__main__":
     v = vars(args)
     argsNumber = sum([1 for a in v.values() if a])
     if argsNumber == 1:
-        args.verbose=args.name=args.id=args.domains=args.server=True
+        args.verbose = args.name = args.id = args.domains = args.server = True
 
     results = ase.batch_ssh_command_result(
         SERVER_LIST,
@@ -145,7 +145,7 @@ if __name__ == "__main__":
 
     if args.verbose and args.server:
         print(
-            f"Subscription with {args.domainToFind} domain was found on following servers:"
+            f"Subscription with {args.domainToFind} domain was found on following servers:\n"
         )
 
     if args.id:
@@ -186,5 +186,7 @@ if __name__ == "__main__":
                 print(record["name"])
                 for domain in record["domains"]:
                     print(domain)
+            if len(results) > 1:
+                print("-------")
     else:
         print(f"No servers was found with {args.domainToFind} domain")
