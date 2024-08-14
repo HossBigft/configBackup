@@ -75,6 +75,7 @@ PLESK_SERVER_LIST = (
     "cloud-3.hoster.kz.",
     "cloud-4.hoster.kz.",
     "cloud-5.hoster.kz.",
+    "acloud-1.hoster.kz"
 )
 
 async def _run_command_over_ssh(host, username, command, verbose: bool):
