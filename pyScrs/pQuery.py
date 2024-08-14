@@ -2,7 +2,6 @@ import async_ssh_executor as ase
 import pathlib
 import datetime
 import argparse
-import sys
 
 
 SSH_USER = "maximg"
@@ -32,7 +31,7 @@ if __name__ == "__main__":
     
     if not results:
         print(f"No results for query {args.command}")
-        sys.exit(1)
+        quit(1)
 
     statsFileName = (
         f"{args.fileName}{datetime.datetime.now().strftime('%Y%m%d_%H%M')}.txt"
