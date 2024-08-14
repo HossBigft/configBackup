@@ -224,6 +224,11 @@ matches:
     replace: "https://hoster.kz/support/ssl-certificates/555"
   - trigger: "\\ipmphp"
     replace: "https://hoster.kz/support/mail-hosted-by-plesk/5580/"
+  - trigger: "\\iovnc"
+    replace: "https://hoster.kz/support/oblachnyy-server/6788/?sphrase_id=4216"
+  - trigger: "\\iopow"
+    replace: "https://hoster.kz/support/oblachnyy-server/6787/?sphrase_id=4723"
+
 
 
 
