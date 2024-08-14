@@ -1,7 +1,6 @@
-import subprocess
+import async_ssh_executor as ase
 import re
 import pathlib
-import shlex
 import datetime
 import argparse
 
@@ -64,36 +63,29 @@ class pkzServer:
         return f"Name: {self.name}\nTotal space: {self.totalSpace}\nUsed space:{self.usedSpace}\nPlesk Version:{self.pleskVersion}"
 
 
-def __send_command_to_servers(cmd: str, sshUser: str, serverList: list) -> dict:
-    serverAnswers = {}
-    for host in serverList:
-        sshCommand = f"ssh {sshUser}@{host} {cmd}"
-        print(f"Querying {host} with: {cmd}")
-        sshOutput = subprocess.run(
-            shlex.split(sshCommand), capture_output=True, text=True
-        )
-        serverAnswers[host] = sshOutput.stdout
-    return serverAnswers
-
-
 def __createFreeSpaceServerList(sshUser: str, userHomeDirectory: str, fileName: str):
     statsFileName = f"{fileName}{datetime.datetime.now().strftime('%Y%m%d_%H%M')}.txt"
     statsDirName = "pkzStats"
-    statsDirPath = f"{USER_HOME_DIR}/{statsDirName}"
+    statsDirPath = f"{userHomeDirectory}/{statsDirName}"
     statsFilePath = f"{statsDirPath}/{statsFileName}"
     pathlib.Path(statsDirPath).mkdir(parents=True, exist_ok=True)
     print("Starting query...")
-    serverSpaceData = __send_command_to_servers("df -BG", sshUser, SERVER_LIST)
+    serverSpaceData = ase.batch_ssh_command_result(
+        server_list="plesk", username=sshUser, command="df -BG", verbose=True
+    )
 
-    for server, answer in serverSpaceData.items():
-        currAnswer = answer.splitlines()
+    for record in serverSpaceData:
+        server = record["host"]
+        currAnswer = record["stdout"].splitlines()
         currAnswer = [" ".join(line.split()) for line in currAnswer]
 
         currAnswer = re.search(
             r"(?:\S+\s+){5}\/var;|((?:\S+\s+){5}\/;)(?!.*\/var;)", ";".join(currAnswer)
         ).group(0)
         print(f"{server} answered {currAnswer}")
-        serverSpaceData[server] = currAnswer
+        record["stdout"] = currAnswer
+
+    serverSpaceData = {record["host"]: record["stdout"] for record in serverSpaceData}
 
     print("Sorting by used space %")
     serverSpaceData = dict(
@@ -106,22 +98,28 @@ def __createFreeSpaceServerList(sshUser: str, userHomeDirectory: str, fileName: 
     print(f"Saved in {statsFilePath}")
 
 
-def __createServerVersionList(user: str, userHomeDirectory: str, fileName: str):
+def __createServerVersionList(sshUser: str, userHomeDirectory: str, fileName: str):
     statsFileName = f"{fileName}{datetime.datetime.now().strftime('%Y%m%d_%H%M')}.txt"
     statsDirName = "pkzStats"
-    statsDirPath = f"{USER_HOME_DIR}/{statsDirName}"
+    statsDirPath = f"{userHomeDirectory}/{statsDirName}"
     statsFilePath = f"{statsDirPath}/{statsFileName}"
     pathlib.Path(statsDirPath).mkdir(parents=True, exist_ok=True)
     print("Starting query...")
-    serverVersionData = __send_command_to_servers("plesk -v", SSH_USER, SERVER_LIST)
+    serverVersionData = ase.batch_ssh_command_result(
+        server_list="plesk", username=sshUser, command="plesk -v", verbose=True
+    )
 
-    for server, answer in serverVersionData.items():
-        currAnswer = answer.splitlines()
+    for record in serverVersionData:
+        server = record["host"]
+        currAnswer = record["stdout"].splitlines()
         currAnswer = [" ".join(line.split()) for line in currAnswer]
         currAnswer = "".join(filter(lambda s: re.search(r"Plesk.*", s), currAnswer))
         print(f"{server} answered {currAnswer}")
-        serverVersionData[server] = currAnswer
+        record["stdout"] = currAnswer
 
+    serverVersionData = {
+        record["host"]: record["stdout"] for record in serverVersionData
+    }
     serverVersionData = {
         key: re.search(r"\d+(\.\d+)+", value).group(0)
         for key, value in serverVersionData.items()
