@@ -34,6 +34,7 @@ if __name__ == "__main__":
     results = ase.batch_ssh_command_result(
         server_list="plesk", username=SSH_USER, command=args.command, verbose=True
     )
+
     if args.oneline:
         results = [
             {"host": x["host"], "stdout": ";".join(x["stdout"].split())}
@@ -42,18 +43,19 @@ if __name__ == "__main__":
         ]
     else:
         results = [
-            {"host": x["host"], "stdout": x["stdout"].strip()}
-            for x in results
-            if x["stdout"]
+            {"host": x["host"], "stdout": x["stdout"]} for x in results if x["stdout"]
         ]
 
     if not results:
         print(f"No results for query {args.command}")
         quit(1)
 
-    statsFileName = (
-        f"{args.filename}{datetime.datetime.now().strftime('%Y%m%d_%H%M')}.txt"
-    )
+    if args.oneline:
+        statsFileName = f"{args.filename}_oneline{datetime.datetime.now().strftime('%Y%m%d_%H%M')}.txt"
+    else:
+        statsFileName = (
+            f"{args.filename}{datetime.datetime.now().strftime('%Y%m%d_%H%M')}.txt"
+        )
     statsDirPath = f"{pathlib.Path.home()}/{STATS_DIR_NAME}"
     statsFilePath = f"{statsDirPath}/{statsFileName}"
 
