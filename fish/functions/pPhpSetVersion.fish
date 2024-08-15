@@ -1,4 +1,4 @@
-function pSetPhpVersion --wraps==ssh --wraps=ssh
+function pPhpSetVersion --wraps=ssh
     set host (echo $argv[1])
     set domain (echo $argv[2])
     set phpVersion (echo $argv[3])
@@ -11,4 +11,5 @@ function pSetPhpVersion --wraps==ssh --wraps=ssh
     else
         printf "Available PHP versions: $availablePhpRegex"
     end
+
 end
