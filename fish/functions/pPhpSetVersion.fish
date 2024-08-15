@@ -6,7 +6,7 @@ function pPhpSetVersion --wraps=ssh
     if string match -aqr $phpVersion $availablePhpRegex
         set username (echo $domain|string replace "." "_" )
         if ssh maximg@$host "selectorctl --set-user-current=$phpVersion --user=$username"
-            printf "Set PHP %s for user %s" $phpVersion $username
+            printf "Set PHP %s for user %s\n" $phpVersion $username
         end
     else
         printf "Available PHP versions: $availablePhpRegex"
