@@ -23,12 +23,30 @@ if __name__ == "__main__":
         help="command that will be sent to Plesk servers",
     )
 
+    parser.add_argument(
+        "-o",
+        "--oneline",
+        action="store_true",
+        help="output will we written in singleline",
+    )
+
     args = parser.parse_args()
     results = ase.batch_ssh_command_result(
         server_list="plesk", username=SSH_USER, command=args.command, verbose=True
     )
-    results = [x for x in results if x["stdout"]]
-    
+    if args.oneline:
+        results = [
+            {"host": x["host"], "stdout": ";".join(x["stdout"].split())}
+            for x in results
+            if x["stdout"]
+        ]
+    else:
+        results = [
+            {"host": x["host"], "stdout": x["stdout"].strip()}
+            for x in results
+            if x["stdout"]
+        ]
+
     if not results:
         print(f"No results for query {args.command}")
         quit(1)
@@ -43,5 +61,5 @@ if __name__ == "__main__":
 
     with open(statsFilePath, "w") as statsFile:
         for record in results:
-            statsFile.write(f"{record['host']}|{record['stdout'].strip()}\n")
+            statsFile.write(f"{record['host']}|{record['stdout']}\n")
     print(f"Saved in {statsFilePath}")
