@@ -34,7 +34,7 @@ if __name__ == "__main__":
         quit(1)
 
     statsFileName = (
-        f"{args.fileName}{datetime.datetime.now().strftime('%Y%m%d_%H%M')}.txt"
+        f"{args.filename}{datetime.datetime.now().strftime('%Y%m%d_%H%M')}.txt"
     )
     statsDirPath = f"{pathlib.Path.home()}/{STATS_DIR_NAME}"
     statsFilePath = f"{statsDirPath}/{statsFileName}"
@@ -43,5 +43,5 @@ if __name__ == "__main__":
 
     with open(statsFilePath, "w") as statsFile:
         for record in results:
-            statsFile.write(f"{record['host']} {record['stdout']}\n")
+            statsFile.write(f"{record['host']}|{record['stdout'].strip()}\n")
     print(f"Saved in {statsFilePath}")
