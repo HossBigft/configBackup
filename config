@@ -339,3 +339,4 @@ Host p-acloud-1
 	HostName acloud-1.hoster.kz.
 	User maximg
 	IdentityFile ~/.ssh/id_rsa
+#apkz-5 does not exist
