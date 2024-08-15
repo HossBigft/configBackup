@@ -88,9 +88,9 @@ async def _run_command_over_ssh(host, username, command, verbose: bool):
         print(f"{host} {ssh_command}| Awaiting result...")
     stdout, stderr = await process.communicate()
     if verbose:
-        print(f"{host} answered: {stdout.decode()}")
+        print(f"{host} answered: {stdout.decode().strip()}")
 
-    return (host, stdout.decode(), stderr.decode(), process.returncode)
+    return (host, stdout.decode().strip(), stderr.decode().strip(), process.returncode)
 
 
 async def _batch_ssh_command_prepare(servers, username, command, verbose: bool):
