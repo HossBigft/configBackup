@@ -1,4 +1,4 @@
-function pGPHPVersion --wraps=ssh
+function pPhpVersion --wraps=ssh
     set host (echo $argv[1])
     set domain (echo $argv[2])
     set username (echo $domain|string replace "." "_")
