@@ -256,7 +256,7 @@ if len(serverData) == 0:
 
 serverData = dict(
     sorted(
-        serverData.items(), key=lambda item: item[1].getUsedSpacePercent(), reverse=True
+        serverData.items(), key=lambda item: round(item[1].getFreeSpace() - siteSize)
     )
 )
 print("server | Total | Used | Free | Used% | Host version >= Target version")
