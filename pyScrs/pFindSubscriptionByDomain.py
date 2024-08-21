@@ -102,7 +102,7 @@ if __name__ == "__main__":
             "name": x["stdout"].strip().split("\n")[1],
             "username": x["stdout"].strip().split("\n")[2].split("\t")[0],
             "userlogin": x["stdout"].strip().split("\n")[2].split("\t")[1],
-            "domains": x["stdout"].strip().split("\n")[4:],
+            "domains": x["stdout"].strip().split("\n")[3:],
         }
         for x in results
         if x["stdout"]
@@ -112,7 +112,6 @@ if __name__ == "__main__":
         print(
             f"\nSubscription with {args.domainToFind} domain was found on following servers:"
         )
-
     if results:
         for record in results:
             if args.name or args.id or args.server or args.user:
