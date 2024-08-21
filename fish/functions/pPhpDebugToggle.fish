@@ -8,6 +8,8 @@ function pPhpDebugToggle --wraps=ssh
         if string match -qr "no Result for" $host
             echo $host
             return 1
+        else 
+            echo Server $host
         end
     else if test $argNum -eq 2
         set domain (echo $argv[2])
