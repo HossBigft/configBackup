@@ -5,9 +5,12 @@ function pPhpExtensionsGet --wraps=ssh
     if test $argNum -eq 1
         set domain (echo $argv)
         set host (digsx $argv)
-        if string match -qr "no Result for" $host
-            echo $host
+        set host (_findPleskHost $domain)
+        if test -z "$host"
+            echo "Host for $domain was not found"
             return 1
+        else
+            echo "Host for $domain is $host"
         end
         
         set username (echo $domain|string replace "." "_")
