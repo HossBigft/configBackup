@@ -1,20 +1,11 @@
 function pQueryMailQueueSize
-    set currDate (date +%Y%m%d_%H%M)
-    set filename pleskMailQueueSize
-    set servers (cat ~/.ssh/config|grep -Po "(?<=Hostname ).*|(?<=HostName ).*"|grep -Pv "ns.*hoster.kz|((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}")
-
+    set  filename "pleskMailQueueSize"
+    set  currDate (date +%Y%m%d_%H%M)
+    set filePath ~/pkzStats/$filename$currDate.txt
     
-    echo "Starting queries"
-    mkdir -p ~/pkzStats && touch ~/pkzStats/$filename$currDate.txt
+    python3.12 /home/gmv/configBackup/pyScrs/pQuery.py $filename "mailq | grep -c '^[A-F0-9]'"
     
-    for server in $servers
-        echo "Querying $server"
-        set response (ssh maximg@$server "mailq | grep -c '^[A-F0-9]'")
-        echo "$server  answered $response"
-        echo $server\; Mail queue size $response >>~/pkzStats/$filename$currDate.txt
-    end
-    
-    echo Sorting
-    sort -t' ' -n -k5 -o ~/pkzStats/$filename$currDate.txt{,}
-    echo "Saved in ~/pkzStats/$filename$currDate.txt"
+    echo Sorting..
+    sort -t'|' -n -k2  --output $filePath{,}
+    echo "Sorted file saved in $filePath"
 end
