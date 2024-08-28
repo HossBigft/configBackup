@@ -18,6 +18,6 @@ function pGetDNSRecords --wraps=ssh
         return 1
     end
     
-    ssh maximg@$host "plesk bin dns --info $domain" | awk NF | head -n -1 | sort -k2; 
+    ssh $host "plesk bin dns --info $domain" | awk NF | head -n -1 | sort -k2; 
     return 0
 end
