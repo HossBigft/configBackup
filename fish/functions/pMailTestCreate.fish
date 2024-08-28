@@ -13,6 +13,9 @@ function pMailTestCreate --wraps=ssh
     else if test $argNum -eq 2
         set domain (echo $argv[2])
         set host (echo $argv[1])
+    else
+        echo Wrong input
+        return 1
     end
 
     set testMail "testhostermail"
@@ -20,4 +23,5 @@ function pMailTestCreate --wraps=ssh
     ssh maximg@$host "plesk bin mail --create $testMail@$domain -passwd \"$password\" -mailbox true -description \"$password\""
     echo "Login link:https://webmail.$domain/roundcube/index.php?_user=$testMail%40$domain"
     echo $password
+    return 1
 end
