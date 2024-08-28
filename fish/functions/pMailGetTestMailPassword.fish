@@ -1,4 +1,4 @@
-function pMailGetTestMailPassword
+function pMailGetTestMailPassword --wraps=ssh
     set argNum (count $argv)
 
     if test $argNum -eq 1
