@@ -1,4 +1,5 @@
 import asyncio
+
 PLESK_SERVER_LIST = (
     "cloud-1.hoster.kz.",
     "aturbo-2.hoster.kz.",
@@ -61,7 +62,6 @@ PLESK_SERVER_LIST = (
     "pkz55.hoster.kz.",
     "pkz56.hoster.kz.",
     "pkz57.hoster.kz.",
-    "pkz58.hoster.kz.",
     "pkz59.hoster.kz.",
     "pkz60.hoster.kz.",
     "pkz61.hoster.kz.",
@@ -75,8 +75,11 @@ PLESK_SERVER_LIST = (
     "cloud-3.hoster.kz.",
     "cloud-4.hoster.kz.",
     "cloud-5.hoster.kz.",
-    "acloud-1.hoster.kz."
+    "acloud-1.hoster.kz.",
 )
+
+TEST_SERVER_LIST = ("185.111.106.116", "185.129.51.20")
+
 
 async def _run_command_over_ssh(host, username, command, verbose: bool):
     ssh_command = f'ssh {username}@{host} "{command}"'
@@ -104,11 +107,16 @@ async def _batch_ssh_command_prepare(servers, username, command, verbose: bool):
     ]
 
 
-def batch_ssh_command_result(server_list, username, command, verbose=False):
-    serverList:list
-    if server_list=="plesk":
-        serverList=PLESK_SERVER_LIST
+def batch_ssh_command_result(server_list, username, command, verbose=False, test=False):
+    serverList: list
+    if server_list == "plesk":
+        serverList = PLESK_SERVER_LIST
     else:
-        serverList=server_list
-            
-    return asyncio.run(_batch_ssh_command_prepare(serverList, username, command, verbose))
+        serverList = server_list
+
+    if test:
+        serverList = TEST_SERVER_LIST
+        username = "root"
+    return asyncio.run(
+        _batch_ssh_command_prepare(serverList, username, command, verbose)
+    )
