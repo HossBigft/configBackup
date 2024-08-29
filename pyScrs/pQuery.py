@@ -29,11 +29,25 @@ if __name__ == "__main__":
         action="store_true",
         help="output will we written in singleline",
     )
+    
+    parser.add_argument(
+        "-t",
+        "--test",
+        action="store_true",
+        help="query will run on test hosts",
+    )
+    
+
 
     args = parser.parse_args()
-    results = ase.batch_ssh_command_result(
-        server_list="plesk", username=SSH_USER, command=args.command, verbose=True
-    )
+    if args.test:
+        results = ase.batch_ssh_command_result(
+            server_list="plesk", username=SSH_USER, command=args.command, verbose=True , test=True
+        )
+    else:
+        results = ase.batch_ssh_command_result(
+            server_list="plesk", username=SSH_USER, command=args.command, verbose=True
+        )
 
     if args.oneline:
         results = [
