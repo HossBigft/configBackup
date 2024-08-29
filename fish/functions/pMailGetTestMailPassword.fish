@@ -18,6 +18,7 @@ function pMailGetTestMailPassword --wraps=ssh
         return 1
     end
     set testMail "testhostermail"
-    echo  testhostermail@$domain password: (ssh maximg@$host  "plesk bin mail --info testhostermail@$domain"|grep Description|string replace -r ' +' ' '|string split " " -f2)
+    echo "Login link:https://webmail.$domain/roundcube/index.php?_user=$testMail%40$domain"
+    echo  password: (ssh maximg@$host  "plesk bin mail --info testhostermail@$domain"|grep Description|string replace -r ' +' ' '|string split " " -f2)
     return 0
 end
