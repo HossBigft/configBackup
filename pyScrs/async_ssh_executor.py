@@ -78,7 +78,7 @@ PLESK_SERVER_LIST = (
     "acloud-1.hoster.kz.",
 )
 
-TEST_SERVER_LIST = ("185.111.106.116", "185.129.51.20")
+TEST_SERVER_LIST = ("185.111.106.116", "185.129.51.20" ,"google.com")
 
 
 async def _run_command_over_ssh(host, username, command, verbose: bool, timeout=5):
