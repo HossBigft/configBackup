@@ -81,7 +81,7 @@ PLESK_SERVER_LIST = (
 TEST_SERVER_LIST = ("185.111.106.116", "185.129.51.20" ,"google.com")
 
 
-async def _run_command_over_ssh(host, username, command, verbose: bool, timeout=30):
+async def _run_command_over_ssh(host, username, command, verbose: bool):
     ssh_command = f'ssh {username}@{host} "{command}"'
     process = await asyncio.create_subprocess_shell(
         ssh_command, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
@@ -89,17 +89,11 @@ async def _run_command_over_ssh(host, username, command, verbose: bool, timeout=
 
     if verbose:
         print(f"{host} {ssh_command}| Awaiting result...")
+    stdout, stderr = await process.communicate()
+    if verbose:
+        print(f"{host} answered: {stdout.decode().strip()}")
 
-    try:
-        stdout, stderr = await asyncio.wait_for(process.communicate(), timeout)
-        if verbose:
-            print(f"{host} answered: {stdout.decode().strip()}")
-        return (host, stdout.decode().strip(), stderr.decode().strip(), process.returncode)
-    except asyncio.exceptions.TimeoutError:
-        if verbose:
-            print(f"{host} command timed out.")
-        return (host, 'host unavailable', '', -1) 
-
+    return (host, stdout.decode().strip(), stderr.decode().strip(), process.returncode)
 
 
 async def _batch_ssh_command_prepare(servers, username, command, verbose: bool):
