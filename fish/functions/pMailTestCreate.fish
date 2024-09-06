@@ -19,7 +19,7 @@ function pMailTestCreate --wraps=ssh
     end
 
     set testMail "testhostermail"
-    set password (pwgen | string split " " -f1)
+    set password (pwgen 20 | string split " " -f1)
     ssh maximg@$host "plesk bin mail --create $testMail@$domain -passwd \"$password\" -mailbox true -description \"$password\""
     echo "Login link:https://webmail.$domain/roundcube/index.php?_user=$testMail%40$domain"
     echo $password
