@@ -4,5 +4,5 @@ function pMailBlacklistDomain --wraps=ssh
 
     ssh $host "plesk bin mailserver --add-to-black-list $domain"
     printf "Domain %s was added to mail server spamlist on %s" $domain $host
-
+    ssh $host "plesk bin mailserver --info black-list" 
 end
