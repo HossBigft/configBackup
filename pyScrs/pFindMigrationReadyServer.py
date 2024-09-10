@@ -3,6 +3,7 @@ import re
 import pathlib
 import datetime
 import argparse
+import os
 
 
 class pkzServer:
@@ -181,6 +182,13 @@ parser.add_argument(
     metavar="size",
 )
 
+parser.add_argument(
+    "-r",
+    "--refresh",
+    action="store_false",
+    help="run query again instead of using existing result",
+)
+
 args = parser.parse_args()
 siteSize = float(args.siteSize)
 serverData = {}
@@ -188,24 +196,29 @@ versionDataPath: str
 spaceDataPath: str
 
 
-if not any(
-    pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob(
-        f"{SERVER_VERSION_FILENAME}{datetime.datetime.now().strftime('%Y%m%d')}*.txt"
+if (
+    not any(
+        pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob(
+            f"{SERVER_VERSION_FILENAME}{datetime.datetime.now().strftime('%Y%m%d')}*.txt"
+        )
     )
+    or not args.refresh
 ):
     print("No relevant file with server versions was found")
     __createServerVersionList(SSH_USER, USER_HOME_DIR, SERVER_VERSION_FILENAME)
-    versionDataPath = list(
+    versionDataPath = max(
         pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob(
             f"{SERVER_VERSION_FILENAME}{datetime.datetime.now().strftime('%Y%m%d')}*.txt"
-        )
-    )[-1]
+        ),
+        key=os.path.getctime,
+    )
 else:
-    versionDataPath = list(
+    versionDataPath = max(
         pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob(
             f"{SERVER_VERSION_FILENAME}{datetime.datetime.now().strftime('%Y%m%d')}*.txt"
-        )
-    )[-1]
+        ),
+        key=os.path.getctime,
+    )
 #    print(f"Found version datafile: {versionDataPath}")
 
 with open(versionDataPath) as v:
@@ -219,24 +232,29 @@ with open(versionDataPath) as v:
 if len(serverData) == 0:
     raise NoCompatiblePleskVersionError(args.targetVersion)
 
-if not any(
-    pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob(
-        f"{SERVER_FREE_SPACE_FILENAME}{datetime.datetime.now().strftime('%Y%m%d')}*.txt"
+if (
+    not any(
+        pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob(
+            f"{SERVER_FREE_SPACE_FILENAME}{datetime.datetime.now().strftime('%Y%m%d')}*.txt"
+        )
     )
+    or not args.refresh
 ):
     print("No relevant file with server space was found")
     __createFreeSpaceServerList(SSH_USER, USER_HOME_DIR, SERVER_FREE_SPACE_FILENAME)
-    spaceDataPath = list(
+    spaceDataPath = max(
         pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob(
             f"{SERVER_FREE_SPACE_FILENAME}{datetime.datetime.now().strftime('%Y%m%d')}*.txt"
-        )
-    )[-1]
+        ),
+        key=os.path.getctime,
+    )
 else:
-    spaceDataPath = list(
+    spaceDataPath = max(
         pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob(
             f"{SERVER_FREE_SPACE_FILENAME}{datetime.datetime.now().strftime('%Y%m%d')}*.txt"
-        )
-    )[-1]
+        ),
+        key=os.path.getctime,
+    )
 #    print(f"Found space datafile: {spaceDataPath}")
 
 with open(spaceDataPath) as f:
