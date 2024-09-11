@@ -5,8 +5,8 @@ if (($#>1)); then
 	exit 1
 fi
 declare -r logDirName=~/sshsessionlog/"${@}_$(date "+%Y%m%d")"
-declare -r logfile=$logDirName/"${@}_$(date "+%Y%m%d_%H%M%S").log"
-declare -r logfileFull=$logDirName/"${@}_$(date "+%Y%m%d_%H%M%S")_full.log"
+declare -r logfile=$logDirName/"${@}_$(date "+%Y%m%d_%H%M%S")_$$.log"
+declare -r logfileFull=$logDirName/"${@}_$(date "+%Y%m%d_%H%M%S")_full_$$.log"
 declare -r description="sshlog-${$} ${@}"
 declare -r TAB=$'\t'
 
