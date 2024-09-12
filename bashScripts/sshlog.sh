@@ -4,7 +4,7 @@ if (($#>1)); then
 	echo Error: Only one argument should be given
 	exit 1
 fi
-declare -r logDirName=~/sshsessionlog/"${@}_$(date "+%Y%m%d")"
+declare -r logDirName=~/sshsessionlog/$(date "+%Y%m%d")/"${@}_$(date "+%Y%m%d")"
 declare -r logfile=$logDirName/"${@}_$(date "+%Y%m%d_%H%M%S")_$$.log"
 declare -r logfileFull=$logDirName/"${@}_$(date "+%Y%m%d_%H%M%S")_full_$$.log"
 declare -r description="sshlog-${$} ${@}"
