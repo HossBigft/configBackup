@@ -247,7 +247,7 @@ Host p-pkz54 pkz54.hoster.kz.
 Host p-pkz55 pkz55.hoster.kz.
         HostName pkz55.hoster.kz.
         User maximg
-	IdentityFile ~/.ssh/id_rsa
+	IdentityFile ~/.ssh/id_hoster
 Host p-pkz56 pkz56.hoster.kz.
         HostName pkz56.hoster.kz.
         User maximg
