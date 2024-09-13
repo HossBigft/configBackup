@@ -38,7 +38,7 @@ matches:
 
   - trigger: "\\здр"
     replace: "Здравствуйте!"
-  - trigger: "\\пр"
+  - trigger: "\\при"
     replace: "Привет!"
   - trigger: "\\дд"
     replace: "Добрый день!"
@@ -178,7 +178,7 @@ matches:
   - trigger: "\\ipcsr"
     replace: "https://hoster.kz/support/ssl-certificates/5588/"
   - trigger: "\\imail"
-    replace: "https://hoster.kz/support/nastroyka-pochty-na-storonnie-servisy-yandeks-mail-ru-vk-workmail-google/5534/"
+    replace: "https://hoster.kz/support/nastroyka-pochty-na-storonnie-servisy-yandeks-mail-ru-vk-workmail-google/5570/"
   - trigger: "\\igoogle"
     replace: "https://hoster.kz/support/upravlenie-dns-zapisyami-domenov/6475/?sphrase_id=3005"
   - trigger: "\\iphp"
@@ -190,16 +190,16 @@ matches:
   - trigger: "\\mm"
     replace: "20mingot@gmail.com"
   - trigger: "\\ts"
-    replace: "test {{mydate}},{{mytime}}"
+    replace: "{{mydate}}_{{mytime}}"
     vars:
       - name: mytime
         type: date
         params:
-          format: "%_H:%M:%S"
+          format: "%_H%M%S"
       - name: mydate
         type: date
         params:
-          format: "%m/%d/%Y"
+          format: "%m%d%Y"
   - trigger: "\\Вмжу"
     replace: "Вы можете в этом убедиться "
   - trigger: "\\вмжу"
@@ -230,6 +230,46 @@ matches:
     replace: "https://hoster.kz/support/oblachnyy-server/6787/?sphrase_id=4723"
   - trigger: "\\itilda"
     replace: "https://hoster.kz/support/upravlenie-dns-zapisyami-domenov/5992/"
+  - trigger: "\\Нп"
+    replace: "Напишите, пожалуйста, "
+  - trigger: "\\нп"
+    replace: "напишите, пожалуйста, "
+  - trigger: "\\Прп"
+    replace: "Пришлите, пожалуйста, "
+  - trigger: "\\прп"
+    replace: "пришлите, пожалуйста, "
+  - trigger: "=ms"
+    replace: "mailq | grep '^ *[0-9A-F]\\{10,\\} ' | awk '{print $7}' | sort | uniq -c | sort -n"
+  - trigger: "\\sig"
+    replace: "maximg_{{mydate}}_{{mytime}}"
+    vars:
+      - name: mytime
+        type: date
+        params:
+          format: "%_H%M"
+      - name: mydate
+        type: date
+        params:
+          format: "%m%d%Y"
+  - trigger: "\\сайтс"
+    replace: |
+     Здравствуйте.
+
+       С сайта {{clipb}}  идет спам рассылка.
+       Рассылка идет от скрипта
+
+
+       Вынуждены были ограничить отправку почты с сайта, чтобы остановить рассылку.
+       Вы можете просканировать сайт антивирусом, инструкция: https://hoster.kz/support/rabota-s-saytom-v-paneli-plesk/5572/
+    vars:
+      - name: "clipb"
+        type: "clipboard"
+
+  - trigger: "=mrmd"
+    replace: "mailq | tail -n +2 | head -n -2 | grep -v '^ *(' | awk 'BEGIN { RS = \"\" } { if (($7 == \"SENDER@EMAIL.COM\")) print $1 }' | tr -d '*!'| postsuper -d -  "
+  - trigger: "=pm"
+    replace: "/usr/local/psa/admin/bin/mail_auth_view"
+
 
 
 
