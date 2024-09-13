@@ -1,8 +1,8 @@
-function pPHPMailToggle --wraps=ssh
+function pPhpMailToggle --wraps=ssh
     set argNum (count $argv)
 
     if test $argNum -eq 1
-        set domain nodejs.gruzo.kz
+        set domain (echo $argv[1])
         set host (_findPleskHost $domain)
         if test $status -eq 1
             echo "Host for $domain was not found"
@@ -28,5 +28,4 @@ function pPHPMailToggle --wraps=ssh
     else
      echo \$domain does not exist
     fi"
-
 end
