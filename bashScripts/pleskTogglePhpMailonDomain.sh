@@ -8,4 +8,6 @@ if [ -f $phpIniPath ]; then
 
         printf "%s: PHP mail is disabled. \nExecute commands below to enable it back: \nsed -i '/^disable_functions =/s/,mail//g' %s && plesk bin site --update-php-settings %s -settings %s\n" $domain $phpIniPath $domain $phpIniPath
     fi;
+    else
+     echo \$domain does not exist
 fi;
