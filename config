@@ -1,4 +1,9 @@
 Include conf.d/*
+Host *
+	ControlMaster auto
+	ControlPath /tmp/%r@%h:%p
+    ServerAliveInterval 11
+    ControlPersist 10m 
 Host ogruzo
 	HostName 185.129.51.20
 	User root
