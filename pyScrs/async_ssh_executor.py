@@ -92,10 +92,11 @@ async def _run_command_over_ssh(host, username, command, verbose: bool , timeout
     stdout, stderr = await process.communicate()
     if verbose:
         succesfulAnswer = stdout.decode().strip()
-        if succesfulAnswer: 
-            print(f"{host} answered: {succesfulAnswer}")
+        failAnswer = stderr.decode().strip()
+        if failAnswer: 
+            print(f"{host} failed: {failAnswer}")
         else:
-            print(f"{host} failed: {stderr.decode().strip()}")
+            print(f"{host} answered: {succesfulAnswer}")
 
     return (host, stdout.decode().strip(), stderr.decode().strip(), process.returncode)
 
