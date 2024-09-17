@@ -81,8 +81,8 @@ PLESK_SERVER_LIST = (
 TEST_SERVER_LIST = ("185.111.106.116", "185.129.51.20" ,"google.com")
 
 
-async def _run_command_over_ssh(host, username, command, verbose: bool):
-    ssh_command = f'ssh {username}@{host} "{command}"'
+async def _run_command_over_ssh(host, username, command, verbose: bool , timeout=5):
+    ssh_command = f'ssh  -o PasswordAuthentication=no -o ConnectTimeout={timeout} {username}@{host} "{command}"'
     process = await asyncio.create_subprocess_shell(
         ssh_command, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
     )
@@ -91,7 +91,11 @@ async def _run_command_over_ssh(host, username, command, verbose: bool):
         print(f"{host} {ssh_command}| Awaiting result...")
     stdout, stderr = await process.communicate()
     if verbose:
-        print(f"{host} answered: {stdout.decode().strip()}")
+        succesfulAnswer = stdout.decode().strip()
+        if succesfulAnswer: 
+            print(f"{host} answered: {succesfulAnswer}")
+        else:
+            print(f"{host} failed: {stderr.decode().strip()}")
 
     return (host, stdout.decode().strip(), stderr.decode().strip(), process.returncode)
 
