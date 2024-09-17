@@ -48,7 +48,6 @@ if __name__ == "__main__":
         results = ase.batch_ssh_command_result(
             server_list="plesk", username=SSH_USER, command=args.command, verbose=True
         )
-
     if args.oneline:
         results = [
             {"host": x["host"], "stdout": ";".join(x["stdout"].split())}
@@ -57,7 +56,7 @@ if __name__ == "__main__":
         ]
     else:
         results = [
-            {"host": x["host"], "stdout": x["stdout"]} for x in results if x["stdout"]
+            {"host": x["host"], "stdout": x["stdout"] , "stderr": x["stderr"]} for x in results if x["stdout"] or x["stderr"]
         ]
 
     if not results:
@@ -77,5 +76,8 @@ if __name__ == "__main__":
 
     with open(statsFilePath, "w") as statsFile:
         for record in results:
-            statsFile.write(f"{record['host']}|{record['stdout']}\n")
-    print(f"Saved in {statsFilePath}")
+            if record['stdout']:
+                statsFile.write(f"{record['host']}[0]|{record['stdout']}\n")
+            elif record['stderr']:
+                statsFile.write(f"{record['host']}[1]|{record['stderr']}\n")
+    print(f"Saved in\n{statsFilePath}")
