@@ -86,7 +86,7 @@ def __createFreeSpaceServerList(sshUser: str, userHomeDirectory: str, fileName: 
         print(f"{server} answered {currAnswer}")
         record["stdout"] = currAnswer
 
-    serverSpaceData = {record["host"]: record["stdout"] for record in serverSpaceData}
+    serverSpaceData = {record["host"]: record["stdout"] for record in serverSpaceData if record["stdout"]}
 
     print("Sorting by used space %")
     serverSpaceData = dict(
@@ -119,7 +119,7 @@ def __createServerVersionList(sshUser: str, userHomeDirectory: str, fileName: st
         record["stdout"] = currAnswer
 
     serverVersionData = {
-        record["host"]: record["stdout"] for record in serverVersionData
+        record["host"]: record["stdout"] for record in serverVersionData if record["stdout"]
     }
     serverVersionData = {
         key: re.search(r"\d+(\.\d+)+", value).group(0)
