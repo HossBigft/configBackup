@@ -3,13 +3,15 @@ function _pDomainToCageFsUsername
     argparse -n _pDomainToCageFsUsername $options -- $argv
     set argNum (count $argv)
 
-    if test $argNum -eq 2 || test $argNum -eq 1
+    if test $argNum -le 2 
         if  set -q _flag_reverse
          echo $argv | string replace -ar "_" "."
         else
-            string shorten -m12 -c "" $argv | string replace -ar "\." "_"
+           string replace ".webspace" "" $argv | string shorten -m12 -c "" | string replace -ar "\." "_"
         end
+        return 0
     else
         echo Too much arguments
+        return 1
     end
 end
