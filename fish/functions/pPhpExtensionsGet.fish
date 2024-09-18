@@ -13,14 +13,14 @@ function pPhpExtensionsGet --wraps=ssh
             echo "Host for $domain is $host"
         end
         
-        set username (echo $domain|string replace -ar "\.|-" "_")
+        set username (_pDomainToCageFsUsername $domain)
         ssh maximg@$host "curPHPVersion=\$(selectorctl --user-summary --user=$username|grep s|cut -d \" \" -f1)&& selectorctl --list-user-extensions --version=\$curPHPVersion --user=$username"
         return 0
         
     else if test $argNum -eq 2
         set host (echo $argv[1])
         set domain (echo $argv[2])
-        set username (echo $domain|string replace -ar "\.|-" "_")
+        set username (_pDomainToCageFsUsername $domain)
         ssh maximg@$host "curPHPVersion=\$(selectorctl --user-summary --user=$username|grep s|cut -d \" \" -f1)&& selectorctl --list-user-extensions --version=\$curPHPVersion --user=$username"
         return 0
         
@@ -29,7 +29,7 @@ function pPhpExtensionsGet --wraps=ssh
         if string match -aqr $phpVersion $availablePhpRegex
             set host (echo $argv[1])
             set domain (echo $argv[2])
-            set username (echo $domain|string replace -ar "\.|-" "_")
+            set username (_pDomainToCageFsUsername $domain)
             ssh maximg@$host "selectorctl --list-user-extensions --version=$phpVersion --user=$username"
             return 0
         else
