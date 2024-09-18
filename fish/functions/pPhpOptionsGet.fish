@@ -4,7 +4,7 @@ function pPhpOptionsGet --wraps=ssh
 
     if test $argNum -eq 1
         set domain (echo $argv)
-        set username (echo $domain|string replace -ar "\.|-" "_")
+        set username (_pDomainToCageFsUsername $domain)
         set host (_findPleskHost $domain)
         if test -z "$host"
             echo "Host for $domain was not found"
@@ -14,7 +14,7 @@ function pPhpOptionsGet --wraps=ssh
         end
     else if test $argNum -eq 2
         set domain (echo $argv[2])
-        set username (echo $domain|string replace -ar "\.|-" "_")
+        set username (_pDomainToCageFsUsername $domain)
         set host (echo $argv[1])
     end
     
