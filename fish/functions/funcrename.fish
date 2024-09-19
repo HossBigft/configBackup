@@ -1,4 +1,4 @@
-function funcrename
+function funcrename --wraps=funced
     set -l old_func $argv[1]
     set -l new_func $argv[2]
     if test $old_func = $new_func

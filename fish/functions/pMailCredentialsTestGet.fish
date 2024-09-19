@@ -1,4 +1,4 @@
-function pMailGetTestCredentials
+function pMailCredentialsTestGet
     set argNum (count $argv)
 
     if test $argNum -eq 1
