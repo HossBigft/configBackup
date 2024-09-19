@@ -1,4 +1,4 @@
-function pDnsGetRecords
+function pDnsGetRecords --wraps=ssh
     set argNum (count $argv)
     
     if test $argNum -eq 1
