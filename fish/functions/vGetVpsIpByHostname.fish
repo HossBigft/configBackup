@@ -14,6 +14,7 @@ function vGetVpsIpByHostname
         echo "Host $vpsHostName was not found"
         return 1
     else
-        echo $requestResult | jello  -rl '[ip for server_record in _.vs.values() for ip in server_record.ips.values()]' 
+        echo $requestResult | jello  -rl '[ip for server_record in _.vs.values() for ip in server_record.ips.values()]'
+        return 0 
     end
 end
