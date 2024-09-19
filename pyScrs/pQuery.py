@@ -29,20 +29,22 @@ if __name__ == "__main__":
         action="store_true",
         help="output will we written in singleline",
     )
-    
+
     parser.add_argument(
         "-t",
         "--test",
         action="store_true",
         help="query will run on test hosts",
     )
-    
-
 
     args = parser.parse_args()
     if args.test:
         results = ase.batch_ssh_command_result(
-            server_list="plesk", username=SSH_USER, command=args.command, verbose=True , test=True
+            server_list="plesk",
+            username=SSH_USER,
+            command=args.command,
+            verbose=True,
+            test=True,
         )
     else:
         results = ase.batch_ssh_command_result(
@@ -56,7 +58,9 @@ if __name__ == "__main__":
         ]
     else:
         results = [
-            {"host": x["host"], "stdout": x["stdout"] , "stderr": x["stderr"]} for x in results if x["stdout"] or x["stderr"]
+            {"host": x["host"], "stdout": x["stdout"], "stderr": x["stderr"]}
+            for x in results
+            if x["stdout"] or x["stderr"]
         ]
 
     if not results:
@@ -73,11 +77,14 @@ if __name__ == "__main__":
     statsFilePath = f"{statsDirPath}/{statsFileName}"
 
     pathlib.Path(statsDirPath).mkdir(parents=True, exist_ok=True)
-
     with open(statsFilePath, "w") as statsFile:
         for record in results:
-            if record['stdout']:
-                statsFile.write(f"{record['host']}[0]|{record['stdout']}\n")
-            elif record['stderr']:
-                statsFile.write(f"{record['host']}[1]|{record['stderr']}\n")
+            if record["stdout"] and not record["stderr"]:
+                statsFile.write(f"[0]{record['host']}|{record['stdout']}\n")
+            elif record["stderr"] and not record["stdout"]:
+                statsFile.write(f"[1]{record['host']}|{record['stderr']}\n")
+            elif record["stdout"] and record["stderr"]:
+                statsFile.write(
+                    f"[01]{record['host']}|{record['stdout']}||{record['stderr']}\n"
+                )
     print(f"Saved in\n{statsFilePath}")
