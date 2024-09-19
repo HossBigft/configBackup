@@ -76,15 +76,16 @@ def __createFreeSpaceServerList(sshUser: str, userHomeDirectory: str, fileName: 
     )
 
     for record in serverSpaceData:
-        server = record["host"]
-        currAnswer = record["stdout"].splitlines()
-        currAnswer = [" ".join(line.split()) for line in currAnswer]
+        if record["stdout"]:
+            server = record["host"]
+            currAnswer = record["stdout"].splitlines()
+            currAnswer = [" ".join(line.split()) for line in currAnswer]
 
-        currAnswer = re.search(
-            r"(?:\S+\s+){5}\/var;|((?:\S+\s+){5}\/;)(?!.*\/var;)", ";".join(currAnswer)
-        ).group(0)
-        print(f"{server} answered {currAnswer}")
-        record["stdout"] = currAnswer
+            currAnswer = re.search(
+                r"(?:\S+\s+){5}\/var;|((?:\S+\s+){5}\/;)(?!.*\/var;)", ";".join(currAnswer)
+            ).group(0)
+            print(f"{server} answered {currAnswer}")
+            record["stdout"] = currAnswer
 
     serverSpaceData = {record["host"]: record["stdout"] for record in serverSpaceData if record["stdout"]}
 
@@ -111,12 +112,13 @@ def __createServerVersionList(sshUser: str, userHomeDirectory: str, fileName: st
     )
 
     for record in serverVersionData:
-        server = record["host"]
-        currAnswer = record["stdout"].splitlines()
-        currAnswer = [" ".join(line.split()) for line in currAnswer]
-        currAnswer = "".join(filter(lambda s: re.search(r"Plesk.*", s), currAnswer))
-        print(f"{server} answered {currAnswer}")
-        record["stdout"] = currAnswer
+        if record["stdout"]:
+            server = record["host"]
+            currAnswer = record["stdout"].splitlines()
+            currAnswer = [" ".join(line.split()) for line in currAnswer]
+            currAnswer = "".join(filter(lambda s: re.search(r"Plesk.*", s), currAnswer))
+            print(f"{server} answered {currAnswer}")
+            record["stdout"] = currAnswer
 
     serverVersionData = {
         record["host"]: record["stdout"] for record in serverVersionData if record["stdout"]
