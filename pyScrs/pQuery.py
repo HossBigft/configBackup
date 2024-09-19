@@ -87,4 +87,4 @@ if __name__ == "__main__":
                 statsFile.write(
                     f"[01]{record['host']}|{record['stdout']}||{record['stderr']}\n"
                 )
-    print(f"Saved in\n{statsFilePath}")
+    print(f"Saved in {statsFilePath}")
