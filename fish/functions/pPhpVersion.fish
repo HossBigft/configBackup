@@ -1,4 +1,4 @@
-function pPhpVersion --wraps=ssh
+function pPhpVersion --wraps=ssh --description "Returns current PHP version set in PHP Selector. Takes either hostname and subscription name or tries to find host by subscription name"
     set argNum (count $argv)
 
     if test $argNum -eq 1
