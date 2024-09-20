@@ -1,4 +1,4 @@
-function nsGetZoneMaster
+function nsZoneMaster
     set dnsServers (cat ~/.ssh/config|grep -Po "(?<=Hostname ).*|(?<=HostName ).*"|grep -Po "ns.*")
     set domains (echo $argv | string split " ")
     set domainCount (count $domains)
