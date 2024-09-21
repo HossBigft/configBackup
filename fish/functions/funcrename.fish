@@ -2,15 +2,11 @@ function funcrename --wraps=funced
     set -l old_func $argv[1]
     set -l new_func $argv[2]
     if test $old_func = $new_func
-        return
+        echo The function is alredy named $new_func
+        return 1
     end
 
-    functions --copy $old_func $new_func
-    functions --erase $old_func
-
-    set -l saved_func $HOME/.config/fish/functions/$old_func.fish
-    if test -f $saved_func
-        funcsave $new_func
-        rm $saved_func
-    end
+    set old_func_path (functions --details $old_func)
+    set new_func_path (string replace -a $old_func $new_func $old_func_path)
+    string replace -a $old_func $new_func (cat $old_func_path)>$new_func_path && rm $old_func_path
 end
