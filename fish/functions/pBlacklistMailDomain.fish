@@ -1,4 +1,4 @@
-function pMailBlacklistDomain --wraps=ssh
+function pBlacklistMailDomain --wraps=ssh
     set host (echo $argv[1])
     set domain (echo $argv[2])
 
