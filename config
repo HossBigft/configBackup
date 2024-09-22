@@ -1,9 +1,10 @@
 Include conf.d/*
 Host *
 	ControlMaster auto
-	ControlPath /tmp/%r@%h:%p
-    ServerAliveInterval 11
-    ControlPersist 30m 
+        ControlPath /tmp/%r@%h:%p
+        ServerAliveInterval 11
+        ControlPersist 30m 
+        ConnectTimeout=5
 Host ogruzo
 	HostName 185.129.51.20
 	User root
@@ -317,15 +318,15 @@ Host p-cloud-4 cloud-4.hoster.kz.
 		Hostname cloud-4.hoster.kz.
 		User maximg
     IdentityFile ~/.ssh/id_rsa
-Host ns1
+Host ns1 ns3.hoster.kz.
 		Hostname ns1.hoster.kz.
 		User root
     IdentityFile ~/.ssh/id_rsa
-Host ns2
+Host ns2 ns3.hoster.kz.
 		Hostname ns2.hoster.kz.
 		User root
     IdentityFile ~/.ssh/id_rsa
-Host ns3
+Host ns3 ns3.hoster.kz.
 		Hostname ns3.hoster.kz.
 		User root
     IdentityFile ~/.ssh/id_rsa
