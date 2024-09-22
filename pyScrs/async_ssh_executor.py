@@ -77,6 +77,11 @@ PLESK_SERVER_LIST = (
     "cloud-5.hoster.kz.",
     "acloud-1.hoster.kz.",
 )
+DNS_SERVER_LIST = (
+    "ns1.hoster.kz.",
+    "ns2.hoster.kz.",
+    "ns3.hoster.kz."
+)
 
 TEST_SERVER_LIST = ("185.111.106.116", "185.129.51.20" ,"google.com")
 
@@ -113,11 +118,13 @@ async def _batch_ssh_command_prepare(servers, username, command, verbose: bool):
 
 
 def batch_ssh_command_result(server_list, username, command, verbose=False, test=False):
-    serverList: list
-    if server_list == "plesk":
-        serverList = PLESK_SERVER_LIST
-    else:
-        serverList = server_list
+    match server_list:
+        case "plesk":
+            serverList = PLESK_SERVER_LIST
+        case "DNS":
+            serverList = DNS_SERVER_LIST
+        case _:
+            serverList = server_list
 
     if test:
         serverList = TEST_SERVER_LIST
