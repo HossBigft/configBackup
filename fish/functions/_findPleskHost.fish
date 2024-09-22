@@ -2,7 +2,7 @@ function _findPleskHost --description "Tries to find Plesk server hostname by gi
     set domain (echo $argv[1])
     set host (digsx $domain)
     if string match -rq "no Result for" $host; or not string match -rq "hoster.kz" $host
-        set host (digsx (nsGetZoneMaster $domain))
+        set host (digsx (nsZoneMaster $domain))
         if string match -rq "no Result for" $host; or not string match -rq "hoster.kz" $host
             set host (python3.12 /home/gmv/configBackup/pyScrs/pFindSubscriptionByDomain.py -s $domain|string collect)
             
