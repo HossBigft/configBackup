@@ -8,7 +8,9 @@ function nsZoneMaster --description "Returns zone master value from DNS servers 
     set domainCount (count $domains)
 
     if test $domainCount -eq 1
-        echo Querying Hoster.KZ DNS servers about $argv
+        if not set -q _flag_quiet
+            echo Querying Hoster.KZ DNS servers about $argv
+        end
         for host in $dnsServers
             set zoneMaster (ssh $host "cat /var/opt/isc/scls/isc-bind/zones/_default.nzf"| grep \"$argv\" | grep -Po "((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}")
 
