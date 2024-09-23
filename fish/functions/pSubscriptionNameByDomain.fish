@@ -1,4 +1,4 @@
-function pSubscriptionNameByDomain --wraps=ssh
+function pSubscriptionNameByDomain --wraps=ssh --description "Returns subscription name of given domain. Can search subscription host"
     set -l options q/quiet
     argparse -n pSubscriptionNameByDomain $options -- $argv
     or return
