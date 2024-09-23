@@ -1,6 +1,6 @@
-function pGetSubscriptionIDByDomain --wraps=ssh
+function pSubscriptionIDByDomain --wraps=ssh
     set -l options q/quiet
-    argparse -n pGetSubscriptionIDByDomain $options -- $argv
+    argparse -n pSubscriptionIDByDomain $options -- $argv
     or return
 
     set argNum (count $argv)
