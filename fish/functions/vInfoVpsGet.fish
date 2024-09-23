@@ -14,7 +14,7 @@ function vInfoVpsGet  --description "Returns info about given Virtualizor VPS by
         echo "Host $vpsHostName was not found"
         return 1
     else
-        set parsedResult (echo $requestResult | jello -lr '[f"{k}:{v}" for server_record in _.vs.values() for k,v in server_record.iteritems() if k in ["hostname", "vpsid", "os_name", "space", "ram", "cores", "network_speed", "upload_speed", "suspended", "nic_type", "cpu_mode", "server_name", "email"] or (k == "ips" and {f"ips:{ip}" for ip in v.values()})]')
+        set parsedResult (echo $requestResult | jello -lr '[f"{k}:{v}" for server_record in _.vs.values() for k,v in server_record.iteritems() if k in ["hostname", "vps_name", "os_name", "space", "ram", "cores", "network_speed", "upload_speed", "suspended", "nic_type", "cpu_mode", "server_name", "email"] or (k == "ips" and {f"ips:{ip}" for ip in v.values()})]')
         set vpsId (string split ":" -f2 $parsedResult[1])
         set vpsHostname (string split ":" -f2 $parsedResult[2])
         set os_name (string split ":" -f2 $parsedResult[3])
@@ -30,6 +30,7 @@ function vInfoVpsGet  --description "Returns info about given Virtualizor VPS by
         set email (string split ":" -f2 $parsedResult[13])
         set ip (string split ":" -f2 $parsedResult[14]|grep -Po "((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}")
         echo IP\|$ip
+        echo ID\|$vpsId
         echo Hostname\|$vpsHostname
         echo User\|$email
         echo Is suspended\|$suspended
