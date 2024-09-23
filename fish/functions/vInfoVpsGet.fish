@@ -34,6 +34,7 @@ function vInfoVpsGet  --description "Returns info about given Virtualizor VPS by
         echo Hostname\|$vpsHostname
         echo User\|$email
         echo Is suspended\|$suspended
+        echo Server\|$server_name
         echo OS\|$os_name
         echo NIC\|$nic_type
         echo Space\|$space
