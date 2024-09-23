@@ -4,9 +4,9 @@ function pMailTestCreate --wraps=ssh --description "Creates test mail account fo
     or return
 
     set argNum (count $argv)
-    set testMail testhostermail
+    set testMail "testhostermail"
 
-    if test $argNum -eq 1
+    if test $argNum -eq 1 
         set domain (echo $argv)
         set host (_findPleskHost $domain)
         if test -z "$host"
@@ -15,7 +15,7 @@ function pMailTestCreate --wraps=ssh --description "Creates test mail account fo
         else
             echo "Host for $domain is $host"
         end
-    else if test $argNum -eq 2
+    else if test $argNum -eq 2 
         set domain (echo $argv[2])
         set host (echo $argv[1])
     else
@@ -23,9 +23,8 @@ function pMailTestCreate --wraps=ssh --description "Creates test mail account fo
         return 1
     end
     if set -q _flag_remove
-        ssh host "plesk bin mail --remove $testMail@$domain"
-        if test $status eq 0
-            echo Email $testMail@$domain is removed
+        ssh $host "plesk bin mail --remove $testMail@$domain"
+        if test $status -eq 0
             return 0
         else
             return 1
@@ -33,8 +32,8 @@ function pMailTestCreate --wraps=ssh --description "Creates test mail account fo
     end
 
 
-    set password (ssh $host  "plesk bin mail --info $testMail@$domain" | grep Description | string replace -r ' +' ' ' | string split " " -f2)
-    if test -n "$password"
+    set password (ssh $host  "plesk bin mail --info $testMail@$domain" 2>/dev/null| grep Description | string replace -r ' +' ' ' | string split " " -f2 )
+    if test $status -eq 1
         set password (pwgen 20 | string split " " -f1)
         ssh $host "plesk bin mail --create $testMail@$domain -passwd \"$password\" -mailbox true -description \"$password\""
         if test $status -eq 0
