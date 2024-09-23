@@ -1,4 +1,4 @@
-function pMailTestRemove --wraps=ssh
+function LEGACY_pMailTestRemove --wraps=ssh
     set argNum (count $argv)
 
     if test $argNum -eq 1
