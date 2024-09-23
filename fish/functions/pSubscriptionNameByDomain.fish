@@ -1,6 +1,6 @@
 function pSubscriptionNameByDomain --wraps=ssh
     set -l options q/quiet
-    argparse -n pMailTestCreate $options -- $argv
+    argparse -n pSubscriptionNameByDomain $options -- $argv
     or return
 
     set argNum (count $argv)
