@@ -68,7 +68,7 @@ Host p-pkz58 pkz58.hoster.kz.
         HostName pkz58.hoster.kz.
         User maximg
 	IdentityFile ~/.ssh/id_rsa
-Host p-cloud-2 cloud-2.hoster.kz
+Host p-cloud-2 cloud-2.hoster.kz.
         HostName cloud-2.hoster.kz
         User maximg
 	IdentityFile ~/.ssh/id_rsa
