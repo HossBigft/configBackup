@@ -40,7 +40,7 @@ def main():
 
     results = []
     for domain in domain_list:
-        getZoneMasterCmd = f"cat /var/opt/isc/scls/isc-bind/zones/_default.nzf| grep {domain} | grep -Po '((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}')"
+        getZoneMasterCmd = f"cat /var/opt/isc/scls/isc-bind/zones/_default.nzf| grep {domain} | grep -Po '((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\\b){{4}}' | head -n1"
         dnsAnswers = []
         if args.test:
             dnsAnswers = ase.batch_ssh_command_result(
