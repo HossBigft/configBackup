@@ -1,4 +1,4 @@
-function pSubscriptionIDByDomain --wraps=ssh
+function pSubscriptionIDByDomain --wraps=ssh --description "Returns subscription id of given domain. Can search hosts"
     set -l options q/quiet
     argparse -n pSubscriptionIDByDomain $options -- $argv
     or return
