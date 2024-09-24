@@ -1,4 +1,8 @@
 function pPhpVersion --wraps=ssh --description "Returns current PHP version set in PHP Selector. Takes either hostname and subscription name or tries to find host by subscription name"
+    set -l options l/literal
+    argparse -n pPhpVersion $options -- $argv
+    or return
+    
     set argNum (count $argv)
 
     if test $argNum -eq 1
@@ -13,7 +17,13 @@ function pPhpVersion --wraps=ssh --description "Returns current PHP version set 
         end
     else if test $argNum -eq 2
         set domain (echo $argv[2])
-        set username (_pDomainToCageFsUsername $domain)
+        
+        if set -q _flag_literal
+            set username (echo $domain)
+        else    
+            set username (_pDomainToCageFsUsername $domain)
+        end
+        
         set host (echo $argv[1])
     end
 
