@@ -6,11 +6,10 @@ SSH_USER = "root"
 SERVER_LIST = "DNS"
 
 
-def getDomainZoneMaster(
-    domain_list: list, verbosity_flag=True, test_flag=False
-):
+def getDomainZoneMaster(*domains, verbosity_flag=True, test_flag=False):
     results = []
-    for domain in domain_list:
+    for domain in domains:
+        domain = "".join(domain)
         getZoneMasterCmd = f"cat /var/opt/isc/scls/isc-bind/zones/_default.nzf| grep {domain} | grep -Po '((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\\b){{4}}' | head -n1"
         dnsAnswers = []
         if test_flag:
@@ -30,17 +29,10 @@ def getDomainZoneMaster(
                 verbose=verbosity_flag,
             )
         results.append({"domain": f"{domain}", "answers": dnsAnswers})
-
     if verbosity_flag:
-        for result in results:
-            print(result["domain"])
-            for answer in result["answers"]:
-                print(f"{answer['host']}|{answer['stdout']}")
-        sys.exit(0)
+        return results
     else:
-        for result in results:
-            print("|".join(set([host["stdout"] for host in result["answers"]])))
-        sys.exit(0)
+        return set([host["stdout"] for result in results for host in result["answers"]])
 
 
 def main():
@@ -71,16 +63,26 @@ def main():
 
     args = parser.parse_args()
     verbosity_flag = args.verbose
+
     if args.domains:
         domain_list = args.domains.splitlines()
     else:
         domain_list = sys.stdin.read().strip().splitlines()
 
-    getDomainZoneMaster(
-        domain_list=domain_list,
-        verbosity_flag=verbosity_flag,
-        test_flag=args.test
+    results = getDomainZoneMaster(
+        domain_list, verbosity_flag=verbosity_flag, test_flag=args.test
     )
+
+    if verbosity_flag:
+        for result in results:
+            print(result["domain"])
+            for answer in result["answers"]:
+                print(f"{answer['host']}|{answer['stdout']}")
+        sys.exit(0)
+    else:
+        for result in results:
+            print("".join(result))
+        sys.exit(0)
 
 
 if __name__ == "__main__":
