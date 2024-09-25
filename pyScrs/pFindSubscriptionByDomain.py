@@ -117,7 +117,7 @@ def main():
     if results:
         if args.verbose and args.server:
             print(
-                f"\nSubscription with {args.domainToFind} domain was found on following servers:"
+                f"\nSubscription with {args.domainToFind} domain was found on following servers[{len(results)}]:"
             )
         for record in results:
             if args.name or args.id or args.server or args.user:
