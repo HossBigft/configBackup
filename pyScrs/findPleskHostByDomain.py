@@ -17,8 +17,7 @@ def main():
     )
     args = parser.parse_args()
     domain = args.domain
-    
-    print(f"Trying to find {domain} host by A record")
+    print(f"Starting host resolution for {domain} using A record")
     try:
         a_record = "".join([ipval.to_text() for ipval in resolver.resolve(domain, "A")])
         try:
@@ -30,24 +29,29 @@ def main():
             else:
                 print(f"No substring 'hoster.kz' in {ptr_record}")
         except resolver.NXDOMAIN:
-            print(f"There is no PTR record for {a_record}")
+            print(f"[ERROR] PTR record not found for {a_record}. PTR lookup failed.")
+    except resolver.NoAnswer:
+        print(f"[ERROR] A record not found for {domain}")
+    
+    print(f"Attempting to resolve host for {domain} using MX record")
+    try:
+        mx_record = "".join([ipval.to_text() for ipval in resolver.resolve(domain, "MX")]).split(" ")[1]
+        a_record = "".join([ipval.to_text() for ipval in resolver.resolve(mx_record, "A")])
+        try:
+            addr_record = reversename.from_address(a_record)
+            ptr_record = str(resolver.resolve(addr_record, "PTR")[0])
+            if "hoster.kz" in ptr_record:
+                print(ptr_record, end="")
+                sys.exit(0)
+            else:
+                print(f"No substring 'hoster.kz' in {ptr_record}")
+        except resolver.NXDOMAIN:
+            print(f"[ERROR] PTR record not found for {mx_record}. PTR lookup failed.")
     except resolver.NXDOMAIN:
-        print(f"There is no A record for {domain}")
+        print(f"[ERROR] A record not found for {mx_record}")
 
 
 
-    # try:
-    #     command = shlex.split(f'fish -c "nsZoneMaster -q {domain}"')
-
-    #     output = subprocess.run(command, capture_output=True, text=True, check=True)
-    #     domainPtr = socket.getfqdn(socket.gethostbyname(output.stdout))
-    #     if not domainPtr[-1] == ".":
-    #         domainPtr += "."
-    #     if "hoster.kz" in domainPtr:
-    #         print(domainPtr, end="")
-    #         sys.exit(0)
-    # except Exception as e:
-    #     print(e)
 
     # try:
     #     command = shlex.split(f'python3 pFindSubscriptionByDomain.py -s {domain}"')
