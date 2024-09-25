@@ -3,7 +3,7 @@ function pDnsGetRecords --wraps=ssh
     
     if test $argNum -eq 1
         set domain (echo $argv)
-        set host (_findPleskHost $domain)
+        set host (digsx (nsZoneMaster $domain -q))
         if test $status -eq 1
             echo "Host for $domain was not found"
             return 1
