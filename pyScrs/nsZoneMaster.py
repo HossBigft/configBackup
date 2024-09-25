@@ -41,9 +41,9 @@ def main():
     )
 
     parser.add_argument(
-        "-v",
-        "--verbose",
-        action="store_true",
+        "-q",
+        "--quiet",
+        action="store_false",
         help="Only master ip will be returned",
     )
 
@@ -62,7 +62,7 @@ def main():
     )
 
     args = parser.parse_args()
-    verbosity_flag = args.verbose
+    verbosity_flag = args.quiet
 
     if args.domains:
         domain_list = args.domains.splitlines()
