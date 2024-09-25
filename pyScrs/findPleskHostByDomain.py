@@ -50,7 +50,7 @@ def main():
             addr_record = reversename.from_address(a_record)
             ptr_record = str(resolver.resolve(addr_record, "PTR")[0])
             if "hoster.kz" in ptr_record and not ptr_record == DNS_HOSTING_HOSTNAME:
-                print(ptr_record, end="")
+                print(ptr_record)
                 sys.exit(0)
             elif verbose_flag:
                 print(f"No substring 'hoster.kz' in {ptr_record}.")
@@ -74,7 +74,7 @@ def main():
             addr_record = reversename.from_address(a_record)
             ptr_record = str(resolver.resolve(addr_record, "PTR")[0])
             if "hoster.kz" in ptr_record and not ptr_record == DNS_HOSTING_HOSTNAME:
-                print(ptr_record, end="")
+                print(ptr_record)
                 sys.exit(0)
             else:
                 if verbose_flag:
@@ -97,7 +97,7 @@ def main():
             addr_record = reversename.from_address(zone_master_a_record)
             ptr_record = str(resolver.resolve(addr_record, "PTR")[0])
             if "hoster.kz" in ptr_record and not ptr_record == DNS_HOSTING_HOSTNAME:
-                print(ptr_record, end="")
+                print(ptr_record)
                 sys.exit(0)
             else:
                 if verbose_flag:
