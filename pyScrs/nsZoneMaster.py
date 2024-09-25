@@ -6,33 +6,32 @@ SSH_USER = "root"
 SERVER_LIST = "DNS"
 
 
-def getDomainZoneMaster(*domains, verbosity_flag=True, test_flag=False):
-    results = []
-    for domain in domains:
-        domain = "".join(domain)
-        getZoneMasterCmd = f"cat /var/opt/isc/scls/isc-bind/zones/_default.nzf| grep {domain} | grep -Po '((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\\b){{4}}' | head -n1"
-        dnsAnswers = []
-        if test_flag:
-            dnsAnswers = ase.batch_ssh_command_result(
-                server_list=SERVER_LIST,
-                username=SSH_USER,
-                command=getZoneMasterCmd,
-                verbose=verbosity_flag,
-                test=True,
-            )
+def getDomainZoneMaster(domain_name, verbosity_flag=True, test_flag=False):
+    getZoneMasterCmd = f"cat /var/opt/isc/scls/isc-bind/zones/_default.nzf| grep {''.join(domain_name)} | grep -Po '((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\\b){{4}}' | head -n1"
+    dnsAnswers = []
+    if test_flag:
+        dnsAnswers = ase.batch_ssh_command_result(
+            server_list=SERVER_LIST,
+            username=SSH_USER,
+            command=getZoneMasterCmd,
+            verbose=verbosity_flag,
+            test=True,
+        )
 
-        else:
-            dnsAnswers = ase.batch_ssh_command_result(
-                server_list=SERVER_LIST,
-                username=SSH_USER,
-                command=getZoneMasterCmd,
-                verbose=verbosity_flag,
-            )
-        results.append({"domain": f"{domain}", "answers": dnsAnswers})
-    if verbosity_flag:
-        return results
     else:
-        return set([host["stdout"] for result in results for host in result["answers"]])
+        dnsAnswers = ase.batch_ssh_command_result(
+            server_list=SERVER_LIST,
+            username=SSH_USER,
+            command=getZoneMasterCmd,
+            verbose=verbosity_flag,
+        )
+    if verbosity_flag:
+        return {"domain": f"{domain_name}", "answers": dnsAnswers}
+    else:
+        return {
+            "domain": f"{domain_name}",
+            "zone_master": list(set([answer["stdout"] for answer in dnsAnswers])),
+        }
 
 
 def main():
@@ -69,10 +68,10 @@ def main():
     else:
         domain_list = sys.stdin.read().strip().splitlines()
 
-    results = getDomainZoneMaster(
-        domain_list, verbosity_flag=verbosity_flag, test_flag=args.test
-    )
-
+    results = [
+        getDomainZoneMaster(domain, verbosity_flag=verbosity_flag, test_flag=args.test)
+        for domain in domain_list
+    ]
     if verbosity_flag:
         for result in results:
             print(result["domain"])
@@ -80,9 +79,17 @@ def main():
                 print(f"{answer['host']}|{answer['stdout']}")
         sys.exit(0)
     else:
+        return_value = 0
         for result in results:
-            print("".join(result))
-        sys.exit(0)
+            if (zone_master_count := len(result["zone_master"])) > 1:
+                print(
+                    f"[ERROR] Multiple zone masters [{zone_master_count}] for {result['domain']}"
+                )
+                return_value = 1
+                print(f"{''.join(result['domain'])}|{''.join(result['zone_master'])}")
+            else:
+                print("".join(result["zone_master"]))
+        sys.exit(return_value)
 
 
 if __name__ == "__main__":
