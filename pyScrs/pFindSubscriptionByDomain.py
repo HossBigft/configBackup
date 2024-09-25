@@ -5,7 +5,7 @@ SSH_USER = "maximg"
 
 
 def query_domain_info(domain_to_find: str, verbose_flag=True):
-    results = ase.batch_ssh_command_result(
+    answers = ase.batch_ssh_command_result(
         "plesk",
         SSH_USER,
         f"plesk db -Ne \\\"SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '{domain_to_find}%';"
@@ -17,15 +17,15 @@ def query_domain_info(domain_to_find: str, verbose_flag=True):
 
     results = [
         {
-            "host": x["host"],
-            "id": x["stdout"].strip().split("\n")[0],
-            "name": x["stdout"].strip().split("\n")[1],
-            "username": x["stdout"].strip().split("\n")[2].split("\t")[0],
-            "userlogin": x["stdout"].strip().split("\n")[2].split("\t")[1],
-            "domains": x["stdout"].strip().split("\n")[3:],
+            "host": answer["host"],
+            "id": answer["stdout"].strip().split("\n")[0],
+            "name": answer["stdout"].strip().split("\n")[1],
+            "username": answer["stdout"].strip().split("\n")[2].split("\t")[0],
+            "userlogin": answer["stdout"].strip().split("\n")[2].split("\t")[1],
+            "domains": answer["stdout"].strip().split("\n")[3:],
         }
-        for x in results
-        if x["stdout"]
+        for answer in answers
+        if answer["stdout"]
     ]
     return results
 
