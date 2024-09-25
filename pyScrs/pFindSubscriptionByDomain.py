@@ -3,7 +3,34 @@ import argparse
 
 SSH_USER = "maximg"
 
-if __name__ == "__main__":
+
+def query_domain_info(domain_to_find: str, verbose_flag=True):
+    results = ase.batch_ssh_command_result(
+        "plesk",
+        SSH_USER,
+        f"plesk db -Ne \\\"SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '{domain_to_find}%';"
+        + f"SELECT name FROM domains WHERE id=(SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '{domain_to_find}%');"
+        + f"SELECT pname, login FROM clients WHERE id=(SELECT cl_id FROM domains WHERE name LIKE '{domain_to_find}%');"
+        + f"SELECT name FROM domains WHERE webspace_id=(SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '{domain_to_find}%')\\\"",
+        verbose=verbose_flag,
+    )
+
+    results = [
+        {
+            "host": x["host"],
+            "id": x["stdout"].strip().split("\n")[0],
+            "name": x["stdout"].strip().split("\n")[1],
+            "username": x["stdout"].strip().split("\n")[2].split("\t")[0],
+            "userlogin": x["stdout"].strip().split("\n")[2].split("\t")[1],
+            "domains": x["stdout"].strip().split("\n")[3:],
+        }
+        for x in results
+        if x["stdout"]
+    ]
+    return results
+
+
+def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
@@ -85,34 +112,13 @@ if __name__ == "__main__":
         else:
             output_elements[:] = [*output_elements, *["{username}", "{userlogin}"]]
 
-    results = ase.batch_ssh_command_result(
-        "plesk",
-        SSH_USER,
-        f"plesk db -Ne \\\"SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '{args.domainToFind}%';"
-        + f"SELECT name FROM domains WHERE id=(SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '{args.domainToFind}%');"
-        + f"SELECT pname, login FROM clients WHERE id=(SELECT cl_id FROM domains WHERE name LIKE '{args.domainToFind}%');"
-        + f"SELECT name FROM domains WHERE webspace_id=(SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '{args.domainToFind}%')\\\"",
-        verbose=args.verbose,
-    )
+    results = query_domain_info(args.domainToFind, verbose_flag=args.verbose)
 
-    results = [
-        {
-            "host": x["host"],
-            "id": x["stdout"].strip().split("\n")[0],
-            "name": x["stdout"].strip().split("\n")[1],
-            "username": x["stdout"].strip().split("\n")[2].split("\t")[0],
-            "userlogin": x["stdout"].strip().split("\n")[2].split("\t")[1],
-            "domains": x["stdout"].strip().split("\n")[3:],
-        }
-        for x in results
-        if x["stdout"]
-    ]
-
-    if args.verbose and args.server:
-        print(
-            f"\nSubscription with {args.domainToFind} domain was found on following servers:"
-        )
     if results:
+        if args.verbose and args.server:
+            print(
+                f"\nSubscription with {args.domainToFind} domain was found on following servers:"
+            )
         for record in results:
             if args.name or args.id or args.server or args.user:
                 print(
@@ -135,3 +141,7 @@ if __name__ == "__main__":
                 print("-------")
     else:
         print(f"No servers was found with {args.domainToFind} domain")
+
+
+if __name__ == "__main__":
+    main()
