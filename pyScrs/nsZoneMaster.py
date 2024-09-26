@@ -3,7 +3,6 @@ import argparse
 import sys
 from dns import resolver, reversename, exception
 
-SSH_USER = "root"
 SERVER_LIST = "DNS"
 DNS_HOSTING_HOSTNAME = "dns.hoster.kz."
 
@@ -22,7 +21,6 @@ def getDomainZoneMaster(domain_name, verbosity_flag=True, test_flag=False):
     dnsAnswers = []
     dnsAnswers = ase.batch_ssh_command_result(
         server_list=SERVER_LIST,
-        username=SSH_USER,
         command=getZoneMasterCmd,
         verbose=verbosity_flag,
         test=test_flag,
