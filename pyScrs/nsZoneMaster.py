@@ -1,20 +1,21 @@
 import async_ssh_executor as ase
 import argparse
 import sys
-from dns import resolver, reversename
-from beautifultable import BeautifulTable
+from dns import resolver, reversename, exception
 
 SSH_USER = "root"
 SERVER_LIST = "DNS"
 DNS_HOSTING_HOSTNAME = "dns.hoster.kz."
 
-def getPtr(ip:str):
+
+def getPtr(ip: str):
     try:
         addr_record = reversename.from_address(ip)
         ptr_record = str(resolver.resolve(addr_record, "PTR")[0])
-        return(ptr_record)
-    except (resolver.NoAnswer, resolver.NXDOMAIN):
+        return ptr_record
+    except (resolver.NoAnswer, resolver.NXDOMAIN, exception.SyntaxError):
         return ip
+
 
 def getDomainZoneMaster(domain_name, verbosity_flag=True, test_flag=False):
     getZoneMasterCmd = f"cat /var/opt/isc/scls/isc-bind/zones/_default.nzf| grep {''.join(domain_name)} | grep -Po '((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\\b){{4}}' | head -n1"
@@ -76,25 +77,69 @@ def main():
     ]
 
     if verbosity_flag:
-        table = BeautifulTable()
-        table.columns.header = ["Domain", "Nameservers: ns1.hoster.kz, ns2.hoster.kz, ns3.hoster.kz"]
-        for result in results:
-            table_row = []
-            dns_row = []
-            ptr_row = []
-            table_row.append(result["domain"])
-            
-            for answer in result["answers"]:
-                dns_row.append(answer["stdout"])
-                ptr_row.append(getPtr(answer["stdout"]))
-                
-            dns_combined = ", ".join(dns_row)
-            ptr_combined = ", ".join(ptr_row)
-            
-            table_row.append(ptr_combined+"\n"+dns_combined)
-            table.rows.append(table_row)
+        for i, result in enumerate(results):
+            domain = result["domain"]
 
-        print(table)
+            # Create the new answers structure
+            results[i]["answers"] = [
+                {
+                    "host": answer["host"],
+                    "zone_master": answer["stdout"],
+                    "ptr": getPtr(answer["stdout"]),
+                }
+                for answer in result["answers"]
+            ]
+        ns_padding = 4
+        extra_padding = 2
+        domain_padding = (
+            len(max([result["domain"] for result in results], key=len)) + extra_padding
+        )
+
+        ip_padding = (
+            len(
+                max(
+                    [
+                        answer["zone_master"]
+                        for result in results
+                        for answer in result["answers"]
+                    ],
+                    key=len,
+                )
+            )
+            + extra_padding
+        )
+
+        ptr_padding = (
+            len(
+                max(
+                    [
+                        answer["ptr"]
+                        for result in results
+                        for answer in result["answers"]
+                    ],
+                    key=len,
+                )
+            )
+            + extra_padding
+        )
+
+        print(
+            f"{'Querying DNS servers about zone master...':^{ns_padding+ip_padding+ptr_padding+extra_padding}}"
+        )
+
+        print(
+            f"{'NS':<{ns_padding}}|{'Domain':<{domain_padding}}|{'PTR':<{ptr_padding}}|{'IP':<{ip_padding}}"
+        )
+
+        for result in results:
+            domain = result["domain"]
+            for answer in result["answers"]:
+                host = answer["host"].replace(".hoster.kz.", "")
+                ip_value = answer["zone_master"]
+                ptr_value = getPtr(ip_value)
+                print(
+                    f"{host:<{ns_padding}}|{domain:<{domain_padding}}|{ptr_value:<{ptr_padding}}|{ip_value:<{ip_padding}}"
+                )
         sys.exit(0)
     else:
         return_value = 0
