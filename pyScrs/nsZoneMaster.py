@@ -9,29 +9,21 @@ SERVER_LIST = "DNS"
 def getDomainZoneMaster(domain_name, verbosity_flag=True, test_flag=False):
     getZoneMasterCmd = f"cat /var/opt/isc/scls/isc-bind/zones/_default.nzf| grep {''.join(domain_name)} | grep -Po '((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\\b){{4}}' | head -n1"
     dnsAnswers = []
-    if test_flag:
-        dnsAnswers = ase.batch_ssh_command_result(
-            server_list=SERVER_LIST,
-            username=SSH_USER,
-            command=getZoneMasterCmd,
-            verbose=verbosity_flag,
-            test=True,
-        )
-
-    else:
-        dnsAnswers = ase.batch_ssh_command_result(
-            server_list=SERVER_LIST,
-            username=SSH_USER,
-            command=getZoneMasterCmd,
-            verbose=verbosity_flag,
-        )
+    dnsAnswers = ase.batch_ssh_command_result(
+        server_list=SERVER_LIST,
+        username=SSH_USER,
+        command=getZoneMasterCmd,
+        verbose=verbosity_flag,
+        test=test_flag,
+    )
     if verbosity_flag:
         return {"domain": f"{domain_name}", "answers": dnsAnswers}
-    else:
-        return {
-            "domain": f"{domain_name}",
-            "zone_master": list(set([answer["stdout"] for answer in dnsAnswers])),
-        }
+
+    unique_zone_masters = list(set(answer["stdout"] for answer in dnsAnswers))
+    return {
+        "domain": domain_name,
+        "zone_master": unique_zone_masters,
+    }
 
 
 def main():
