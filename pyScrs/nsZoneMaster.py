@@ -1,10 +1,20 @@
 import async_ssh_executor as ase
 import argparse
 import sys
+from dns import resolver, reversename
+from beautifultable import BeautifulTable
 
 SSH_USER = "root"
 SERVER_LIST = "DNS"
+DNS_HOSTING_HOSTNAME = "dns.hoster.kz."
 
+def getPtr(ip:str):
+    try:
+        addr_record = reversename.from_address(ip)
+        ptr_record = str(resolver.resolve(addr_record, "PTR")[0])
+        return(ptr_record)
+    except (resolver.NoAnswer, resolver.NXDOMAIN):
+        return ip
 
 def getDomainZoneMaster(domain_name, verbosity_flag=True, test_flag=False):
     getZoneMasterCmd = f"cat /var/opt/isc/scls/isc-bind/zones/_default.nzf| grep {''.join(domain_name)} | grep -Po '((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\\b){{4}}' | head -n1"
@@ -64,11 +74,27 @@ def main():
         getDomainZoneMaster(domain, verbosity_flag=verbosity_flag, test_flag=args.test)
         for domain in domain_list
     ]
+
     if verbosity_flag:
+        table = BeautifulTable()
+        table.columns.header = ["Domain", "Nameservers: ns1.hoster.kz, ns2.hoster.kz, ns3.hoster.kz"]
         for result in results:
-            print(result["domain"])
+            table_row = []
+            dns_row = []
+            ptr_row = []
+            table_row.append(result["domain"])
+            
             for answer in result["answers"]:
-                print(f"{answer['host']}|{answer['stdout']}")
+                dns_row.append(answer["stdout"])
+                ptr_row.append(getPtr(answer["stdout"]))
+                
+            dns_combined = ", ".join(dns_row)
+            ptr_combined = ", ".join(ptr_row)
+            
+            table_row.append(ptr_combined+"\n"+dns_combined)
+            table.rows.append(table_row)
+
+        print(table)
         sys.exit(0)
     else:
         return_value = 0
