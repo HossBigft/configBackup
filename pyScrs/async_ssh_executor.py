@@ -15,9 +15,9 @@ PLESK_SERVER_LIST = (
     "pkz49.hoster.kz.",
     "pkz50.hoster.kz.",
     "pkz58.hoster.kz.",
-    "cloud-2.hoster.kz",
-    "nturbo-2.hoster.kz",
-    "nturbo-1.hoster.kz",
+    "cloud-2.hoster.kz.",
+    "nturbo-2.hoster.kz.",
+    "nturbo-1.hoster.kz.",
     "pkz4.hoster.kz.",
     "pkz5.hoster.kz.",
     "pkz6.hoster.kz.",
@@ -77,17 +77,13 @@ PLESK_SERVER_LIST = (
     "cloud-5.hoster.kz.",
     "acloud-1.hoster.kz.",
 )
-DNS_SERVER_LIST = (
-    "ns1.hoster.kz.",
-    "ns2.hoster.kz.",
-    "ns3.hoster.kz."
-)
+DNS_SERVER_LIST = ("ns1.hoster.kz.", "ns2.hoster.kz.", "ns3.hoster.kz.")
 
-TEST_SERVER_LIST = ("185.111.106.116", "185.129.51.20" ,"google.com")
+TEST_SERVER_LIST = ("185.111.106.116", "185.129.51.20", "google.com")
 
 
-async def _run_command_over_ssh(host, username, command, verbose: bool , timeout=5):
-    ssh_command = f'ssh  -o PasswordAuthentication=no -o ConnectTimeout={timeout} {username}@{host} "{command}"'
+async def _run_command_over_ssh(host, command, verbose: bool):
+    ssh_command = f'ssh  -o PasswordAuthentication=no  {host} "{command}"'
     process = await asyncio.create_subprocess_shell(
         ssh_command, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
     )
@@ -98,7 +94,7 @@ async def _run_command_over_ssh(host, username, command, verbose: bool , timeout
     if verbose:
         succesfulAnswer = stdout.decode().strip().rstrip()
         failAnswer = stderr.decode().strip().rstrip()
-        if failAnswer: 
+        if failAnswer:
             print(f"{host} failed: {failAnswer}")
         else:
             print(f"{host} answered: {succesfulAnswer}")
@@ -106,10 +102,8 @@ async def _run_command_over_ssh(host, username, command, verbose: bool , timeout
     return (host, stdout.decode().strip(), stderr.decode().strip(), process.returncode)
 
 
-async def _batch_ssh_command_prepare(servers, username, command, verbose: bool):
-    tasks = [
-        _run_command_over_ssh(host, username, command, verbose) for host in servers
-    ]
+async def _batch_ssh_command_prepare(servers, command, verbose: bool):
+    tasks = [_run_command_over_ssh(host, command, verbose) for host in servers]
     results = await asyncio.gather(*tasks)
     return [
         {"host": host, "stdout": stdout, "stderr": stderr}
@@ -117,7 +111,7 @@ async def _batch_ssh_command_prepare(servers, username, command, verbose: bool):
     ]
 
 
-def batch_ssh_command_result(server_list, username, command, verbose=False, test=False):
+def batch_ssh_command_result(server_list, command, verbose=False, test=False):
     match server_list:
         case "plesk":
             serverList = PLESK_SERVER_LIST
@@ -128,7 +122,4 @@ def batch_ssh_command_result(server_list, username, command, verbose=False, test
 
     if test:
         serverList = TEST_SERVER_LIST
-        username = "root"
-    return asyncio.run(
-        _batch_ssh_command_prepare(serverList, username, command, verbose)
-    )
+    return asyncio.run(_batch_ssh_command_prepare(serverList, command, verbose))
