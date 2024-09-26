@@ -1,13 +1,10 @@
 import async_ssh_executor as ase
 import argparse
 
-SSH_USER = "maximg"
-
 
 def query_domain_info(domain_to_find: str, verbose_flag=True):
     answers = ase.batch_ssh_command_result(
         "plesk",
-        SSH_USER,
         f"plesk db -Ne \\\"SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '{domain_to_find}%';"
         + f"SELECT name FROM domains WHERE id=(SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '{domain_to_find}%');"
         + f"SELECT pname, login FROM clients WHERE id=(SELECT cl_id FROM domains WHERE name LIKE '{domain_to_find}%');"
