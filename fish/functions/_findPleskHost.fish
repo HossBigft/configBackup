@@ -1,3 +1,4 @@
 function _findPleskHost --description "Tries to find Plesk server hostname by given domain"
-    python3 /home/gmv/configBackup/pyScrs/findPleskHostByDomain.py $argv
+    set scriptsPath (find ~ -name configBackup | head -n1)
+    python3 $scriptsPath/pyScrs/findPleskHostByDomain.py $argv
 end
