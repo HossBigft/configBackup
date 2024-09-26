@@ -64,7 +64,7 @@ class pkzServer:
         return f"Name: {self.name}\nTotal space: {self.totalSpace}\nUsed space:{self.usedSpace}\nPlesk Version:{self.pleskVersion}"
 
 
-def __createFreeSpaceServerList(sshUser: str, userHomeDirectory: str, fileName: str):
+def __createFreeSpaceServerList(userHomeDirectory: str, fileName: str):
     statsFileName = f"{fileName}{datetime.datetime.now().strftime('%Y%m%d_%H%M')}.txt"
     statsDirName = "pkzStats"
     statsDirPath = f"{userHomeDirectory}/{statsDirName}"
@@ -72,7 +72,7 @@ def __createFreeSpaceServerList(sshUser: str, userHomeDirectory: str, fileName: 
     pathlib.Path(statsDirPath).mkdir(parents=True, exist_ok=True)
     print("Starting query...")
     serverSpaceData = ase.batch_ssh_command_result(
-        server_list="plesk", username=sshUser, command="df -BG", verbose=True
+        server_list="plesk", command="df -BG", verbose=True
     )
 
     for record in serverSpaceData:
@@ -82,12 +82,17 @@ def __createFreeSpaceServerList(sshUser: str, userHomeDirectory: str, fileName: 
             currAnswer = [" ".join(line.split()) for line in currAnswer]
 
             currAnswer = re.search(
-                r"(?:\S+\s+){5}\/var;|((?:\S+\s+){5}\/;)(?!.*\/var;)", ";".join(currAnswer)
+                r"(?:\S+\s+){5}\/var;|((?:\S+\s+){5}\/;)(?!.*\/var;)",
+                ";".join(currAnswer),
             ).group(0)
             print(f"{server} answered {currAnswer}")
             record["stdout"] = currAnswer
 
-    serverSpaceData = {record["host"]: record["stdout"] for record in serverSpaceData if record["stdout"]}
+    serverSpaceData = {
+        record["host"]: record["stdout"]
+        for record in serverSpaceData
+        if record["stdout"]
+    }
 
     print("Sorting by used space %")
     serverSpaceData = dict(
@@ -100,7 +105,7 @@ def __createFreeSpaceServerList(sshUser: str, userHomeDirectory: str, fileName: 
     print(f"Saved in {statsFilePath}")
 
 
-def __createServerVersionList(sshUser: str, userHomeDirectory: str, fileName: str):
+def __createServerVersionList(userHomeDirectory: str, fileName: str):
     statsFileName = f"{fileName}{datetime.datetime.now().strftime('%Y%m%d_%H%M')}.txt"
     statsDirName = "pkzStats"
     statsDirPath = f"{userHomeDirectory}/{statsDirName}"
@@ -108,7 +113,7 @@ def __createServerVersionList(sshUser: str, userHomeDirectory: str, fileName: st
     pathlib.Path(statsDirPath).mkdir(parents=True, exist_ok=True)
     print("Starting query...")
     serverVersionData = ase.batch_ssh_command_result(
-        server_list="plesk", username=sshUser, command="plesk -v", verbose=True
+        server_list="plesk", command="plesk -v", verbose=True
     )
 
     for record in serverVersionData:
@@ -121,7 +126,9 @@ def __createServerVersionList(sshUser: str, userHomeDirectory: str, fileName: st
             record["stdout"] = currAnswer
 
     serverVersionData = {
-        record["host"]: record["stdout"] for record in serverVersionData if record["stdout"]
+        record["host"]: record["stdout"]
+        for record in serverVersionData
+        if record["stdout"]
     }
     serverVersionData = {
         key: re.search(r"\d+(\.\d+)+", value).group(0)
@@ -163,7 +170,6 @@ def regex_type(pattern: str | re.Pattern):
     return closure_check_regex
 
 
-SSH_USER = "maximg"
 USER_HOME_DIR = pathlib.Path.home()
 SERVER_FREE_SPACE_FILENAME = "pleskAvalSpaceList"
 SERVER_VERSION_FILENAME = "pleskServerVersionList"
@@ -207,7 +213,7 @@ if (
     or not args.refresh
 ):
     print("No relevant file with server versions was found")
-    __createServerVersionList(SSH_USER, USER_HOME_DIR, SERVER_VERSION_FILENAME)
+    __createServerVersionList(USER_HOME_DIR, SERVER_VERSION_FILENAME)
     versionDataPath = max(
         pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob(
             f"{SERVER_VERSION_FILENAME}{datetime.datetime.now().strftime('%Y%m%d')}*.txt"
@@ -243,7 +249,7 @@ if (
     or not args.refresh
 ):
     print("No relevant file with server space was found")
-    __createFreeSpaceServerList(SSH_USER, USER_HOME_DIR, SERVER_FREE_SPACE_FILENAME)
+    __createFreeSpaceServerList(USER_HOME_DIR, SERVER_FREE_SPACE_FILENAME)
     spaceDataPath = max(
         pathlib.Path(f"{USER_HOME_DIR}/pkzStats").glob(
             f"{SERVER_FREE_SPACE_FILENAME}{datetime.datetime.now().strftime('%Y%m%d')}*.txt"
