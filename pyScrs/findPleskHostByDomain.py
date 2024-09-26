@@ -90,9 +90,8 @@ def main():
 
     if verbose_flag:
         print(f"Attempting to resolve host for {domain} using DNS zone master.")
-    if zone_master_a_record := "".join(
-        nsZoneMaster.getDomainZoneMaster(domain, verbosity_flag=False)
-    ):
+
+    if zone_master_a_record := "".join(nsZoneMaster.getDomainZoneMaster(domain, verbosity_flag=False)["zone_master"]):
         try:
             addr_record = reversename.from_address(zone_master_a_record)
             ptr_record = str(resolver.resolve(addr_record, "PTR")[0])
