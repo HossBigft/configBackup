@@ -4,7 +4,6 @@ import datetime
 import argparse
 
 
-SSH_USER = "maximg"
 STATS_DIR_NAME = "pkzStats"
 USER_HOME_DIR = pathlib.Path.home()
 
@@ -41,14 +40,13 @@ if __name__ == "__main__":
     if args.test:
         results = ase.batch_ssh_command_result(
             server_list="plesk",
-            username=SSH_USER,
             command=args.command,
             verbose=True,
             test=True,
         )
     else:
         results = ase.batch_ssh_command_result(
-            server_list="plesk", username=SSH_USER, command=args.command, verbose=True
+            server_list="plesk", command=args.command, verbose=True
         )
     if args.oneline:
         results = [
