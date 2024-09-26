@@ -24,5 +24,5 @@ function pUserNameSubscriptionByDomain --wraps=ssh --description 'Returns userna
         return 1
     end
 
-    ssh $host "plesk db -Ne \"SELECT DISTINCT c.login AS 'Customer Username' FROM data_bases db JOIN domains d ON db.dom_id = d.id JOIN clients c ON d.cl_id = c.id WHERE d.id = (SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '$domain%');\""
+    ssh $host "plesk db -Ne \"SELECT login FROM clients WHERE id=(SELECT cl_id FROM domains WHERE name LIKE '$domain%');\""
 end
