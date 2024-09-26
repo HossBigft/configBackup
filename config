@@ -72,11 +72,11 @@ Host p-cloud-2 cloud-2.hoster.kz.
         HostName cloud-2.hoster.kz
         User maximg
 	IdentityFile ~/.ssh/id_rsa
-Host p-nturbo-2 nturbo-2.hoster.kz
-        HostName nturbo-2.hoster.kz
+Host p-nturbo-2 nturbo-2.hoster.kz nturbo-2.hoster.kz.
+        HostName nturbo-2.hoster.kz.
         User maximg
 	IdentityFile ~/.ssh/id_rsa
-Host p-nturbo-1 nturbo-1.hoster.kz
+Host p-nturbo-1 nturbo-1.hoster.kz.
         HostName nturbo-1.hoster.kz
         User maximg
 	IdentityFile ~/.ssh/id_rsa
@@ -85,7 +85,7 @@ Host p-pkz4  pkz4.hoster.kz.
         HostName pkz4.hoster.kz.
         User maximg
 	IdentityFile ~/.ssh/id_rsa
-Host p-pkz5 pkz5.hoster.kz
+Host p-pkz5 pkz5.hoster.kz.
         #No access
         HostName pkz5.hoster.kz.
         User maximg
