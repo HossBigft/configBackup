@@ -1,7 +1,7 @@
 function pQueryMailQueueSize
     set  filename "pleskMailQueueSize"
     set  currDate (date +%Y%m%d_%H%M)
-    set scriptsPath (find ~ -name configBackup | head -n1)
+    set scriptsPath (find ~ -maxdepth 1 -name configBackup  | head -n1)
     
     python3.12  $scriptsPath/pyScrs/pQuery.py $filename "mailq | grep -c '^[A-F0-9]'"
     
