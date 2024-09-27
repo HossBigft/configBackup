@@ -22,7 +22,7 @@ function pMailBlock --wraps=ssh --description 'Changes password of given email a
             return 1
         end
         set password (pwgen 20 | string split " " -f1)
-        ssh $host "plesk bin mail -u $email -passwd '$password' 1> /dev/null && echo Password for $email is updated && plesk bin mail --update $email -outgoing-messages-mbox-limit 0 1> /dev/null && echo Outgoing email limit for $email set to 0"
+        ssh $host "echo Current password is \$(/usr/local/psa/admin/bin/mail_auth_view | grep $email | tr -s ' ' | awk '{print \$5}') && plesk bin mail -u $email -passwd '$password' 1> /dev/null && echo Password for $email is updated && plesk bin mail --update $email -outgoing-messages-mbox-limit 0 1> /dev/null && echo Outgoing email limit for $email set to 0"
         set sshStatus (echo $status)
         if test $sshStatus -eq 0
             echo I did
