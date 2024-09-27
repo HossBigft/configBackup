@@ -1,4 +1,4 @@
-function vGetVpsIpByHostname
+function vIpVpsByHostnameGet
     set argNum (count $argv)
     if test $argNum -gt 1
         echo Too many arguments [$argnum]
