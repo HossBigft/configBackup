@@ -7,14 +7,31 @@ import re
 
 DNS_HOSTING_HOSTNAME = "dns.hoster.kz."
 
+
 class AmbiguousMXRecordTargets(Exception):
     def __init__(self, mx_record, message=None):
-            self.domain = mx_record
-            self.message = message or f'Multiple A records found for MX record "{mx_record}".'
-            super().__init__(self.message)
+        self.mx_record = mx_record
+        self.message = (
+            message or f"Multiple A records found for MX record [{mx_record}]."
+        )
+        super().__init__(self.message)
 
     def __str__(self):
         return self.message
+
+
+class PTRValidationError(Exception):
+    def __init__(self, ptr_record, message=None):
+        self.ptr_record = ptr_record
+        self.message = (
+            message
+            or f'PTR record does not contain subsctring "hoster.kz" [{ptr_record}].'
+        )
+        super().__init__(self.message)
+
+    def __str__(self):
+        return self.message
+
 
 def regex_type(pattern: str | re.Pattern):
     """Argument type for matching a regex pattern."""
@@ -60,11 +77,14 @@ def main():
             if "hoster.kz" in ptr_record and not ptr_record == DNS_HOSTING_HOSTNAME:
                 print(ptr_record)
                 sys.exit(0)
-            elif verbose_flag:
-                print(f"No substring 'hoster.kz' in {ptr_record}.")
+            else:
+                raise PTRValidationError(ptr_record)
         except (resolver.NoAnswer, resolver.NXDOMAIN):
             if verbose_flag:
                 print(f"[FAIL] PTR record not found for {a_record}. PTR lookup failed.")
+        except PTRValidationError:
+            if verbose_flag:
+                print(f"[FAIL] No substring 'hoster.kz' in {ptr_record}.")
     except (resolver.NoAnswer, resolver.NXDOMAIN):
         if verbose_flag:
             print(f"[FAIL] A record not found for {domain}.")
@@ -75,12 +95,19 @@ def main():
         mx_record = "".join(
             [ipval.to_text() for ipval in resolver.resolve(domain, "MX")]
         ).split(" ")[1]
-        
-        a_record:str
-        if len(a_records:= [ipval.to_text() for ipval in resolver.resolve(mx_record, "A")]) > 1:
+
+        a_record: str
+        if (
+            len(
+                a_records := [
+                    ipval.to_text() for ipval in resolver.resolve(mx_record, "A")
+                ]
+            )
+            > 1
+        ):
             raise AmbiguousMXRecordTargets(mx_record)
         else:
-            a_record=a_records[0]
+            a_record = a_records[0]
 
         try:
             addr_record = reversename.from_address(a_record)
@@ -89,21 +116,29 @@ def main():
                 print(ptr_record)
                 sys.exit(0)
             else:
-                if verbose_flag:
-                    print(f"No substring 'hoster.kz' in {ptr_record}.")
+                raise PTRValidationError(ptr_record)
+
         except (resolver.NoAnswer, resolver.NXDOMAIN):
             if verbose_flag:
-                print(
-                    f"[FAIL] PTR record not found for {mx_record}. PTR lookup failed."
-                )
-    except (resolver.NoAnswer, resolver.NXDOMAIN, AmbiguousMXRecordTargets):
+                print(f"[FAIL] PTR record not found for {mx_record}.")
+        except PTRValidationError:
+            if verbose_flag:
+                print(f"[FAIL] No substring 'hoster.kz' in {ptr_record}.")
+    except (resolver.NoAnswer, resolver.NXDOMAIN):
         if verbose_flag:
             print(f"[FAIL] MX record not found for {domain}.")
+    except AmbiguousMXRecordTargets:
+        if verbose_flag:
+            print(
+                f"[FAIL] Multiple A records for MX record {mx_record} Ambioguous mail host."
+            )
 
     if verbose_flag:
         print(f"Attempting to resolve host for {domain} using DNS zone master.")
 
-    if zone_master_a_record := "".join(nsZoneMaster.getDomainZoneMaster(domain, verbosity_flag=False)["zone_master"]):
+    if zone_master_a_record := "".join(
+        nsZoneMaster.getDomainZoneMaster(domain, verbosity_flag=False)["zone_master"]
+    ):
         try:
             addr_record = reversename.from_address(zone_master_a_record)
             ptr_record = str(resolver.resolve(addr_record, "PTR")[0])
@@ -111,11 +146,13 @@ def main():
                 print(ptr_record)
                 sys.exit(0)
             else:
-                if verbose_flag:
-                    print(f"No substring 'hoster.kz' in {ptr_record}.")
+                raise PTRValidationError(ptr_record)
         except (resolver.NoAnswer, resolver.NXDOMAIN):
             if verbose_flag:
                 print(f"[FAIL] PTR record not found for {a_record}. PTR lookup failed.")
+        except PTRValidationError:
+            if verbose_flag:
+                print(f"[FAIL] No substring 'hoster.kz' in {ptr_record}.")
     else:
         if verbose_flag:
             print(f"[FAIL] Zone master not found for {domain}.")
@@ -128,7 +165,9 @@ def main():
         if not answer["host"] == DNS_HOSTING_HOSTNAME
     ]:
         if (hosts_num := len(answers)) > 1:
-            print(f"[ERROR] Multiple hosts found [{hosts_num}] The actual host is ambiguous.")
+            print(
+                f"[ERROR] Multiple hosts found [{hosts_num}] The actual host is ambiguous."
+            )
             for answer in answers:
                 print(answer["host"])
             sys.exit(1)
