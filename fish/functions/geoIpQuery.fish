@@ -8,7 +8,7 @@ function geoIpQuery --description 'Return geo data about IP. Uses ipinfo.io'
     end 
     for ip in $ipList
         set parsedRequest (curl -s https://ipinfo.io/$ip|jello -lr '[f"{k}:{v}" for k,v in _.iteritems() if k  in ["ip", "country", "org"]]'&& echo PTR:(digsx $ip) )
-        string repeat "⋁" -n (string split "" $parsedRequest[1]|count)
+        #string repeat "⋁" -n (string split "" $parsedRequest[1]|count)
         printf %s\n $parsedRequest
         string repeat "⋀" -n (string split "" $parsedRequest[4]|count)
     end
