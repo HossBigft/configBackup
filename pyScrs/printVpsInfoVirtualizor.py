@@ -85,7 +85,7 @@ def vInfoVpsGet(vps_hostname):
 
     print(f"Disk Info|{request_result['space']}")
     print(f"Filesystem|{filesystem}")
-    print(f"Space||{used_Percent}/100%|{used_gb}/{total_gb}gB")
+    print(f"Space|{used_Percent}/100%|{used_gb}/{total_gb}gB")
     print(f"Inode|{used_inodes_Percent}/100%|{used_inodes}/{total_inodes}")
 
     print(f"User|{request_result['email']}")
