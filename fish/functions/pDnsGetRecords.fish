@@ -5,10 +5,10 @@ function pDnsGetRecords --wraps=ssh
         set domain (echo $argv)
         set host (digsx (nsZoneMaster $domain -q))
         if not test $status -eq 0
-            echo "Host for $domain was not found"
+            echo "Zone master for $domain was not found"
             return 1
         else
-            echo "Host for $domain is $host"
+            echo "Zone master for $domain is $host"
         end
     else if test $argNum -eq 2
         set domain (echo $argv[2])
