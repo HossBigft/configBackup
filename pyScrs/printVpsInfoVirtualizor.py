@@ -6,9 +6,7 @@ import phpserialize
 
 
 def vInfoVpsGet(vps_hostname):
-    """
-    Returns info about given Virtualizor VPS by hostname.
-    """
+  
     api_key = os.getenv("VZR_API_KEY")
     api_pass = os.getenv("VZR_API_PASS")
 
