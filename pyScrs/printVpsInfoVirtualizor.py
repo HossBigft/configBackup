@@ -20,19 +20,22 @@ def vInfoVpsGet(vps_hostname):
         print("Empty input")
         return 1
 
-    # Make the API request
-    url = f"https://virtualizor.hoster.kz:4085/index.php?act=vs&vpshostname={vps_hostname}&api=json&adminapikey={api_key}&adminapipass={api_pass}"
+    vpsInfoRequest = f"https://virtualizor.hoster.kz:4085/index.php?act=vs&vpshostname={vps_hostname}&api=json&adminapikey={api_key}&adminapipass={api_pass}"
 
     try:
-        response = requests.get(url)
+        response = requests.get(vpsInfoRequest)
         response.raise_for_status()  # Raise an error for bad responses
-        request_result = response.json()
+        info_request_result = response.json()
+        if not info_request_result["vs"]:
+            print("[ERROR] Empty response.")
+            sys.exit(1)
     except requests.RequestException as e:
         print(f"Request failed: {e}")
         return 1
-    request_result = {
+
+    info_request_result = {
         k: v
-        for server_record in request_result["vs"].values()
+        for server_record in info_request_result["vs"].values()
         for k, v in server_record.items()
         if k
         in [
@@ -51,18 +54,29 @@ def vInfoVpsGet(vps_hostname):
             "server_name",
             "email",
             "cached_disk",
+            "nw_suspended",
         ]
         or (k == "ips" and {f"ips:{ip}" for ip in v.values()})
     }
 
-    ips = request_result["ips"]
+    vpsStatusRequest = f"https://virtualizor.hoster.kz:4085/index.php?act=vs&vs_status={info_request_result['vpsid']}&api=json&adminapikey={api_key}&adminapipass={api_pass}"
+
+    try:
+        response = requests.get(vpsStatusRequest)
+        response.raise_for_status()  # Raise an error for bad responses
+        response = response.json()
+    except requests.RequestException as e:
+        print(f"Request failed: {e}")
+        return 1
+    vps_status = response["status"][info_request_result["vpsid"]]["status"]
+
+    ips = info_request_result["ips"]
 
     ip_list = [f"ips:{ip}" for ip in ips.values()]
 
-    serialized_data = request_result["cached_disk"]
+    serialized_data = info_request_result["cached_disk"]
     data = phpserialize.loads(serialized_data.encode("utf-8"))
 
-    # Convert byte strings to regular strings
     disk_data = {
         k.decode("utf-8"): {
             kk.decode("utf-8"): vv.decode("utf-8") for kk, vv in v.items()
@@ -78,27 +92,29 @@ def vInfoVpsGet(vps_hostname):
     used_inodes = disk_data["inode"]["IUsed"]
     used_inodes_Percent = disk_data["inode"]["IUse%"]
 
-    # Display results
     print(f"IP|{' '.join(ip_list)}")
-    print(f"ID|{request_result['vpsid']}\\{request_result['vps_name']}")
-    print(f"Hostname|{request_result['hostname']}")
-
-    print(f"Disk Info|{request_result['space']}")
+    print(f"Hostname|{info_request_result['hostname']}")
+    print(f"User|{info_request_result['email']}")
+    print(f"Server|{info_request_result['server_name']}")
+    print(f"Space|{info_request_result['space']}GB")
     print(f"Filesystem|{filesystem}")
-    print(f"Space|{used_Percent}/100%|{used_gb}/{total_gb}gB")
+    print(f"Space|{used_Percent}/100%|{used_gb}/{total_gb}GB")
     print(f"Inode|{used_inodes_Percent}/100%|{used_inodes}/{total_inodes}")
-
-    print(f"User|{request_result['email']}")
-    print(f"Is suspended|{request_result['suspended']}")
-    print(f"Server|{request_result['server_name']}")
-    print(f"OS|{request_result['os_name']}")
-    print(f"NIC|{request_result['nic_type']}")
-    print(f"Space|{request_result['space']}")
-    print(f"RAM|{request_result['ram']}")
-    print(f"CPU mode|{request_result['cpu_mode']}")
-    print(f"Cores|{request_result['cores']}")
-    print(f"Network speed|{request_result['network_speed']}")
-    print(f"Upload speed|{request_result['upload_speed']}")
+    print(f"ID/VID|{info_request_result['vpsid']}/{info_request_result['vps_name']}")
+    print(
+        f"VDS Status|{'Online' if vps_status==1 else 'Offline' if vps_status==1 else vps_status}"
+    )
+    print(
+        f"Suspended|{'True' if info_request_result['suspended'] ==1 else 'False' if info_request_result['suspended']==0 else info_request_result['suspended']}"
+    )
+    print(f"Network suspend|{info_request_result['nw_suspended']}")
+    print(f"OS|{info_request_result['os_name']}")
+    print(f"Network interface|{info_request_result['nic_type']}")
+    print(f"RAM|{info_request_result['ram']}")
+    print(f"CPU mode|{info_request_result['cpu_mode']}")
+    print(f"Cores|{info_request_result['cores']}")
+    print(f"Network speed|{info_request_result['network_speed']}")
+    print(f"Upload speed|{info_request_result['upload_speed']}")
 
     return 0
 
