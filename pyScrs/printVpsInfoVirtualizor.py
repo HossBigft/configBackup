@@ -68,7 +68,7 @@ def vInfoVpsGet(vps_hostname):
     except requests.RequestException as e:
         print(f"Request failed: {e}")
         return 1
-    vps_status = response["status"][info_request_result["vpsid"]]["status"]
+    vps_status = str(response["status"][info_request_result["vpsid"]]["status"])
 
     ips = info_request_result["ips"]
 
@@ -102,10 +102,10 @@ def vInfoVpsGet(vps_hostname):
     print(f"Inode|{used_inodes_Percent}/100%|{used_inodes}/{total_inodes}")
     print(f"ID/VID|{info_request_result['vpsid']}/{info_request_result['vps_name']}")
     print(
-        f"VDS Status|{'Online' if vps_status==1 else 'Offline' if vps_status==1 else vps_status}"
+        f"VDS Status|{'Online' if vps_status=='1' else 'Offline' if vps_status == '0' else 'Suspended' if vps_status == '2' else vps_status}"
     )
     print(
-        f"Suspended|{'True' if info_request_result['suspended'] ==1 else 'False' if info_request_result['suspended']==0 else info_request_result['suspended']}"
+        f"Suspended|{'True' if info_request_result['suspended'] == '1' else 'False' if info_request_result['suspended']=='0' else info_request_result['suspended']}"
     )
     print(f"Network suspend|{info_request_result['nw_suspended']}")
     print(f"OS|{info_request_result['os_name']}")
