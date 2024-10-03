@@ -7,8 +7,9 @@ function pPhpVersion --wraps=ssh --description "Returns current PHP version set 
 
     if test $argNum -eq 1
         set domain (echo $argv)
-        set username (_pDomainToCageFsUsername $domain)
+        set subscriptionName (pSubscriptionNameByDomain $domain -q)
         set host (_findPleskHost $domain)
+        set username (_pDomainToCageFsUsername $host $domain)
         if test $status -eq 1
             echo "Host for $domain was not found"
             return 1
@@ -17,14 +18,14 @@ function pPhpVersion --wraps=ssh --description "Returns current PHP version set 
         end
     else if test $argNum -eq 2
         set domain (echo $argv[2])
+        set host (echo $argv[1])
         
         if set -q _flag_literal
             set username (echo $domain)
         else    
-            set username (_pDomainToCageFsUsername $domain)
+            set username (_pDomainToCageFsUsername $host $domain)
         end
         
-        set host (echo $argv[1])
     end
 
     ssh maximg@$host "selectorctl --user-summary --user=$username|grep s|cut -d \" \" -f1"
