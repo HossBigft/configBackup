@@ -10,8 +10,15 @@ function pPhpVersion --wraps=ssh --description "Returns current PHP version set 
         set subscriptionName (pSubscriptionNameByDomain $domain -q)
         set host (_findPleskHost $domain)
         set username (_pDomainToCageFsUsername $host $domain)
+        
+        if test $status -ne 0
+            echo "[ERROR] CageFS user for subscription $subscriptionName was not found."
+        else
+            echo "Found CageFS user $username for subscription $subscriptionName."
+        end
+        
         if test $status -eq 1
-            echo "Host for $domain was not found"
+            echo "[ERROR] Host for $domain was not found"
             return 1
         else
             echo "Host for $domain is $host"
