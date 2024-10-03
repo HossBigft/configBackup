@@ -1,8 +1,7 @@
 import requests
 import os
-import argparse
 import sys
-import phpserialize
+from termcolor import colored
 
 
 def getNodeInfo():
@@ -17,7 +16,7 @@ def getNodeInfo():
 
     try:
         response = requests.get(vpsInfoRequest)
-        response.raise_for_status()  # Raise an error for bad responses
+        response.raise_for_status()
         response = response.json()
     except requests.RequestException as e:
         print(f"Request failed: {e}")
@@ -34,36 +33,52 @@ def getNodeInfo():
                 "total_space",
                 "status",
                 "server_name",
+                "ram",
+                "total_ram",
             ]
         }
         for record in response["servs"].values()
-        # filter out inactive
-        if not record["status"] == "0" or not record["total_space"] == 0
+        if not (
+            record["status"] == "0"
+            or record["total_space"] == 0
+            or record["server_name"] == "virtualizor.hoster.kz"
+        )
     ]
+
+    for server in server_info:
+        server["total_space"] = int(server["total_space"])
+        server["space"] = int(server["space"])
+        server["used_space"] = server["total_space"] - server["space"]
+        server["used_space_percent"] = round(
+            (((server["used_space"] / server["total_space"]) * 10000 + 100 - 1) / 100),
+            2,
+        )
+
+        server["total_ram"] = round(int(server["total_ram"]) / 1024, 2)
+        server["ram"] = round(int(server["ram"]) / 1024, 2)
+        server["used_ram"] = round(server["total_ram"] - server["ram"], 2)
+        server["used_ram_percent"] = round(
+            (((server["used_ram"] / server["total_ram"]) * 10000 + 100 - 1) / 100), 2
+        )
 
     return server_info
 
 
-if __name__ == "__main__":
+def main():
     server_info = getNodeInfo()
-    server_info = [
-        server
-        for server in server_info
-        if (
-            (
-                (
-                    int(server["total_space"])
-                    - int(server["space"]) / int(server["total_space"])
-                )
-                * 10000
-                + 100
-                - 1
-            )
-            / 100
-        ) > 89
-    ]
-    server_info = sorted(server_info, key=lambda d: int(d["space"]))
+    server_info = sorted(server_info, key=lambda d: (d["space"], d["ram"]))
     for server in server_info:
         print(
-            f"{server['server_name']}|{server['ip']}|{'Online' if int(server['status'])==1 else 'Offline' if int(server['status'])==0 else server['status']}|Space:{int(server['total_space']) - int(server['space'])}/{server['total_space']}GB|Free {server['space']}GB|"
+            f"{colored('Online','green') if int(server['status'])==1 else colored('Offline','red') if int(server['status'])==0 else server['status']}|{server['server_name']}|{server['ip']}|ID:{server['serid']}"
         )
+        print(
+            f"{colored('Space','light_blue')}:{server['used_space']}/{server['total_space']}GB, Free {server['space']}GB|{colored('RAM','light_yellow')}:{server['used_ram']}/{server['total_ram']}GB, Free RAM {server['ram']}GB"
+        )
+        print(
+            f"{colored('Space','light_blue')}:{server['used_space_percent']}/100%, Free {round(100-server['used_space_percent'], 2)}%|{colored('RAM','light_yellow')}:{server['used_ram_percent']}/100%, Free RAM {round(100 -server['used_ram_percent'], 2)}%"
+        )
+        print(f"{server['os']}\n")
+
+
+if __name__ == "__main__":
+    typer.run(main)
