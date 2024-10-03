@@ -4,24 +4,29 @@ function pPhpExtensionsGet --wraps=ssh
     
     if test $argNum -eq 1
         set domain (echo $argv)
-        set host (digsx $argv)
+        set subscriptionName (pSubscriptionNameByDomain $domain -q)
         set host (_findPleskHost $domain)
-        if test -z "$host"
-            echo "Host for $domain was not found"
+        set username (_pDomainToCageFsUsername $host $subscriptionName)
+        
+        if test $status -ne 0
+            echo "[ERROR] CageFS user for subscription $subscriptionName was not found."
+        else
+            echo "Found CageFS user $username for subscription $subscriptionName."
+        end
+        
+        if test $status -eq 1
+            echo "[ERROR] Host for $domain was not found"
             return 1
         else
             echo "Host for $domain is $host"
         end
-        
-        set username (_pDomainToCageFsUsername $domain)
-        ssh maximg@$host "curPHPVersion=\$(selectorctl --user-summary --user=$username|grep s|cut -d \" \" -f1)&& selectorctl --list-user-extensions --version=\$curPHPVersion --user=$username"
+        ssh $host "curPHPVersion=\$(selectorctl --user-summary --user=$username|grep s|cut -d \" \" -f1)&& selectorctl --list-user-extensions --version=\$curPHPVersion --user=$username"
         return 0
-        
     else if test $argNum -eq 2
         set host (echo $argv[1])
         set domain (echo $argv[2])
-        set username (_pDomainToCageFsUsername $domain)
-        ssh maximg@$host "curPHPVersion=\$(selectorctl --user-summary --user=$username|grep s|cut -d \" \" -f1)&& selectorctl --list-user-extensions --version=\$curPHPVersion --user=$username"
+        set username (_pDomainToCageFsUsername $host $domain)
+        ssh $host "curPHPVersion=\$(selectorctl --user-summary --user=$username|grep s|cut -d \" \" -f1)&& selectorctl --list-user-extensions --version=\$curPHPVersion --user=$username"
         return 0
         
     else if test $argNum -eq 3
@@ -29,8 +34,8 @@ function pPhpExtensionsGet --wraps=ssh
         if string match -aqr $phpVersion $availablePhpRegex
             set host (echo $argv[1])
             set domain (echo $argv[2])
-            set username (_pDomainToCageFsUsername $domain)
-            ssh maximg@$host "selectorctl --list-user-extensions --version=$phpVersion --user=$username"
+            set username (_pDomainToCageFsUsername $host $domain)
+            ssh $host "selectorctl --list-user-extensions --version=$phpVersion --user=$username"
             return 0
         else
             printf "Available PHP versions: $availablePhpRegex\n"
