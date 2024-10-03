@@ -72,7 +72,7 @@ Host p-cloud-2 cloud-2.hoster.kz.
         HostName cloud-2.hoster.kz
         User maximg
 	IdentityFile ~/.ssh/id_rsa
-Host p-nturbo-2 nturbo-2.hoster.kz nturbo-2.hoster.kz.
+Host p-nturbo-2  nturbo-2.hoster.kz.
         HostName nturbo-2.hoster.kz.
         User maximg
 	IdentityFile ~/.ssh/id_rsa
@@ -346,3 +346,8 @@ Host p-acloud-1 acloud-1.hoster.kz.
 	User maximg
 	IdentityFile ~/.ssh/id_rsa
 #apkz-5 does not exist
+#Added 20241003_1001
+Host  p-acloud-2 acloud-2.hoster.kz.
+	HostName acloud-2.hoster.kz
+	User maximg
+	IdentityFile ~/.ssh/id_rsa
