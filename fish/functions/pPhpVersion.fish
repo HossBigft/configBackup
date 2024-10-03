@@ -1,4 +1,4 @@
-function pPhpVersion --wraps=ssh --description "Returns current PHP version set in PHP Selector. Takes either hostname and subscription name or tries to find host by subscription name"
+function pPhpVersion --wraps=ssh --description 'Returns current PHP version set in PHP Selector. Takes either hostname and subscription name or tries to find host by subscription name'
     set -l options l/literal
     argparse -n pPhpVersion $options -- $argv
     or return
@@ -9,7 +9,7 @@ function pPhpVersion --wraps=ssh --description "Returns current PHP version set 
         set domain (echo $argv)
         set subscriptionName (pSubscriptionNameByDomain $domain -q)
         set host (_findPleskHost $domain)
-        set username (_pDomainToCageFsUsername $host $domain)
+        set username (_pDomainToCageFsUsername $host $subscriptionName)
         
         if test $status -ne 0
             echo "[ERROR] CageFS user for subscription $subscriptionName was not found."
@@ -24,13 +24,13 @@ function pPhpVersion --wraps=ssh --description "Returns current PHP version set 
             echo "Host for $domain is $host"
         end
     else if test $argNum -eq 2
-        set domain (echo $argv[2])
+        set subscriptionName (echo $argv[2])
         set host (echo $argv[1])
         
         if set -q _flag_literal
             set username (echo $domain)
         else    
-            set username (_pDomainToCageFsUsername $host $domain)
+            set username (_pDomainToCageFsUsername $host $subscriptionName)
         end
         
     end
