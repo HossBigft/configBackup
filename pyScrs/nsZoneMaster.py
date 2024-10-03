@@ -16,13 +16,13 @@ def getPtr(ip: str):
         return ip
 
 
-def getDomainZoneMaster(domain_name, verbosity_flag=True, test_flag=False):
+def getDomainZoneMaster(domain_name, verbosity_flag=True, test_flag=False, debug_flag=False):
     getZoneMasterCmd = f"cat /var/opt/isc/scls/isc-bind/zones/_default.nzf| grep {''.join(domain_name)} | grep -Po '((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\\b){{4}}' | head -n1"
     dnsAnswers = []
     dnsAnswers = ase.batch_ssh_command_result(
         server_list=SERVER_LIST,
         command=getZoneMasterCmd,
-        verbose=verbosity_flag,
+        verbose=debug_flag,
         test=test_flag,
     )
     if verbosity_flag:
@@ -60,6 +60,13 @@ def main():
         type=str,
         help="List of domains to get zone master",
     )
+    
+    parser.add_argument(
+        "-d",
+        "--debug",
+        action="store_true",
+        help="Maximum verbosity",
+    )
 
     args = parser.parse_args()
     verbosity_flag = args.quiet
@@ -70,7 +77,7 @@ def main():
         domain_list = sys.stdin.read().strip().splitlines()
 
     results = [
-        getDomainZoneMaster(domain, verbosity_flag=verbosity_flag, test_flag=args.test)
+        getDomainZoneMaster(domain, verbosity_flag=verbosity_flag, test_flag=args.test, debug_flag=args.debug)
         for domain in domain_list
     ]
 
