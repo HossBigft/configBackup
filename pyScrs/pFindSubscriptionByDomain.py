@@ -134,7 +134,7 @@ def main():
                 print(record["name"])
                 for domain in record["domains"]:
                     print(domain)
-            if len(results) > 1:
+            if len(results) > 1 and args.verbose:
                 print("-------")
     else:
         print(f"No servers was found with {args.domainToFind} domain")
