@@ -51,7 +51,16 @@ function pPhpSetVersion --wraps=ssh
         set phpVersion (echo $argv[3])
         
         if string match -aqr $phpVersion $availablePhpRegex
-            set subscriptionName (echo $argv[2])
+            set domain (echo $argv[2])
+            
+            set subscriptionName (pSubscriptionNameByDomain $host $domain -q)
+            if test $status -ne 0
+                echo (color_word red "[ERROR]")" Subscription $subscriptionName was not found on $host"
+                return 1
+            else
+                echo (color_word blue "[FOUND]")" subscription $subscriptionName on $host."
+            end
+            
             set username (_pDomainToCageFsUsername $host $subscriptionName)
             if test $status -ne 0
                 set_color red; echo "[ERROR] CageFS user for subscription $subscriptionName was not found."
