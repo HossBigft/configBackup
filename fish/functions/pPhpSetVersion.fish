@@ -4,48 +4,47 @@ function pPhpSetVersion --wraps=ssh
     if test $argNum -eq 2
         set domain (echo $argv[1])
         set phpVersion (echo $argv[2])
-        if string match -aqr $phpVersion $availablePhpRegex
-        
+        if contains $phpVersion (string split "|" $availablePhpRegex)
             set host (_findPleskHost $domain)
             if test $status -eq 0
-                echo "Host for $domain is $host"
+                echo (color_word blue "[FOUND]")" Host for $domain is "(color_word yellow $host)
             else
-                echo "[ERROR] Host for $domain was not found."
+                echo (color_word red "[ERROR]")" Host for $domain was not found."
                 return 1
             end
             
             set subscriptionName (pSubscriptionNameByDomain $host $domain -q)
             if test $status -ne 0
-                echo "[ERROR] Subscription $subscriptionName was not found on $host"
+                echo (color_word red "[ERROR]")" Subscription $subscriptionName was not found on $host"
                 return 1
             else
-                echo "Found subscription $subscriptionName on $host."
+                echo (color_word blue "[FOUND]")" subscription $subscriptionName on $host."
             end
             
             set username (_pDomainToCageFsUsername $host $subscriptionName)
             if test $status -ne 0
-                echo "[ERROR] CageFS user for subscription $subscriptionName was not found."
+                echo (color_word red "[ERROR]")" CageFS user for subscription $subscriptionName was not found."
                 return 1
             else
-                echo "Found CageFS user $username for subscription $subscriptionName"
+                echo (color_word blue "[FOUND]")" CageFS user $username for subscription $subscriptionName"
             end
             
             
             ssh $host "selectorctl --set-user-current=$phpVersion --user=$username"
             if test $status -eq 0
-                printf "Set PHP %s for user %s.\n" $phpVersion $username
+                printf (echo (color_word green "[SET]"))" PHP %s for subscription %s with user %s.\n" $phpVersion $subscriptionName $username
             end
             return $status
         else
-            printf "[ERROR] PHP $phpVersion not available.\nAvailable PHP versions: $availablePhpRegex\n"
+            echo (color_word red "[ERROR]")" PHP $phpVersion not available."
+            echo "Available PHP versions: $availablePhpRegex"
             return 1
         end
     else if test $argNum -eq 3
         set host (echo $argv[1])
         
-        
         if not _isExistingPleskHost $host
-            echo "[ERROR] Host $host does not exist."
+           echo (color_word red "[ERROR]")" Host $host does not exist."
             return 1
         end
         
@@ -55,23 +54,24 @@ function pPhpSetVersion --wraps=ssh
             set subscriptionName (echo $argv[2])
             set username (_pDomainToCageFsUsername $host $subscriptionName)
             if test $status -ne 0
-                echo "[ERROR] CageFS user for subscription $subscriptionName was not found."
+                set_color red; echo "[ERROR] CageFS user for subscription $subscriptionName was not found."
                 return 1
             else
-                echo "Found CageFS user $username for subscription $subscriptionName"
+                echo (color_word blue "[FOUND]")" CageFS user $username for subscription $subscriptionName"
             end
             
             ssh $host "selectorctl --set-user-current=$phpVersion --user=$username"
             
             if test $status -eq 0
-                printf "Set PHP %s for user %s\n" $phpVersion $username
+               printf (echo (color_word green "[SET]"))" PHP %s for subscription %s with user %s.\n" $phpVersion $subscriptionName $username
             end
         else
-            printf "[ERROR] PHP $phpVersion not available.\nAvailable PHP versions: $availablePhpRegex\n"
+            echo (color_word red "[ERROR]")" PHP $phpVersion not available."
+            echo "Available PHP versions: $availablePhpRegex"
             return 1
         end
     else
-        echo "[ERROR] wrong number of arguments[$argNum]"
+        echo (color_word red "[ERROR]")" wrong number of arguments[$argNum]"
     end
 
 end
