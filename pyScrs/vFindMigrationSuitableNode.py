@@ -48,16 +48,16 @@ def getNodeInfo():
 
     for server in server_info:
         server["total_space"] = int(server["total_space"])
-        server["space"] = int(server["space"])
-        server["used_space"] = server["total_space"] - server["space"]
+        server["free_space"] = int(server["space"])
+        server["used_space"] = server["total_space"] - server["free_space"]
         server["used_space_percent"] = round(
             (((server["used_space"] / server["total_space"]) * 10000 + 100 - 1) / 100),
             2,
         )
 
         server["total_ram"] = round(int(server["total_ram"]) / 1024, 2)
-        server["ram"] = round(int(server["ram"]) / 1024, 2)
-        server["used_ram"] = round(server["total_ram"] - server["ram"], 2)
+        server["free_ram"] = round(int(server["ram"]) / 1024, 2)
+        server["used_ram"] = round(server["total_ram"] - server["free_ram"], 2)
         server["used_ram_percent"] = round(
             (((server["used_ram"] / server["total_ram"]) * 10000 + 100 - 1) / 100), 2
         )
@@ -72,14 +72,16 @@ def main(machine_size: float, machine_ram: float):
     machine_ram --- RAM size of machine to be migrated in GB
     """
     server_info = getNodeInfo()
+
     server_info = [
         server
         for server in server_info
-        if not (server["used_space_percent"] >= 89 or server["used_ram_percent"] >= 89)
+        if not (server["used_space_percent"] >= 89 or server["used_ram_percent"] >= 50)
     ]
+
     for server in server_info:
         server["used_space_after"] = server["total_space"] - (
-            server["space"] - machine_size
+            server["free_space"] - machine_size
         )
 
         server["free_space_after"] = server["total_space"] - server["used_space_after"]
@@ -93,7 +95,7 @@ def main(machine_size: float, machine_ram: float):
         )
 
         server["used_ram_after"] = round(
-            server["total_ram"] - (server["ram"] - machine_ram), 2
+            server["total_ram"] - (server["free_ram"] - machine_ram), 2
         )
         server["free_ram_after"] = server["total_ram"] - server["used_ram_after"]
         server["used_ram_percent_after"] = round(
@@ -112,18 +114,22 @@ def main(machine_size: float, machine_ram: float):
             or server["used_ram_percent_after"] >= 89
         )
     ]
-    for server in server_info:
-        print(server["used_space_percent_after"])
-    server_info = sorted(server_info, key=lambda d: (d["space"], d["ram"]))
+
+    server_info = sorted(
+        server_info, key=lambda d: (d["free_ram_after"], d["free_space_after"])
+    )
+
     for server in server_info:
         print(
             f"{colored('Online','green') if int(server['status'])==1 else colored('Offline','red') if int(server['status'])==0 else server['status']}|{server['server_name']}|{server['ip']}|ID:{server['serid']}"
         )
         print(
-            f"{colored('Space','light_blue')}:{server['used_space']}/{server['total_space']}GB, Free {server['space']}GB|{colored('RAM','light_yellow')}:{server['used_ram']}/{server['total_ram']}GB, Free RAM {server['ram']}GB"
+            f"{colored('Space','light_blue')}:{server['used_space']}=>{server['used_space_after']:g}/{server['total_space']}GB, Free {server['free_space']}=>{server['free_space_after']}GB\n"
+            + f"{colored('RAM','light_yellow')}:{server['used_ram']}=>{server['used_ram_after']:g}/{server['total_ram']}GB, Free RAM {server['free_ram']}=>{server['free_ram_after']}GB"
         )
         print(
-            f"{colored('Space','light_blue')}:{server['used_space_percent']}/100%, Free {round(100-server['used_space_percent'], 2)}%|{colored('RAM','light_yellow')}:{server['used_ram_percent']}/100%, Free RAM {round(100 -server['used_ram_percent'], 2)}%"
+            f"{colored('Space','light_blue')}:{server['used_space_percent']}=>{server['used_space_percent_after']:g}/100%, Free {round(server['used_space_percent'], 2)}=>{round(server['used_space_percent_after'], 2):g}%\n"
+            + f"{colored('RAM','light_yellow')}:{server['used_ram_percent']}=>{server['used_ram_percent_after']:g}/100%, Used RAM {round(server['used_ram_percent'], 2)}=>{round(server['used_ram_percent_after'], 2):g}%"
         )
         print(f"{server['os']}\n")
 
