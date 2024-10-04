@@ -9,7 +9,6 @@ PLESK_SERVER_LIST = (
     "apkz4.hoster.kz.",
     "apkz6.hoster.kz.",
     "apkz7.hoster.kz.",
-    "pkz37.hoster.kz.",
     "pkz47.hoster.kz.",
     "pkz48.hoster.kz.",
     "pkz49.hoster.kz.",
