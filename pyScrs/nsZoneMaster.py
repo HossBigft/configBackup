@@ -17,7 +17,7 @@ def getPtr(ip: str):
 
 
 def getDomainZoneMaster(domain_name, verbosity_flag=True, test_flag=False, debug_flag=False):
-    getZoneMasterCmd = f"cat /var/opt/isc/scls/isc-bind/zones/_default.nzf| grep {''.join(domain_name)} | grep -Po '((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\\b){{4}}' | head -n1"
+    getZoneMasterCmd = f"cat /var/opt/isc/scls/isc-bind/zones/_default.nzf| grep '\\\"{''.join(domain_name)}\\\"' | grep -Po '((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\\b){{4}}' | head -n1"
     dnsAnswers = []
     dnsAnswers = ase.batch_ssh_command_result(
         server_list=SERVER_LIST,
