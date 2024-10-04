@@ -1,6 +1,7 @@
 import requests
 import os
 import sys
+import typer
 from termcolor import colored
 
 
@@ -64,8 +65,55 @@ def getNodeInfo():
     return server_info
 
 
-def main():
+def main(machine_size: float, machine_ram: float):
+    """
+    machine_size --- size of machine to be migrated in GB
+
+    machine_ram --- RAM size of machine to be migrated in GB
+    """
     server_info = getNodeInfo()
+    server_info = [
+        server
+        for server in server_info
+        if not (server["used_space_percent"] >= 89 or server["used_ram_percent"] >= 89)
+    ]
+    for server in server_info:
+        server["used_space_after"] = server["total_space"] - (
+            server["space"] - machine_size
+        )
+
+        server["free_space_after"] = server["total_space"] - server["used_space_after"]
+
+        server["used_space_percent_after"] = round(
+            (
+                ((server["used_space_after"] / server["total_space"]) * 10000 + 100 - 1)
+                / 100
+            ),
+            2,
+        )
+
+        server["used_ram_after"] = round(
+            server["total_ram"] - (server["ram"] - machine_ram), 2
+        )
+        server["free_ram_after"] = server["total_ram"] - server["used_ram_after"]
+        server["used_ram_percent_after"] = round(
+            (
+                ((server["used_ram_after"] / server["total_ram"]) * 10000 + 100 - 1)
+                / 100
+            ),
+            2,
+        )
+
+    server_info = [
+        server
+        for server in server_info
+        if not (
+            server["used_space_percent_after"] >= 89
+            or server["used_ram_percent_after"] >= 89
+        )
+    ]
+    for server in server_info:
+        print(server["used_space_percent_after"])
     server_info = sorted(server_info, key=lambda d: (d["space"], d["ram"]))
     for server in server_info:
         print(
@@ -81,4 +129,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main
+    typer.run(main)
