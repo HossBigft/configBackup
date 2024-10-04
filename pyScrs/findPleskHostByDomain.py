@@ -85,7 +85,7 @@ def main():
         except PTRValidationError:
             if verbose_flag:
                 print(f"[FAIL] No substring 'hoster.kz' in {ptr_record}.")
-    except (resolver.NoAnswer, resolver.NXDOMAIN):
+    except (resolver.NoAnswer, resolver.NXDOMAIN, resolver.NoNameservers):
         if verbose_flag:
             print(f"[FAIL] A record not found for {domain}.")
 
@@ -124,7 +124,7 @@ def main():
         except PTRValidationError:
             if verbose_flag:
                 print(f"[FAIL] No substring 'hoster.kz' in {ptr_record}.")
-    except (resolver.NoAnswer, resolver.NXDOMAIN):
+    except (resolver.NoAnswer, resolver.NXDOMAIN, resolver.NoNameservers):
         if verbose_flag:
             print(f"[FAIL] MX record not found for {domain}.")
     except AmbiguousMXRecordTargets:
