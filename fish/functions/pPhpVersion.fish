@@ -35,5 +35,5 @@ function pPhpVersion --wraps=ssh --description 'Returns current PHP version set 
         
     end
 
-    ssh maximg@$host "selectorctl --user-summary --user=$username|grep s|cut -d \" \" -f1"
+    ssh $host "selectorctl --user-summary --user=$username|grep s|cut -d \" \" -f1"
 end
