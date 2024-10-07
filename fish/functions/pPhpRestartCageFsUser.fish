@@ -1,4 +1,4 @@
-function pPhpCageFsUserRestart --wraps=ssh --description 'Restarts CageFS user for given subscription. Takes server hostname, name of subscription or can take only name of subscription and try to find host'
+function pPhpRestartCageFsUser --wraps=ssh --description 'Restarts CageFS user for given subscription. Takes server hostname, name of subscription or can take only name of subscription and try to find host'
     set argNum (count $argv)
 
     if test $argNum -eq 1
