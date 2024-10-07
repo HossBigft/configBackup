@@ -3,9 +3,9 @@ function pPhpCageFsUserRestart --wraps=ssh --description 'Restarts CageFS user f
 
     if test $argNum -eq 1
         set domain (echo $argv)
-        set subscriptionName (pSubscriptionNameByDomain $domain -q)
         set host (_findPleskHost $domain)
-        set username (_pDomainToCageFsUsername $host $domain)
+        set subscriptionName (pSubscriptionNameByDomain $host $domain -q)
+        set username (_pDomainToCageFsUsername $host $subscriptionName)
         
         if test $status -ne 0
             echo "[ERROR] CageFS user for subscription $subscriptionName was not found."
