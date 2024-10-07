@@ -2,13 +2,26 @@ import async_ssh_executor as ase
 import argparse
 
 
-def query_domain_info(domain_to_find: str, verbose_flag=True):
+def build_query(domain_to_find: str) -> str:
+    return (
+        f"SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result "
+        f"FROM domains WHERE name LIKE '{domain_to_find}'; "
+        f"SELECT name FROM domains WHERE id=(SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '{domain_to_find}'); "
+        f"SELECT pname, login FROM clients WHERE id=(SELECT cl_id FROM domains WHERE name LIKE '{domain_to_find}'); "
+        f"SELECT name FROM domains WHERE webspace_id=(SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '{domain_to_find}');"
+    )
+
+
+def query_domain_info(domain_to_find: str, verbose_flag=True, partial_search=False):
+    query = (
+        build_query(domain_to_find)
+        if not partial_search
+        else build_query(domain_to_find + "%")
+    )
+
     answers = ase.batch_ssh_command_result(
         "plesk",
-        f"plesk db -Ne \\\"SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '{domain_to_find}%';"
-        + f"SELECT name FROM domains WHERE id=(SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '{domain_to_find}%');"
-        + f"SELECT pname, login FROM clients WHERE id=(SELECT cl_id FROM domains WHERE name LIKE '{domain_to_find}%');"
-        + f"SELECT name FROM domains WHERE webspace_id=(SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '{domain_to_find}%')\\\"",
+        f'plesk db -Ne \\"{query}\\"',
         verbose=verbose_flag,
     )
 
@@ -72,14 +85,20 @@ def main():
         action="store_true",
         help="print user name and login",
     )
+    parser.add_argument(
+        "-p",
+        "--partial",
+        action="store_true",
+        help="search by part of domain name",
+    )
 
     args = parser.parse_args()
     v = vars(args)
     argsNumber = sum([1 for a in v.values() if a])
     if argsNumber == 1:
         args.verbose = args.name = args.id = args.domains = args.server = args.user = (
-            True
-        )
+            args.partial
+        ) = True
 
     output_elements = []
     if args.server:
@@ -108,8 +127,12 @@ def main():
             ]
         else:
             output_elements[:] = [*output_elements, *["{username}", "{userlogin}"]]
-
-    results = query_domain_info(args.domainToFind, verbose_flag=args.verbose)
+    if args.partial:
+        results = query_domain_info(
+            args.domainToFind, verbose_flag=args.verbose, partial_search=True
+        )
+    else:
+        results = query_domain_info(args.domainToFind, verbose_flag=args.verbose)
 
     if results:
         if args.verbose and args.server:
