@@ -253,6 +253,7 @@ matches:
           format: "%m%d%Y"
   - trigger: "\\сайтс"
     replace: |
+     Спам с сайта {{clipb}}
      Здравствуйте.
 
      С сайта {{clipb}}  идет спам рассылка.
@@ -266,9 +267,28 @@ matches:
         type: "clipboard"
 
   - trigger: "=mrmd"
-    replace: "mailq | tail -n +2 | head -n -2 | grep -v '^ *(' | awk 'BEGIN { RS = \"\" } { if (($7 == \"SENDER@EMAIL.COM\")) print $1 }' | tr -d '*!'| postsuper -d -  "
+    replace: "mailq | tail -n +2 | head -n -2 | grep -v '^ *(' | awk 'BEGIN { RS = \"\" } { if (($7 == \"{{clipb}}\")) print $1 }' | tr -d '*!'| postsuper -d -  "
+    vars:
+      - name: "clipb"
+        type: "clipboard"
   - trigger: "=pm"
     replace: "/usr/local/psa/admin/bin/mail_auth_view"
+  - trigger: "\\почтас"
+    replace: |
+     Добрый день!
+
+     Зафиксировали спам рассылку с почтового ящика {{clipb}}
+     Были вынуждены отключить почтовый ящик и сменить ему пароль, для избежания сам рассылки.
+
+     Просим вас проверить ваш ПК где используется данный почтовый ящик и поменять ему пароль с вашей стороны.
+    vars:
+      - name: "clipb"
+        type: "clipboard"
+  - trigger: "=pv"
+    replace: "postcat -bhq $(mailq | grep {{clipb}} | awk '{print $1}' | head -n1)"
+    vars:
+      - name: "clipb"
+        type: "clipboard"
 
 
 
