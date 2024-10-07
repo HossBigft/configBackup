@@ -6,8 +6,8 @@ function pPhpDebugToggle --wraps=ssh
     set argNum (count $argv)
     if test $argNum -eq 1
         set domain (echo $argv)
-        set subscriptionName (pSubscriptionNameByDomain $domain -q)
         set host (_findPleskHost $domain)
+        set subscriptionName (pSubscriptionNameByDomain $host $domain -q)
         set username (_pDomainToCageFsUsername $host $subscriptionName)
         
         if test $status -ne 0
