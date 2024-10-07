@@ -4,6 +4,8 @@ import sys
 import nsZoneMaster
 import pFindSubscriptionByDomain as pfind
 import re
+from termcolor import colored
+
 
 DNS_HOSTING_HOSTNAME = "dns.hoster.kz."
 
@@ -81,13 +83,13 @@ def main():
                 raise PTRValidationError(ptr_record)
         except (resolver.NoAnswer, resolver.NXDOMAIN):
             if verbose_flag:
-                print(f"[FAIL] PTR record not found for {a_record}. PTR lookup failed.")
+                print(f"[{colored('FAIL','yellow')}] PTR record not found for {a_record}. PTR lookup failed.")
         except PTRValidationError:
             if verbose_flag:
-                print(f"[FAIL] No substring 'hoster.kz' in {ptr_record}.")
+                print(f"[{colored('FAIL','yellow')}] No substring 'hoster.kz' in {ptr_record}.")
     except (resolver.NoAnswer, resolver.NXDOMAIN, resolver.NoNameservers):
         if verbose_flag:
-            print(f"[FAIL] A record not found for {domain}.")
+            print(f"[{colored('FAIL','yellow')}] A record not found for {domain}.")
 
     if verbose_flag:
         print(f"Attempting to resolve host for {domain} using MX record.")
@@ -120,17 +122,17 @@ def main():
 
         except (resolver.NoAnswer, resolver.NXDOMAIN):
             if verbose_flag:
-                print(f"[FAIL] PTR record not found for {mx_record}.")
+                print(f"[{colored('FAIL','yellow')}] PTR record not found for {mx_record}.")
         except PTRValidationError:
             if verbose_flag:
-                print(f"[FAIL] No substring 'hoster.kz' in {ptr_record}.")
+                print(f"[{colored('FAIL','yellow')}] No substring 'hoster.kz' in {ptr_record}.")
     except (resolver.NoAnswer, resolver.NXDOMAIN, resolver.NoNameservers):
         if verbose_flag:
-            print(f"[FAIL] MX record not found for {domain}.")
+            print(f"[{colored('FAIL','yellow')}] MX record not found for {domain}.")
     except AmbiguousMXRecordTargets:
         if verbose_flag:
             print(
-                f"[FAIL] Multiple A records for MX record {mx_record} Ambioguous mail host."
+                f"[{colored('FAIL','yellow')}] Multiple A records for MX record {mx_record} Ambioguous mail host."
             )
 
     if verbose_flag:
@@ -149,13 +151,13 @@ def main():
                 raise PTRValidationError(ptr_record)
         except (resolver.NoAnswer, resolver.NXDOMAIN):
             if verbose_flag:
-                print(f"[FAIL] PTR record not found for {a_record}. PTR lookup failed.")
+                print(f"[{colored('FAIL','yellow')}] PTR record not found for {a_record}. PTR lookup failed.")
         except PTRValidationError:
             if verbose_flag:
-                print(f"[FAIL] No substring 'hoster.kz' in {ptr_record}.")
+                print(f"[{colored('FAIL','yellow')}] No substring 'hoster.kz' in {ptr_record}.")
     else:
         if verbose_flag:
-            print(f"[FAIL] Zone master not found for {domain}.")
+            print(f"[{colored('FAIL','yellow')}] Zone master not found for {domain}.")
 
     if verbose_flag:
         print(f"Attempting to find host {domain} by querying servers.")
@@ -166,7 +168,7 @@ def main():
     ]:
         if (hosts_num := len(answers)) > 1:
             print(
-                f"[ERROR] Multiple hosts found [{hosts_num}] The actual host is ambiguous."
+                f"[{colored('ERROR','red')}] Multiple hosts found [{hosts_num}] The actual host is ambiguous."
             )
             for answer in answers:
                 print(answer["host"])
@@ -177,7 +179,7 @@ def main():
             sys.exit(0)
     else:
         if verbose_flag:
-            print("[ERROR] Host for {domain} not found.")
+            print(f"[{colored('ERROR','red')}] Host for {domain} not found.")
         sys.exit(1)
 
 
