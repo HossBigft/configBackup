@@ -12,6 +12,21 @@ def build_query(domain_to_find: str) -> str:
     )
 
 
+def parse_answer(answer) -> dict:
+    stdout_lines = answer["stdout"].strip().split("\n")
+    if len(stdout_lines) < 4:
+        return None
+
+    return {
+        "host": answer["host"],
+        "id": stdout_lines[0],
+        "name": stdout_lines[1],
+        "username": stdout_lines[2].split("\t")[0],
+        "userlogin": stdout_lines[2].split("\t")[1],
+        "domains": stdout_lines[3:],
+    }
+
+
 def query_domain_info(domain_to_find: str, verbose_flag=True, partial_search=False):
     query = (
         build_query(domain_to_find)
@@ -25,18 +40,7 @@ def query_domain_info(domain_to_find: str, verbose_flag=True, partial_search=Fal
         verbose=verbose_flag,
     )
 
-    results = [
-        {
-            "host": answer["host"],
-            "id": answer["stdout"].strip().split("\n")[0],
-            "name": answer["stdout"].strip().split("\n")[1],
-            "username": answer["stdout"].strip().split("\n")[2].split("\t")[0],
-            "userlogin": answer["stdout"].strip().split("\n")[2].split("\t")[1],
-            "domains": answer["stdout"].strip().split("\n")[3:],
-        }
-        for answer in answers
-        if answer["stdout"]
-    ]
+    results = [parse_answer(answer) for answer in answers if answer["stdout"]]
     return results
 
 
