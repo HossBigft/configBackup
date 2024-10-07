@@ -1,11 +1,15 @@
 import argparse
-from dns import resolver, reversename
 import sys
 import nsZoneMaster
 import pFindSubscriptionByDomain as pfind
 import re
 from termcolor import colored
-
+from dns_resolver import (
+    resolve_a_record,
+    resolve_mx_record,
+    resolve_ptr_record,
+    RecordNotFoundError,
+)
 
 DNS_HOSTING_HOSTNAME = "dns.hoster.kz."
 
@@ -35,11 +39,6 @@ class PTRValidationError(Exception):
         return self.message
 
 
-class RecordNotFoundError(Exception):
-    def __init__(self, message):
-        super().__init__(message)
-
-
 def regex_type(pattern: str | re.Pattern):
     """Argument type for matching a regex pattern."""
 
@@ -51,30 +50,6 @@ def regex_type(pattern: str | re.Pattern):
         return arg_value
 
     return closure_check_regex
-
-
-def resolve_a_record(domain):
-    try:
-        return [ipval.to_text() for ipval in resolver.resolve(domain, "A")]
-    except (resolver.NoAnswer, resolver.NXDOMAIN, resolver.NoNameservers) as exc:
-        raise RecordNotFoundError(f"A record not found for {domain}") from exc
-
-
-def resolve_ptr_record(ip):
-    try:
-        addr_record = reversename.from_address(ip)
-        return str(resolver.resolve(addr_record, "PTR")[0])
-    except (resolver.NoAnswer, resolver.NXDOMAIN) as exc:
-        raise RecordNotFoundError(f"PTR record not found for {ip}") from exc
-
-
-def resolve_mx_record(domain):
-    try:
-        return "".join(
-            [ipval.to_text() for ipval in resolver.resolve(domain, "MX")]
-        ).split(" ")[1]
-    except (resolver.NoAnswer, resolver.NXDOMAIN) as exc:
-        raise RecordNotFoundError(f"MX record not found for {domain}") from exc
 
 
 def main():
