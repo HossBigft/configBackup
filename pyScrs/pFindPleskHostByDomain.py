@@ -55,7 +55,7 @@ def regex_type(pattern: str | re.Pattern):
 
 def resolve_a_record(domain):
     try:
-        return "".join([ipval.to_text() for ipval in resolver.resolve(domain, "A")])
+        return [ipval.to_text() for ipval in resolver.resolve(domain, "A")]
     except (resolver.NoAnswer, resolver.NXDOMAIN, resolver.NoNameservers) as exc:
         raise RecordNotFoundError(f"A record not found for {domain}") from exc
 
@@ -66,6 +66,7 @@ def resolve_ptr_record(ip):
         return str(resolver.resolve(addr_record, "PTR")[0])
     except (resolver.NoAnswer, resolver.NXDOMAIN) as exc:
         raise RecordNotFoundError(f"PTR record not found for {ip}") from exc
+
 
 def resolve_mx_record(domain):
     try:
@@ -100,7 +101,11 @@ def main():
         print(f"Starting host resolution for {domain} using A record.")
 
     try:
-        a_record = resolve_a_record(domain)
+        a_record: str
+        if len(a_records := resolve_a_record(domain)) > 1:
+            raise AmbiguousMXRecordTargets(domain)
+        else:
+            a_record = a_records[0]
         try:
             ptr_record = resolve_ptr_record(a_record)
             if "hoster.kz" in ptr_record and not ptr_record == DNS_HOSTING_HOSTNAME:
