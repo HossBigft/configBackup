@@ -67,6 +67,14 @@ def resolve_ptr_record(ip):
     except (resolver.NoAnswer, resolver.NXDOMAIN) as exc:
         raise RecordNotFoundError(f"PTR record not found for {ip}") from exc
 
+def resolve_mx_record(domain):
+    try:
+        return "".join(
+            [ipval.to_text() for ipval in resolver.resolve(domain, "MX")]
+        ).split(" ")[1]
+    except (resolver.NoAnswer, resolver.NXDOMAIN) as exc:
+        raise RecordNotFoundError(f"MX record not found for {domain}") from exc
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -117,9 +125,7 @@ def main():
     if verbose_flag:
         print(f"Attempting to resolve host for {domain} using MX record.")
     try:
-        mx_record = "".join(
-            [ipval.to_text() for ipval in resolver.resolve(domain, "MX")]
-        ).split(" ")[1]
+        mx_record = resolve_mx_record(domain)
 
         a_record: str
         if len(a_records := resolve_a_record(mx_record)) > 1:
