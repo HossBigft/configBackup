@@ -14,9 +14,6 @@ def build_query(domain_to_find: str) -> str:
 
 def parse_answer(answer) -> dict:
     stdout_lines = answer["stdout"].strip().split("\n")
-    if len(stdout_lines) < 4:
-        return None
-
     return {
         "host": answer["host"],
         "id": stdout_lines[0],
