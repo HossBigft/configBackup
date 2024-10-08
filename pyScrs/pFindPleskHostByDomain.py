@@ -5,9 +5,7 @@ import pFindSubscriptionByDomain as pfind
 import re
 from termcolor import colored
 from dns_resolver import (
-    resolve_a_record,
-    resolve_mx_record,
-    resolve_ptr_record,
+    resolve_record,
     RecordNotFoundError,
 )
 
@@ -77,12 +75,12 @@ def main():
 
     try:
         a_record: str
-        if len(a_records := resolve_a_record(domain)) > 1:
+        if len(a_records := resolve_record(domain, "A")) > 1:
             raise AmbiguousMXRecordTargets(domain)
         else:
             a_record = a_records[0]
         try:
-            ptr_record = resolve_ptr_record(a_record)
+            ptr_record = resolve_record(a_record, "PTR")
             if "hoster.kz" in ptr_record and not ptr_record == DNS_HOSTING_HOSTNAME:
                 print(ptr_record)
                 sys.exit(0)
@@ -105,16 +103,16 @@ def main():
     if verbose_flag:
         print(f"Attempting to resolve host for {domain} using MX record.")
     try:
-        mx_record = resolve_mx_record(domain)
+        mx_record = resolve_record(domain, "MX")
 
         a_record: str
-        if len(a_records := resolve_a_record(mx_record)) > 1:
+        if len(a_records := resolve_record(mx_record, "A")) > 1:
             raise AmbiguousMXRecordTargets(mx_record)
         else:
             a_record = a_records[0]
 
         try:
-            ptr_record = resolve_ptr_record(a_record)
+            ptr_record = resolve_record(a_record, "PTR")
             if "hoster.kz" in ptr_record and not ptr_record == DNS_HOSTING_HOSTNAME:
                 print(ptr_record)
                 sys.exit(0)
@@ -147,7 +145,7 @@ def main():
         nsZoneMaster.getDomainZoneMaster(domain, verbosity_flag=False)["zone_master"]
     ):
         try:
-            ptr_record = resolve_ptr_record(zone_master_a_record)
+            ptr_record = resolve_record(zone_master_a_record, "PTR")
             if "hoster.kz" in ptr_record and not ptr_record == DNS_HOSTING_HOSTNAME:
                 print(ptr_record)
                 sys.exit(0)
