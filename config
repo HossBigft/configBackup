@@ -9,6 +9,7 @@ Host ogruzo
 	HostName 185.129.51.20
 	User admi
   IdentityFile ~/.ssh/id_rsa
+  Port 64610
 Host p-cloud-1 cloud-1.hoster.kz.
 	HostName cloud-1.hoster.kz.
 	User maximg
