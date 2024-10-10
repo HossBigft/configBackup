@@ -6,17 +6,29 @@ class RecordNotFoundError(Exception):
         super().__init__(message)
 
 
-def resolve_record(record: str, type: str):
+def resolve_record(record: str, type: str, dns_list="hoster"):
+    custom_resolver = resolver.Resolver()
+    match dns_list:
+        case "hoster":
+            custom_resolver.nameservers = [
+                "ns1.hoster.kz",
+                "ns2.hoster.kz",
+                "ns3.hoster.kz",
+            ]
+        case "free":
+            custom_resolver.nameservers = ["8.8.8.8", "8.8.4.4"]
     try:
         match type:
             case "A":
-                return [ipval.to_text() for ipval in resolver.resolve(record, type)]
+                return [
+                    ipval.to_text() for ipval in custom_resolver.resolve(record, type)
+                ]
             case "PTR":
                 addr_record = reversename.from_address(record)
-                return str(resolver.resolve(addr_record, type)[0])
+                return str(custom_resolver.resolve(addr_record, type)[0])
             case "MX":
                 return "".join(
-                    [ipval.to_text() for ipval in resolver.resolve(record, "MX")]
+                    [ipval.to_text() for ipval in custom_resolver.resolve(record, "MX")]
                 ).split(" ")[1]
             case _:
                 raise rdatatype.UnknownRdatatype
