@@ -11,9 +11,9 @@ def resolve_record(record: str, type: str, dns_list="hoster"):
     match dns_list:
         case "hoster":
             custom_resolver.nameservers = [
-                "ns1.hoster.kz",
-                "ns2.hoster.kz",
-                "ns3.hoster.kz",
+                "185.116.195.38",
+                "185.121.81.104",
+                "89.35.125.31"
             ]
         case "free":
             custom_resolver.nameservers = ["8.8.8.8", "8.8.4.4"]
