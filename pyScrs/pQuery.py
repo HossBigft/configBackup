@@ -2,6 +2,7 @@ import async_ssh_executor as ase
 import pathlib
 import datetime
 import argparse
+from host_lists import PLESK_SERVER_LIST, TEST_SERVER_LIST
 
 
 STATS_DIR_NAME = "pkzStats"
@@ -39,14 +40,13 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if args.test:
         results = ase.batch_ssh_command_result(
-            server_list="plesk",
+            server_list=TEST_SERVER_LIST,
             command=args.command,
             verbose=True,
-            test=True,
         )
     else:
         results = ase.batch_ssh_command_result(
-            server_list="plesk", command=args.command, verbose=True
+            server_list=PLESK_SERVER_LIST, command=args.command, verbose=True
         )
     if args.oneline:
         results = [

@@ -2,6 +2,7 @@ import async_ssh_executor as ase
 import argparse
 import sys
 from dns import resolver, reversename, exception
+from host_lists import DNS_SERVER_LIST
 
 SERVER_LIST = "DNS"
 DNS_HOSTING_HOSTNAME = "dns.hoster.kz."
@@ -16,11 +17,13 @@ def getPtr(ip: str):
         return ip
 
 
-def getDomainZoneMaster(domain_name, verbosity_flag=True, test_flag=False, debug_flag=False):
+def getDomainZoneMaster(
+    domain_name, verbosity_flag=True, test_flag=False, debug_flag=False
+):
     getZoneMasterCmd = f"cat /var/opt/isc/scls/isc-bind/zones/_default.nzf| grep '\\\"{''.join(domain_name)}\\\"' | grep -Po '((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\\b){{4}}' | head -n1"
     dnsAnswers = []
     dnsAnswers = ase.batch_ssh_command_result(
-        server_list=SERVER_LIST,
+        server_list=DNS_SERVER_LIST,
         command=getZoneMasterCmd,
         verbose=debug_flag,
         test=test_flag,
@@ -60,7 +63,7 @@ def main():
         type=str,
         help="List of domains to get zone master",
     )
-    
+
     parser.add_argument(
         "-d",
         "--debug",
@@ -77,7 +80,12 @@ def main():
         domain_list = sys.stdin.read().strip().splitlines()
 
     results = [
-        getDomainZoneMaster(domain, verbosity_flag=verbosity_flag, test_flag=args.test, debug_flag=args.debug)
+        getDomainZoneMaster(
+            domain,
+            verbosity_flag=verbosity_flag,
+            test_flag=args.test,
+            debug_flag=args.debug,
+        )
         for domain in domain_list
     ]
 

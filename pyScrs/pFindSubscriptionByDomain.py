@@ -1,5 +1,6 @@
 import async_ssh_executor as ase
 import argparse
+from host_lists import PLESK_SERVER_LIST
 
 
 def build_query(domain_to_find: str) -> str:
@@ -32,7 +33,7 @@ def query_domain_info(domain_to_find: str, verbose_flag=True, partial_search=Fal
     )
 
     answers = ase.batch_ssh_command_result(
-        "plesk",
+        PLESK_SERVER_LIST,
         f'plesk db -Ne \\"{query}\\"',
         verbose=verbose_flag,
     )

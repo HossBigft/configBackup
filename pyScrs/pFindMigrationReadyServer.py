@@ -4,6 +4,7 @@ import pathlib
 import datetime
 import argparse
 import os
+from host_lists import PLESK_SERVER_LIST
 
 
 class pkzServer:
@@ -72,7 +73,7 @@ def __createFreeSpaceServerList(userHomeDirectory: str, fileName: str):
     pathlib.Path(statsDirPath).mkdir(parents=True, exist_ok=True)
     print("Starting query...")
     serverSpaceData = ase.batch_ssh_command_result(
-        server_list="plesk", command="df -BG", verbose=True
+        server_list=PLESK_SERVER_LIST, command="df -BG", verbose=True
     )
 
     for record in serverSpaceData:
@@ -113,7 +114,7 @@ def __createServerVersionList(userHomeDirectory: str, fileName: str):
     pathlib.Path(statsDirPath).mkdir(parents=True, exist_ok=True)
     print("Starting query...")
     serverVersionData = ase.batch_ssh_command_result(
-        server_list="plesk", command="plesk -v", verbose=True
+        server_list=PLESK_SERVER_LIST, command="plesk -v", verbose=True
     )
 
     for record in serverVersionData:
