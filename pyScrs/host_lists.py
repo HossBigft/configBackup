@@ -78,4 +78,4 @@ PLESK_SERVER_LIST = (
 
 DNS_SERVER_LIST = ("ns1.hoster.kz.", "ns2.hoster.kz.", "ns3.hoster.kz.")
 
-TEST_SERVER_LIST = ("185.111.106.116", "185.129.51.20", "google.com")
+TEST_SERVER_LIST = ("185.111.106.116", "185.129.51.20", "google.com", "vgruzo", "ogruzo")
