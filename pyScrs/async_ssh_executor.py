@@ -20,8 +20,8 @@ async def _run_command_over_ssh(host, command, verbose: bool):
     return (host, stdout.decode().strip(), stderr.decode().strip(), process.returncode)
 
 
-async def _batch_ssh_command_prepare(servers, command, verbose: bool):
-    tasks = [_run_command_over_ssh(host, command, verbose) for host in servers]
+async def batch_ssh_command_prepare(server_list, command, verbose: bool):
+    tasks = [_run_command_over_ssh(host, command, verbose) for host in server_list]
     results = await asyncio.gather(*tasks)
     return [
         {"host": host, "stdout": stdout, "stderr": stderr}
@@ -30,4 +30,4 @@ async def _batch_ssh_command_prepare(servers, command, verbose: bool):
 
 
 def batch_ssh_command_result(server_list, command, verbose=False):
-    return asyncio.run(_batch_ssh_command_prepare(server_list, command, verbose))
+    return asyncio.run(batch_ssh_command_prepare(server_list, command, verbose))
