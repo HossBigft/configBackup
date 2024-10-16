@@ -3,7 +3,7 @@ import os
 import argparse
 import sys
 import phpserialize
-
+import re
 
 def vInfoVpsGet(vps_hostname):
   
@@ -17,8 +17,14 @@ def vInfoVpsGet(vps_hostname):
     if not vps_hostname:
         print("Empty input")
         return 1
-
-    vpsInfoRequest = f"https://virtualizor.hoster.kz:4085/index.php?act=vs&vpshostname={vps_hostname}&api=json&adminapikey={api_key}&adminapipass={api_pass}"
+    
+    
+    vID_pattern=re.compile(r"^v\d+$")
+    if vID_pattern.match(vps_hostname):
+        ##rewrite this atrocity
+        vpsInfoRequest = f"https://virtualizor.hoster.kz:4085/index.php?act=vs&vpsname={vps_hostname}&api=json&adminapikey={api_key}&adminapipass={api_pass}"
+    else:
+        vpsInfoRequest = f"https://virtualizor.hoster.kz:4085/index.php?act=vs&vpshostname={vps_hostname}&api=json&adminapikey={api_key}&adminapipass={api_pass}"
 
     try:
         response = requests.get(vpsInfoRequest)
@@ -124,7 +130,9 @@ if __name__ == "__main__":
     parser.add_argument("vps_hostname", help="The hostname of the VPS to query.")
 
     args = parser.parse_args()
-
+    input_list=args.vps_hostname.splitlines()
     # Call the function with the parsed argument
-    exit_code = vInfoVpsGet(args.vps_hostname)
+    for hostname in input_list:
+        exit_code = vInfoVpsGet(hostname)
+        print()
     sys.exit(exit_code)
