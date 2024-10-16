@@ -1,6 +1,7 @@
 from host_lists import DNS_SERVER_LIST
 import async_ssh_executor as ase
 
+
 def getDomainZoneMaster(
     domain_name, verbosity_flag=True, test_flag=False, debug_flag=False
 ):
@@ -10,7 +11,6 @@ def getDomainZoneMaster(
         server_list=DNS_SERVER_LIST,
         command=getZoneMasterCmd,
         verbose=debug_flag,
-        test=test_flag,
     )
     if verbosity_flag:
         return {"domain": f"{domain_name}", "answers": dnsAnswers}
