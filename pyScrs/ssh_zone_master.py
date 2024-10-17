@@ -1,5 +1,5 @@
 from host_lists import DNS_SERVER_LIST
-import pyScrs.ssh_async_executor as ase
+import ssh_async_executor as ase
 import re
 
 DOMAIN_REGEX_PATTERN = (
