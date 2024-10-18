@@ -1,4 +1,4 @@
-import pyScrs.ssh_async_executor as ase
+import ssh_async_executor as ase
 import argparse
 from host_lists import PLESK_SERVER_LIST
 
