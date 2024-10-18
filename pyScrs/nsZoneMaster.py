@@ -17,9 +17,6 @@ def getPtr(ip: str):
         return ip
 
 
-
-
-
 def main():
     parser = argparse.ArgumentParser(
         description="Returns DNS zone master for given domain for each server"
@@ -30,13 +27,6 @@ def main():
         "--quiet",
         action="store_false",
         help="Only master ip will be returned",
-    )
-
-    parser.add_argument(
-        "-t",
-        "--test",
-        action="store_true",
-        help="query will run on test hosts",
     )
 
     parser.add_argument(
@@ -65,7 +55,6 @@ def main():
         getDomainZoneMaster(
             domain,
             verbosity_flag=verbosity_flag,
-            test_flag=args.test,
             debug_flag=args.debug,
         )
         for domain in domain_list
