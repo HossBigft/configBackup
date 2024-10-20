@@ -1,15 +1,26 @@
 from host_lists import PLESK_SERVER_LIST
 import ssh_async_executor as ase
+import re
+
+DOMAIN_REGEX_PATTERN = (
+    r"^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}$"
+)
+
+
+def is_valid_domain(domain_name: str) -> bool:
+    return 3 <= len(domain_name) <= 63 and bool(
+        re.match(DOMAIN_REGEX_PATTERN, domain_name)
+    )
 
 
 def build_query(domain_to_find: str) -> str:
     return (
-        f"SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result "
-        f"FROM domains WHERE name LIKE '{domain_to_find}'; "
-        f"SELECT name FROM domains WHERE id=(SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '{domain_to_find}'); "
-        f"SELECT pname, login FROM clients WHERE id=(SELECT cl_id FROM domains WHERE name LIKE '{domain_to_find}'); "
-        f"SELECT name FROM domains WHERE webspace_id=(SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '{domain_to_find}');"
-    )
+        "SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result "
+        "FROM domains WHERE name LIKE %s; "
+        "SELECT name FROM domains WHERE id=(SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE %s); "
+        "SELECT pname, login FROM clients WHERE id=(SELECT cl_id FROM domains WHERE name LIKE %s); "
+        "SELECT name FROM domains WHERE webspace_id=(SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE %s);"
+    ), (domain_to_find, domain_to_find, domain_to_find, domain_to_find)
 
 
 def parse_answer(answer) -> dict:
@@ -24,11 +35,14 @@ def parse_answer(answer) -> dict:
     }
 
 
-def query_domain_info(domain_to_find: str, verbose_flag=True, partial_search=False):
+def query_domain_info(domain_name: str, verbose_flag=True, partial_search=False):
+    if not is_valid_domain(domain_name):
+        raise ValueError("Input string should be a valid domain name.")
+
     query = (
-        build_query(domain_to_find)
+        build_query(domain_name)
         if not partial_search
-        else build_query(domain_to_find + "%")
+        else build_query(domain_name + "%")
     )
 
     answers = ase.batch_ssh_command_result(
