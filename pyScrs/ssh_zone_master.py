@@ -1,6 +1,7 @@
 from host_lists import DNS_SERVER_LIST
 import ssh_async_executor as ase
 import re
+import shlex
 
 DOMAIN_REGEX_PATTERN = (
     r"^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}$"
@@ -17,7 +18,9 @@ def getDomainZoneMaster(domain_name: str, verbosity_flag=True, debug_flag=False)
     if not is_valid_domain(domain_name):
         raise ValueError("Input string should be a valid domain name.")
 
-    getZoneMasterCmd = f"cat /var/opt/isc/scls/isc-bind/zones/_default.nzf| grep '\\\"{''.join(domain_name)}\\\"' | grep -Po '((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\\b){{4}}' | head -n1"
+    getZoneMasterCmd = "cat /var/opt/isc/scls/isc-bind/zones/_default.nzf| grep {} | grep -Po '((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\\b){{4}}' | head -n1".format(
+        shlex.quote(domain_name)
+    )
     dnsAnswers = []
     dnsAnswers = ase.batch_ssh_command_result(
         server_list=DNS_SERVER_LIST,
