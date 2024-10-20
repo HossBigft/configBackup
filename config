@@ -352,3 +352,8 @@ Host  p-acloud-2 acloud-2.hoster.kz.
 	HostName acloud-2.hoster.kz
 	User maximg
 	IdentityFile ~/.ssh/id_rsa
+#Added 20241020_0820
+Host vtest
+	HostName 185.111.106.116
+	User vtest
+	IdentityFile ~/.ssh/id_rsa
