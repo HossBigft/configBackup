@@ -2,15 +2,22 @@ from host_lists import PLESK_SERVER_LIST
 import ssh_async_executor as ase
 import re
 
-DOMAIN_REGEX_PATTERN = (
+DOMAIN_REGEX_PATTERN_STRICT = (
     r"^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}$"
 )
 
+DOMAIN_REGEX_PATTERN_PARTIAL = r"^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9]))$"
+
 
 def is_valid_domain(domain_name: str) -> bool:
-    return 3 <= len(domain_name) <= 63 and bool(
-        re.match(DOMAIN_REGEX_PATTERN, domain_name)
-    )
+    if "." in domain_name:
+        return 3 <= len(domain_name) <= 63 and bool(
+            re.match(DOMAIN_REGEX_PATTERN_STRICT, domain_name)
+        )
+    else:
+        return 3 <= len(domain_name) <= 63 and bool(
+            re.match(DOMAIN_REGEX_PATTERN_PARTIAL, domain_name)
+        )
 
 
 def build_query(domain_to_find: str) -> str:
