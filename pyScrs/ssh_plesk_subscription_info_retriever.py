@@ -32,7 +32,7 @@ def build_query(domain_to_find: str) -> str:
 
 def parse_answer(answer) -> dict:
     stdout_lines = answer["stdout"].strip().split("\n")
-    return {
+    parsed_answer = {
         "host": answer["host"],
         "id": stdout_lines[0],
         "name": stdout_lines[1],
@@ -40,6 +40,7 @@ def parse_answer(answer) -> dict:
         "userlogin": stdout_lines[2].split("\t")[1],
         "domains": stdout_lines[3:],
     }
+    return parsed_answer
 
 
 def query_domain_info(domain_name: str, verbose_flag=True, partial_search=False):
@@ -57,6 +58,5 @@ def query_domain_info(domain_name: str, verbose_flag=True, partial_search=False)
         f'plesk db -Ne \\"{query}\\"',
         verbose=verbose_flag,
     )
-
     results = [parse_answer(answer) for answer in answers if answer["stdout"]]
     return results
