@@ -127,7 +127,7 @@ matches:
     replace: "https://hoster.kz/support/mail-hosted-by-plesk/5560/"
   - trigger: "\\iplogin"
     replace: "https://hoster.kz/support/general-issues/5538/"
-  - trigger: "\\ipmlogin"
+  - trigger: "\\ipmw"
     replace: "https://hoster.kz/support/mail-hosted-by-plesk/5504/"
   - trigger: "\\ipimp"
     replace: "https://hoster.kz/support/rabota-s-saytom-v-paneli-plesk/5545/"

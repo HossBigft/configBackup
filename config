@@ -357,3 +357,18 @@ Host vtest
 	HostName 185.111.106.116
 	User vtest
 	IdentityFile ~/.ssh/id_rsa
+#Added 20241029_0911
+Host p-acloud-3
+	HostName acloud-3.hoster.kz
+	User maximg
+	IdentityFile ~/.ssh/id_rsa
+#Added 20241029_0912
+Host p-acloud-4
+	HostName acloud-4.hoster.kz
+	User maximg
+	IdentityFile ~/.ssh/id_rsa
+#Added 20241029_0912
+Host p-acloud-5
+	HostName acloud-5.hoster.kz
+	User maximg
+	IdentityFile ~/.ssh/id_rsa
