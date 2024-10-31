@@ -19,7 +19,7 @@ def getDomainZoneMaster(domain_name: str, verbosity_flag=True, debug_flag=False)
         raise ValueError("Input string should be a valid domain name.")
 
     getZoneMasterCmd = "cat /var/opt/isc/scls/isc-bind/zones/_default.nzf| grep {} | grep -Po '((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\\b){{4}}' | head -n1".format(
-        shlex.quote(f"\"{domain_name}\"")
+        shlex.quote(f"\"\\\"{domain_name}\\\"\"")
     )
     dnsAnswers = []
     dnsAnswers = ase.batch_ssh_command_result(
