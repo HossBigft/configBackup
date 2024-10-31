@@ -9,5 +9,6 @@ function nsRmZoneMaster --description "Removes zone for given domain from DNS sl
             ssh $host "/opt/isc/isc-bind/root/usr/sbin/rndc delzone -clean $domain"
         end
     end
+    sleep 1
     nsZoneMaster $argv
 end
