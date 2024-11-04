@@ -351,8 +351,20 @@ matches:
     vars:
       - name: "clipb"
         type: "clipboard"
-
-
+  - trigger: "\\ipspace"
+    replace: "https://hoster.kz/support/prochie-voprosy-po-rabote-v-paneli-plesk/5546/"
+  - trigger: "\\вчв"
+    replace: "в чем вы можете убедиться"
+  - trigger: "\\спо"
+    replace: "с помощью "
+  - trigger: "\\Спо"
+    replace: "С помощью "
+  - trigger: "\\Спз"
+    replace: "Создайте, пожалуйста, заявку через личный кабинет в поддержку "
+  - trigger: "\\спз"
+    replace: "создайте, пожалуйста, заявку через личный кабинет в поддержку "
+  - trigger: "\\ппко"
+    replace: "Пришли, пожалуйста, код onlinenic."
 
 
 
