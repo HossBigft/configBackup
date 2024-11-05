@@ -173,8 +173,6 @@ matches:
     replace: "https://hoster.kz/support/rabota-s-saytom-v-paneli-plesk/6827/"
   - trigger: "\\ipreso"
     replace: "https://hoster.kz/support/prochie-voprosy-po-rabote-v-paneli-plesk/5583/"
-  - trigger: "\\спз"
-    replace: "создайте, пожалуйста, заявку в поддержку через личный кабинет"
   - trigger: "\\ipcsr"
     replace: "https://hoster.kz/support/ssl-certificates/5588/"
   - trigger: "\\imail"
