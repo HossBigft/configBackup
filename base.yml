@@ -363,6 +363,13 @@ matches:
     replace: "создайте, пожалуйста, заявку через личный кабинет в поддержку "
   - trigger: "\\ппко"
     replace: "Пришли, пожалуйста, код onlinenic."
+  - trigger: "\\дп"
+    replace: "Да, правильно."
+  - trigger: "=paste"  
+    replace: "{{clipb}}"
+    vars:
+      - name: "clipb"
+        type: "clipboard"
 
 
 
