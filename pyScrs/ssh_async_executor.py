@@ -1,7 +1,10 @@
 import asyncio
+import time
 
 
 async def _run_command_over_ssh(host, command, verbose: bool):
+    start_time = time.time()
+
     ssh_command = f'ssh  -o PasswordAuthentication=no  {host} "{command}"'
     process = await asyncio.create_subprocess_shell(
         ssh_command, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
@@ -9,14 +12,22 @@ async def _run_command_over_ssh(host, command, verbose: bool):
 
     if verbose:
         print(f"{host} {ssh_command}| Awaiting result...")
+
     stdout, stderr = await process.communicate()
+
+    # Record the end time after the command finishes
+    end_time = time.time()
+
+    # Calculate the elapsed time
+    execution_time = end_time - start_time
+
     if verbose:
         succesfulAnswer = stdout.decode().strip().rstrip()
         failAnswer = stderr.decode().strip().rstrip()
         if failAnswer:
             print(f"{host} failed: {failAnswer}")
         else:
-            print(f"{host} answered: {succesfulAnswer}")
+            print(f"{host} answered in {execution_time:.2f}s : {succesfulAnswer}")
 
     return (host, stdout.decode().strip(), stderr.decode().strip(), process.returncode)
 
