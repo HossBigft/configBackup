@@ -361,8 +361,6 @@ matches:
     replace: "Создайте, пожалуйста, заявку через личный кабинет в поддержку "
   - trigger: "\\спз"
     replace: "создайте, пожалуйста, заявку через личный кабинет в поддержку "
-  - trigger: "\\ппко"
-    replace: "Пришли, пожалуйста, код onlinenic."
   - trigger: "\\дп"
     replace: "Да, правильно."
   - trigger: "=paste"  
@@ -370,6 +368,10 @@ matches:
     vars:
       - name: "clipb"
         type: "clipboard"
+  - trigger: "\\пко"
+    replace: "Пришли, пожалуйста, код onlinenic."
+  - trigger: "\\пк1"
+    replace: "Пришли, пожалуйста, код 101domain."
 
 
 
