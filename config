@@ -358,17 +358,17 @@ Host vtest
 	User vtest
 	IdentityFile ~/.ssh/id_rsa
 #Added 20241029_0911
-Host p-acloud-3
+Host p-acloud-3 acloud-3.hoster.kz.
 	HostName acloud-3.hoster.kz
 	User maximg
 	IdentityFile ~/.ssh/id_rsa
 #Added 20241029_0912
-Host p-acloud-4
+Host p-acloud-4 acloud-4.hoster.kz.
 	HostName acloud-4.hoster.kz
 	User maximg
 	IdentityFile ~/.ssh/id_rsa
 #Added 20241029_0912
-Host p-acloud-5
+Host p-acloud-5 acloud-5.hoster.kz.
 	HostName acloud-5.hoster.kz
 	User maximg
 	IdentityFile ~/.ssh/id_rsa
