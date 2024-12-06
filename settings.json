@@ -89,6 +89,7 @@
                 "source": "Windows.Terminal.PowershellCore"
             },
             {
+                "commandline": "wsl.exe",
                 "font": 
                 {
                     "face": "JetBrainsMonoNL Nerd Font Mono"
