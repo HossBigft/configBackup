@@ -222,7 +222,7 @@ Host p-pkz42 pkz42.hoster.kz.
 Host p-pkz43 pkz43.hoster.kz.
         HostName pkz43.hoster.kz.
         User maximg
-	IdentityFile ~/.ssh/id_rsa
+	    IdentityFile ~/.ssh/id_hoster
 Host p-pkz44 pkz44.hoster.kz.
         HostName pkz44.hoster.kz.
         User maximg
