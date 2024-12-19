@@ -3,7 +3,7 @@ import ssh_async_executor as ase
 import re
 
 DOMAIN_REGEX_PATTERN_STRICT = (
-    r"^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}$"
+    r"^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,8}$"
 )
 
 DOMAIN_REGEX_PATTERN_PARTIAL = r"^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9]))$"
