@@ -1,6 +1,10 @@
+import json
+import re
+
+
 from host_lists import PLESK_SERVER_LIST
 import ssh_async_executor as ase
-import re
+
 
 DOMAIN_REGEX_PATTERN_STRICT = (
     r"^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,8}$"
@@ -21,26 +25,32 @@ def is_valid_domain(domain_name: str) -> bool:
 
 
 def build_query(domain_to_find: str) -> str:
-    return (
-        "SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result "
-        "FROM domains WHERE name LIKE '{0}'; "
-        "SELECT name FROM domains WHERE id=(SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '{0}'); "
-        "SELECT pname, login FROM clients WHERE id=(SELECT cl_id FROM domains WHERE name LIKE '{0}'); "
-        "SELECT name FROM domains WHERE webspace_id=(SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '{0}');"
-    ).format(domain_to_find)
+    return f"WITH target AS ( SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS target_id, cl_id FROM domains WHERE name LIKE '{domain_to_find}' ) SELECT JSON_OBJECT( 'subscription_id', t.target_id, 'subscription_name', d.name, 'status', d.status, 'space_overuse', d.overuse, 'user', ( SELECT JSON_OBJECT('name', pname, 'login_id', login) FROM clients WHERE id = t.cl_id ), 'domains', CONCAT('[', COALESCE( GROUP_CONCAT( JSON_OBJECT( 'domain', d2.name, 'status', d2.status ) ), '[]' ), ']') ) AS combined_result FROM target t JOIN domains d ON d.id = t.target_id LEFT JOIN domains d2 ON t.target_id IN (d2.id, d2.webspace_id) GROUP BY t.target_id, d.name, d.status, d.overuse, t.cl_id;"
 
 
-def parse_answer(answer) -> dict:
-    stdout_lines = answer["stdout"].strip().split("\n")
-    parsed_answer = {
-        "host": answer["host"],
-        "id": stdout_lines[0],
-        "name": stdout_lines[1],
-        "username": stdout_lines[2].split("\t")[0],
-        "userlogin": stdout_lines[2].split("\t")[1],
-        "domains": stdout_lines[3:],
-    }
-    return parsed_answer
+def parse_answer(answer) -> dict | None:
+    try:
+        parsed_stdout = json.loads(
+            answer["stdout"]
+            .replace("\\", "")
+            .replace('"[{', "[{")
+            .replace('}]"', "}]")
+            .replace('"{', "{")
+            .replace('}"', "}")
+        )
+        parsed_answer = {
+            "host": answer["host"],
+            "id": parsed_stdout["subscription_id"],
+            "name": parsed_stdout["subscription_name"],
+            "username": parsed_stdout["user"]["name"],
+            "userlogin": parsed_stdout["user"]["login_id"],
+            "domains": parsed_stdout["domains"],
+        }
+
+        return parsed_answer
+    except (json.JSONDecodeError, KeyError) as e:
+        print(f"Error parsing the answer: {e}")
+        return None
 
 
 def query_domain_info(domain_name: str, verbose_flag=True, partial_search=False):
