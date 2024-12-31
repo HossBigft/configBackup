@@ -44,7 +44,7 @@ def parse_answer(answer) -> dict | None:
             "name": parsed_stdout["subscription_name"],
             "username": parsed_stdout["user"]["name"],
             "userlogin": parsed_stdout["user"]["login_id"],
-            "domains": parsed_stdout["domains"],
+            "domains": parsed_stdout["domains"], # status 0 online, status 2 disabled subscription, status 16 disabled by domain, status 64 disabled by user
         }
 
         return parsed_answer
