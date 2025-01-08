@@ -102,19 +102,7 @@ def main():
                 f"\nSubscription with {args.domainToFind} domain was found on following servers[{len(results)}]:"
             )
         for record in results:
-            # Prepare the output elements based on the flags
-            output_elements = []
-            if args.name:
-                output_elements.append("{subscription_name}")
-            if args.id:
-                output_elements.append("{subscription_id}")
-            if args.server:
-                output_elements.append("{hostname}")
-            if args.user:
-                output_elements.append("{username} ({userlogin})")
-
-            # Print the formatted output if any of the flags are set
-            if output_elements:
+            if args.name or args.id or args.server or args.user:
                 print(
                     "|".join(output_elements).format(
                         domaintoFind=args.domainToFind,
@@ -125,22 +113,16 @@ def main():
                         userlogin=record["userlogin"],
                     )
                 )
-
-            # Print domains if the 'domains' flag is set
             if args.domains:
                 if args.verbose:
                     print("Domains:")
-                print(record["name"])  # Print the main subscription name
+                print(record["name"])
                 for domain in record["domains"]:
-                    print(
-                        domain["domain"]
-                    )  # Each domain is a dictionary, so access 'domain' key
-
-            # Print a separator if there are multiple results and verbose is enabled
+                    print(domain)
             if len(results) > 1 and args.verbose:
                 print("-------")
     else:
-        print(f"No servers were found with {args.domainToFind} domain")
+        print(f"No servers was found with {args.domainToFind} domain")
 
 
 if __name__ == "__main__":
