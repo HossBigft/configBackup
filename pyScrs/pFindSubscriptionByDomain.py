@@ -116,7 +116,6 @@ def main():
             if args.domains:
                 if args.verbose:
                     print("Domains:")
-                print(record["name"])
                 for domain in record["domains"]:
                     print(domain)
             if len(results) > 1 and args.verbose:

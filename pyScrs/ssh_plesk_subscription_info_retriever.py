@@ -21,24 +21,72 @@ def is_valid_domain(domain_name: str) -> bool:
 
 
 def build_query(domain_to_find: str) -> str:
-    return (
-        "SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result "
-        "FROM domains WHERE name LIKE '{0}'; "
-        "SELECT name FROM domains WHERE id=(SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '{0}'); "
-        "SELECT pname, login FROM clients WHERE id=(SELECT cl_id FROM domains WHERE name LIKE '{0}'); "
-        "SELECT name FROM domains WHERE webspace_id=(SELECT CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS result FROM domains WHERE name LIKE '{0}');"
-    ).format(domain_to_find)
+    return f"""
+    WITH target AS (
+        SELECT 
+            CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS subscription_id,
+            cl_id,
+            name
+        FROM domains
+        WHERE name LIKE '{domain_to_find}'
+    ),
+    user_info AS (
+        SELECT 
+            id,
+            pname,
+            login
+        FROM clients
+    )
+    SELECT 
+        t.subscription_id AS result,
+        t.name,
+        (SELECT pname FROM user_info WHERE id=t.cl_id) AS username,
+        (SELECT login FROM user_info WHERE id=t.cl_id) AS userlogin,
+        (SELECT GROUP_CONCAT(CONCAT(d2.name, ':', d2.status) SEPARATOR ',')
+         FROM domains d2 
+         WHERE t.subscription_id IN (d2.id, d2.webspace_id)) AS domains,
+         (SELECT overuse FROM domains WHERE id=t.subscription_id) as is_space_overused,
+         (SELECT round(real_size/1024/1024) FROM domains WHERE id=t.subscription_id) as subscription_size_mb,
+         (SELECT status FROM domains WHERE id=t.subscription_id) as subscription_status
+    FROM target t;
+    """
 
 
 def parse_answer(answer) -> dict:
-    stdout_lines = answer["stdout"].strip().split("\n")
+    status_mapping = {
+        0: "online",
+        2: "subscription_is_disabled",
+        16: "domain_disabled_by_admin",
+        64: "domain_disabled_by_client",
+    }
+
+    result_lines = answer["stdout"].strip().split("\n")[0].split("\t")
+
+    domain_states_list = [
+        {
+            "domain": domain_status.split(":")[0],
+            "status": status_mapping.get(
+                int(domain_status.split(":")[1]), "unknown_status"
+            ),
+        }
+        for domain_status in result_lines[4].split(",")
+    ]
+
+    domains_list = [entry["domain"] for entry in domain_states_list]
+
     parsed_answer = {
         "host": answer["host"],
-        "id": stdout_lines[0],
-        "name": stdout_lines[1],
-        "username": stdout_lines[2].split("\t")[0],
-        "userlogin": stdout_lines[2].split("\t")[1],
-        "domains": stdout_lines[3:],
+        "id": result_lines[0],
+        "name": result_lines[1],
+        "username": result_lines[2],
+        "userlogin": result_lines[3],
+        "domains": domains_list,
+        "domain_states": domain_states_list,
+        "is_space_overused": True if result_lines[5] == "true" else False,
+        "subscription_size_mb": int(result_lines[6]),
+        "subscription_status": status_mapping.get(
+            int(result_lines[7]), "unknown_status"
+        ),
     }
     return parsed_answer
 
