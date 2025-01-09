@@ -72,34 +72,39 @@ def is_valid_domain(domain_name: str) -> bool:
 
 
 def build_query(domain_to_find: str) -> str:
+    """
+    Builds a SQL query string to search for domain information.
+    Compatible with MySQL 5.7.
+
+    Args:
+        domain_to_find (str): Domain name pattern to search for
+
+    Returns:
+        str: Complete SQL query string
+    """
     return f"""
-    WITH target AS (
-        SELECT 
-            CASE WHEN webspace_id = 0 THEN id ELSE webspace_id END AS subscription_id,
-            cl_id,
-            name
-        FROM domains
-        WHERE name LIKE '{domain_to_find}'
-    ),
-    user_info AS (
-        SELECT 
-            id,
-            pname,
-            login
-        FROM clients
-    )
     SELECT 
-        t.subscription_id AS result,
-        t.name,
-        (SELECT pname FROM user_info WHERE id=t.cl_id) AS username,
-        (SELECT login FROM user_info WHERE id=t.cl_id) AS userlogin,
+        base.subscription_id AS result,
+        base.name,
+        (SELECT pname FROM clients WHERE id = base.cl_id) AS username,
+        (SELECT login FROM clients WHERE id = base.cl_id) AS userlogin,
         (SELECT GROUP_CONCAT(CONCAT(d2.name, ':', d2.status) SEPARATOR ',')
          FROM domains d2 
-         WHERE t.subscription_id IN (d2.id, d2.webspace_id)) AS domains,
-         (SELECT overuse FROM domains WHERE id=t.subscription_id) as is_space_overused,
-         (SELECT round(real_size/1024/1024) FROM domains WHERE id=t.subscription_id) as subscription_size_mb,
-         (SELECT status FROM domains WHERE id=t.subscription_id) as subscription_status
-    FROM target t;
+         WHERE base.subscription_id IN (d2.id, d2.webspace_id)) AS domains,
+        (SELECT overuse FROM domains WHERE id = base.subscription_id) as is_space_overused,
+        (SELECT ROUND(real_size/1024/1024) FROM domains WHERE id = base.subscription_id) as subscription_size_mb,
+        (SELECT status FROM domains WHERE id = base.subscription_id) as subscription_status
+    FROM (
+        SELECT 
+            CASE 
+                WHEN webspace_id = 0 THEN id 
+                ELSE webspace_id 
+            END AS subscription_id,
+            cl_id,
+            name
+        FROM domains 
+        WHERE name LIKE '{domain_to_find}'
+    ) AS base;
     """
 
 
