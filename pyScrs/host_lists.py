@@ -76,8 +76,15 @@ PLESK_SERVER_LIST = (
     "acloud-2.hoster.kz.",
     "acloud-3.hoster.kz.",
     "acloud-4.hoster.kz.",
+    "acloud-5.hoster.kz.",
 )
 
 DNS_SERVER_LIST = ("ns1.hoster.kz.", "ns2.hoster.kz.", "ns3.hoster.kz.")
 
-TEST_SERVER_LIST = ("185.111.106.116", "185.129.51.20", "google.com", "vgruzo", "ogruzo")
+TEST_SERVER_LIST = (
+    "185.111.106.116",
+    "185.129.51.20",
+    "google.com",
+    "vgruzo",
+    "ogruzo",
+)
