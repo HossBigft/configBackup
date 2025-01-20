@@ -85,12 +85,12 @@ def build_query(domain_to_find: str) -> str:
     return f"""
     SELECT 
         base.subscription_id AS result,
-        base.name,
+        (SELECT name FROM domains WHERE id = base.subscription_id) AS name,
         (SELECT pname FROM clients WHERE id = base.cl_id) AS username,
         (SELECT login FROM clients WHERE id = base.cl_id) AS userlogin,
         (SELECT GROUP_CONCAT(CONCAT(d2.name, ':', d2.status) SEPARATOR ',')
-         FROM domains d2 
-         WHERE base.subscription_id IN (d2.id, d2.webspace_id)) AS domains,
+        FROM domains d2 
+        WHERE base.subscription_id IN (d2.id, d2.webspace_id)) AS domains,
         (SELECT overuse FROM domains WHERE id = base.subscription_id) as is_space_overused,
         (SELECT ROUND(real_size/1024/1024) FROM domains WHERE id = base.subscription_id) as subscription_size_mb,
         (SELECT status FROM domains WHERE id = base.subscription_id) as subscription_status
