@@ -312,9 +312,9 @@ Host p-cloud-3 cloud-3.hoster.kz.
 		User maximg
     IdentityFile ~/.ssh/id_rsa
 Host vgruzo
-		Hostname 185.111.106.116
+		Hostname 194.4.58.45
 		User root
-    IdentityFile ~/.ssh/id_rsa
+    	IdentityFile ~/.ssh/id_hoster
 Host p-cloud-4 cloud-4.hoster.kz.
 		Hostname cloud-4.hoster.kz.
 		User maximg
