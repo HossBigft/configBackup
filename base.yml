@@ -206,7 +206,7 @@ matches:
     replace: "https://hoster.kz/support/upravlenie-dns-zapisyami-domenov/5513/"
   - trigger: "\\itick"
     replace: "https://hoster.kz/support/personal-area/5605/"
-  - trigger: "\\ipftp"
+  - trigger: "\\ipftpcr"
     replace: "https://hoster.kz/support/prochie-voprosy-po-rabote-v-paneli-plesk/5551/"
   - trigger: "\\Спи"
     replace: "С помощью инструкции "
@@ -361,7 +361,7 @@ matches:
     replace: "Создайте, пожалуйста, заявку через личный кабинет в поддержку "
   - trigger: "\\спз"
     replace: "создайте, пожалуйста, заявку через личный кабинет в поддержку "
-  - trigger: "\\дп"
+  - trigger: "\\дпр"
     replace: "Да, правильно."
   - trigger: "=paste"  
     replace: "{{clipb}}"
@@ -372,6 +372,10 @@ matches:
     replace: "Пришли, пожалуйста, код onlinenic."
   - trigger: "\\пк1"
     replace: "Пришли, пожалуйста, код 101domain."
+  - trigger: "\\ivpass"
+    replace: "https://hoster.kz/support/rabota-s-vds-khostingom/5595/"
+  - trigger: "\\ivsshpass"
+    replace: "https://hoster.kz/support/rabota-s-vds-khostingom/5596/?sphrase_id=1766"
 
 
 
