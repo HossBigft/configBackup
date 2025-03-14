@@ -203,7 +203,7 @@ matches:
   - trigger: "\\вмжу"
     replace: "вы можете в этом убедиться "
   - trigger: "\\ins"
-    replace: "https://hoster.kz/support/upravlenie-dns-zapisyami-domenov/5513/"
+    replace: "https://hoster.kz/support/upravlenie-dns-zapisyami-domenov/5536/"
   - trigger: "\\itick"
     replace: "https://hoster.kz/support/personal-area/5605/"
   - trigger: "\\ipftpcr"
@@ -376,6 +376,8 @@ matches:
     replace: "https://hoster.kz/support/rabota-s-vds-khostingom/5595/"
   - trigger: "\\ivsshpass"
     replace: "https://hoster.kz/support/rabota-s-vds-khostingom/5596/?sphrase_id=1766"
+  - trigger: "hlbh" 
+    replace: "hide-lines-before here"
 
 
 
