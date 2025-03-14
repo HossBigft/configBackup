@@ -372,3 +372,13 @@ Host p-acloud-5 acloud-5.hoster.kz.
 	HostName acloud-5.hoster.kz
 	User maximg
 	IdentityFile ~/.ssh/id_rsa
+#Added 20250313_1358
+Host p-cloud-6 cloud-6.hoster.kz.
+	HostName 89.35.125.20
+	User maximg
+	IdentityFile ~/.ssh/id_hoster
+#Added 20250313_1652
+Host p-cloud-7 cloud-7.hoster.kz.
+	HostName 89.35.125.23
+	User maximg
+	IdentityFile ~/.ssh/id_hoster
