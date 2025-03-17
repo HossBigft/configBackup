@@ -382,3 +382,8 @@ Host p-cloud-7 cloud-7.hoster.kz.
 	HostName 89.35.125.23
 	User maximg
 	IdentityFile ~/.ssh/id_hoster
+#Added 20250317_1158
+Host p-acloud-7 acloud-7.hoster.kz.
+	HostName 93.115.14.20
+	User maximg
+	IdentityFile ~/.ssh/id_hoster
