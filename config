@@ -78,7 +78,7 @@ Host p-nturbo-2  nturbo-2.hoster.kz.
         User maximg
 	IdentityFile ~/.ssh/id_rsa
 Host p-nturbo-1 nturbo-1.hoster.kz.
-        HostName nturbo-1.hoster.kz
+        HostName nturbo-1.hoster.kz.
         User maximg
 	IdentityFile ~/.ssh/id_rsa
 Host p-pkz4  pkz4.hoster.kz.
@@ -349,7 +349,7 @@ Host p-acloud-1 acloud-1.hoster.kz.
 #apkz-5 does not exist
 #Added 20241003_1001
 Host  p-acloud-2 acloud-2.hoster.kz.
-	HostName acloud-2.hoster.kz
+	HostName acloud-2.hoster.kz.
 	User maximg
 	IdentityFile ~/.ssh/id_rsa
 #Added 20241020_0820
@@ -359,17 +359,17 @@ Host vtest
 	IdentityFile ~/.ssh/id_rsa
 #Added 20241029_0911
 Host p-acloud-3 acloud-3.hoster.kz.
-	HostName acloud-3.hoster.kz
+	HostName acloud-3.hoster.kz.
 	User maximg
 	IdentityFile ~/.ssh/id_rsa
 #Added 20241029_0912
 Host p-acloud-4 acloud-4.hoster.kz.
-	HostName acloud-4.hoster.kz
+	HostName acloud-4.hoster.kz.
 	User maximg
 	IdentityFile ~/.ssh/id_rsa
 #Added 20241029_0912
 Host p-acloud-5 acloud-5.hoster.kz.
-	HostName acloud-5.hoster.kz
+	HostName acloud-5.hoster.kz.
 	User maximg
 	IdentityFile ~/.ssh/id_rsa
 #Added 20250313_1358
