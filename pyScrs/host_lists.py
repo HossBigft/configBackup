@@ -78,6 +78,7 @@ PLESK_SERVER_LIST = (
     "acloud-4.hoster.kz.",
     "acloud-5.hoster.kz.",
     "cloud-6.hoster.kz.",
+    "cloud-7.hoster.kz.",
 )
 
 DNS_SERVER_LIST = ("ns1.hoster.kz.", "ns2.hoster.kz.", "ns3.hoster.kz.")
