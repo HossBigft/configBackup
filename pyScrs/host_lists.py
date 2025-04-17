@@ -77,6 +77,7 @@ PLESK_SERVER_LIST = (
     "acloud-3.hoster.kz.",
     "acloud-4.hoster.kz.",
     "acloud-5.hoster.kz.",
+    "acloud-6.hoster.kz.",
     "cloud-6.hoster.kz.",
     "cloud-7.hoster.kz.",
 )
