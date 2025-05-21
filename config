@@ -45,10 +45,7 @@ Host p-apkz7 apkz7.hoster.kz.
         HostName apkz7.hoster.kz.
         User maximg
 	IdentityFile ~/.ssh/id_rsa
-Host p-pkz37 pkz37.hoster.kz
-        HostName pkz37.hoster.kz.
-        User maximg
-	IdentityFile ~/.ssh/id_rsa
+
 Host p-pkz47 pkz47.hoster.kz.
         HostName pkz47.hoster.kz.
         User maximg
