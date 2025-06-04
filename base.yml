@@ -378,6 +378,8 @@ matches:
     replace: "https://hoster.kz/support/rabota-s-vds-khostingom/5596/?sphrase_id=1766"
   - trigger: "hlbh" 
     replace: "hide-lines-before here"
+  - trigger: "\\iplog"
+    replace: "https://hoster.kz/support/rabota-s-saytom-v-paneli-plesk/5510/"
 
 
 
