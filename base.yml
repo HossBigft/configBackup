@@ -398,6 +398,8 @@ matches:
     vars:
     - name: "clipb"
       type: "clipboard"
+  - trigger: "\\issh" 
+    replace: "https://hoster.kz/support/obshhie-voprosy/7259/"
 
 
 
