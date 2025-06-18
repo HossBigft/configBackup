@@ -33,8 +33,17 @@ async def _run_command_over_ssh(host, command, verbose: bool):
 
 
 async def batch_ssh_command_prepare(server_list, command, verbose: bool):
+    if verbose:
+        start_time = time.time()
+
     tasks = [_run_command_over_ssh(host, command, verbose) for host in server_list]
     results = await asyncio.gather(*tasks)
+    if verbose:
+        end_time = time.time()
+        execution_time = end_time - start_time
+        print(
+            f"Batch execution run on {len(server_list)} hosts  in {execution_time}s."
+        )
     return [
         {"host": host, "stdout": stdout, "stderr": stderr}
         for host, stdout, stderr, *_ in results
