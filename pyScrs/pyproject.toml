@@ -1,0 +1,7 @@
+[project]
+name = "pyscrs"
+version = "0.1.0"
+requires-python = ">=3.13"
+dependencies = [
+    "scalene>=1.5.51",
+]
