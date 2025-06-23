@@ -203,7 +203,7 @@ matches:
   - trigger: "\\вмжу"
     replace: "вы можете в этом убедиться "
   - trigger: "\\ins"
-    replace: "https://hoster.kz/support/upravlenie-dns-zapisyami-domenov/5536/"
+    replace: "https://hoster.kz/support/upravlenie-dns-zapisyami-domenov/5513/"
   - trigger: "\\itick"
     replace: "https://hoster.kz/support/personal-area/5605/"
   - trigger: "\\ipftpcr"
@@ -400,6 +400,8 @@ matches:
       type: "clipboard"
   - trigger: "\\issh" 
     replace: "https://hoster.kz/support/obshhie-voprosy/7259/"
+  - trigger: "\\увп" 
+    replace: "Уточните, пожалуйста, у вас получилось?"
 
 
 
