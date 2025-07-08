@@ -141,7 +141,7 @@ matches:
     replace: "https://hoster.kz/support/orabota-s-saytom-v-paneli-plesk/5572/"
   - trigger: "\\ipback"
     replace: "https://hoster.kz/support/prochie-voprosy-po-rabote-v-paneli-plesk/5565/"
-  - trigger: "\\ipftpc"
+  - trigger: "\\iftp"
     replace: "https://hoster.kz/support/prochie-voprosy-po-rabote-v-paneli-plesk/5526/?sphrase_id=2799"
   - trigger: "\\ivreinstall"
     replace: "https://hoster.kz/support/rabota-s-vds-khostingom/6482/?sphrase_id=1768"
@@ -378,7 +378,7 @@ matches:
     replace: "https://hoster.kz/support/rabota-s-vds-khostingom/5596/?sphrase_id=1766"
   - trigger: "hlbh" 
     replace: "hide-lines-before here"
-  - trigger: "\\iplog"
+  - trigger: "\\iplogs"
     replace: "https://hoster.kz/support/rabota-s-saytom-v-paneli-plesk/5510/"
   - trigger: "\\нагр"
     replace: |
