@@ -93,7 +93,10 @@ matches:
   - trigger: "\\Вмв"
     replace: "Вы можете воспользоваться "
   - trigger: "\\дпж"
-    replace: "Добавь, пожалуйста, в ."
+    replace: "Добавь, пожалуйста, в {{clipb}}"
+    vars:
+      - name: "clipb"
+        type: "clipboard"
   - trigger: "\\ут"
     replace: "Уточните, пожалуйста, "
   - trigger: "\\Квпс"
